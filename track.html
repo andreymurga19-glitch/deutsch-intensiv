@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeutschTrack</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0d10;--sf:#161619;--sf2:#1e1e24;--sf3:#252530;--br:#2a2a35;--br2:#383848;--gold:#d4a843;--pur:#7b61ff;--grn:#3ecf8e;--red:#f06292;--blu:#38bdf8;--org:#fb923c;--tx:#e8e8f0;--mt:#5a5a70;--mt2:#7a7a90;--fh:"Bebas Neue",sans-serif;--ff:"DM Sans",sans-serif;--fm:"DM Mono",monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh;overflow-x:hidden}
+header{padding:16px 20px 8px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;background:linear-gradient(to bottom,var(--bg) 75%,transparent)}
+.logo{font-family:var(--fh);font-size:1.7rem;letter-spacing:4px;color:var(--gold)}.logo span{color:var(--tx)}
+.streak{margin-left:auto;background:linear-gradient(135deg,#d4a843,#f0c040);color:#000;font-weight:700;font-size:.7rem;padding:5px 12px;border-radius:20px;white-space:nowrap}
+.hbtn{background:none;border:none;color:var(--mt2);cursor:pointer;font-size:1.1rem;padding:4px 6px}
+.tabs{display:flex;padding:0 20px;border-bottom:1px solid var(--br);overflow-x:auto;position:sticky;top:48px;z-index:99;background:var(--bg);scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{background:none;border:none;color:var(--mt2);font-family:var(--ff);font-size:.76rem;font-weight:500;padding:9px 10px;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.cnt{padding:16px 20px 60px;max-width:900px;margin:0 auto}
+.view{display:none}.view.active{display:block;animation:fi .2s ease}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1}}
+@keyframes si{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--sf);border:1px solid var(--br);border-radius:10px;padding:16px 18px;margin-bottom:12px}
+.ctitle{font-family:var(--fh);font-size:.95rem;letter-spacing:2.5px;color:var(--gold);margin-bottom:12px}
+.alert{display:flex;gap:10px;padding:12px 14px;border-radius:10px;margin-bottom:12px;border:1px solid;animation:si .25s ease}
+.ai{font-size:1.3rem;flex-shrink:0}.ab strong{font-size:.85rem}.ab p{font-size:.73rem;margin-top:2px;opacity:.85}
+.adanger{background:#1f0a0a;border-color:var(--red);color:var(--red)}
+.awarn{background:#1e1400;border-color:var(--org);color:var(--org)}
+.aok{background:#071a10;border-color:var(--grn);color:var(--grn)}
+.srow{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:8px;margin-bottom:12px}
+.stat{background:var(--sf);border:1px solid var(--br);border-radius:10px;padding:12px;text-align:center}
+.sn{font-family:var(--fh);font-size:1.8rem;line-height:1;color:var(--gold)}.sl{font-size:.64rem;color:var(--mt2);margin-top:3px;text-transform:uppercase;letter-spacing:.5px}
+.ptabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.ptab{background:var(--sf2);border:1px solid var(--br);border-radius:6px;color:var(--mt2);font-size:.73rem;font-weight:500;padding:5px 12px;cursor:pointer;transition:all .15s}
+.ptab.active{background:var(--gold);color:#000;border-color:var(--gold);font-weight:700}
+.chart{height:135px}.chart svg{width:100%;height:100%}
+.xlbls{display:flex;margin-top:3px}.xl{font-size:.57rem;color:var(--mt);text-align:center;flex:1;overflow:hidden}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}.li{display:flex;align-items:center;gap:4px;font-size:.66rem;color:var(--mt2)}.ld{width:10px;height:10px;border-radius:2px}
+.ins{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:7px;margin-top:10px}
+.iv{font-family:var(--fh);font-size:1.4rem;color:var(--gold);line-height:1}.il{font-size:.63rem;color:var(--mt2);margin-top:2px}
+.tbar{margin-bottom:10px}.tbh{display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px}
+.tbn{font-family:var(--fm);color:var(--gold)}.tbp{color:var(--mt2)}
+.pw{background:var(--sf2);border-radius:4px;height:6px;overflow:hidden}
+.pf{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--pur),var(--gold));transition:width .6s}
+.calnr{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+.calm{font-family:var(--fh);font-size:1rem;letter-spacing:2px}
+.calbtn{background:none;border:1px solid var(--br);color:var(--tx);width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.calbtn:hover{border-color:var(--gold);color:var(--gold)}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cdow{font-size:.57rem;color:var(--mt);text-align:center;padding:2px 0;font-weight:600}
+.cc{aspect-ratio:1;border-radius:4px;background:var(--sf2);border:1px solid var(--br2);display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--mt);position:relative;transition:all .15s}
+.cc:not(.emp){cursor:pointer}.cc:not(.emp):hover{border-color:var(--gold);transform:scale(1.08)}
+.cc.emp{background:transparent;border-color:transparent;cursor:default}
+.cc.hw{background:#0f2a1c;border-color:var(--grn);color:var(--grn)}
+.cc.tod{border-color:var(--gold)!important;color:var(--gold)}.cc.hw.tod{background:#1a2f1a}
+.cdot{position:absolute;bottom:2px;width:4px;height:4px;border-radius:50%;background:var(--gold);display:none}
+.cc.ht .cdot{display:block}
+.calleg{display:flex;gap:9px;flex-wrap:wrap;margin-top:6px}
+.cll{display:flex;align-items:center;gap:4px;font-size:.62rem;color:var(--mt2)}.cls{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+.aform{display:grid;grid-template-columns:1fr 1fr auto;gap:9px;align-items:end;margin-bottom:10px}
+.aform2{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
+.fl label{display:block;font-size:.64rem;color:var(--mt2);margin-bottom:4px;letter-spacing:.6px;text-transform:uppercase}
+.fl input,.fl select,.fl textarea{width:100%;background:var(--sf2);border:1px solid var(--br);border-radius:8px;color:var(--tx);font-family:var(--ff);font-size:.85rem;padding:8px 10px;outline:none;transition:border-color .2s}
+.fl input:focus,.fl select:focus,.fl textarea:focus{border-color:var(--gold)}
+.fl input::placeholder{color:var(--mt)}.fl textarea{resize:vertical;min-height:58px}
+.btn{background:var(--gold);color:#000;border:none;border-radius:8px;font-family:var(--ff);font-weight:600;font-size:.85rem;padding:9px 14px;cursor:pointer;transition:opacity .2s,transform .1s;white-space:nowrap}
+.btn:hover{opacity:.88;transform:translateY(-1px)}.btn:active{transform:translateY(0)}
+.btng{background:var(--sf2);color:var(--tx);border:1px solid var(--br)}.btnsm{padding:5px 10px;font-size:.75rem}
+.tcnt{font-size:.69rem;color:var(--mt2);margin-bottom:4px}.tcnt span{color:var(--gold);font-weight:600}
+.ssep{display:flex;align-items:center;gap:9px;margin:14px 0 8px}
+.ssep h3{font-family:var(--fh);font-size:.82rem;letter-spacing:2px;color:var(--mt2);white-space:nowrap}
+.sbadge{background:var(--sf2);border:1px solid var(--br);border-radius:20px;font-size:.61rem;color:var(--mt2);padding:2px 8px}
+.sline{flex:1;height:1px;background:var(--br)}
+.wrow{background:var(--sf2);border:1px solid var(--br);border-radius:8px;padding:9px 11px;display:flex;align-items:center;gap:8px;margin-bottom:5px;animation:si .18s ease;cursor:pointer;transition:border-color .15s}
+.wrow:hover{border-color:var(--gold)}
+.wde{font-family:var(--fm);font-size:.85rem;color:var(--gold);min-width:88px;flex-shrink:0}
+.warr{color:var(--br2);font-size:.88rem;flex-shrink:0}.wuk{flex:1;font-size:.82rem}
+.ibtn{background:none;border:none;color:var(--mt);cursor:pointer;font-size:.82rem;padding:3px 5px;line-height:1;border-radius:5px;transition:all .15s;flex-shrink:0}
+.ibtn:hover{color:var(--gold)}.ibtn.del:hover{color:var(--red)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:flex;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(6px)}
+.modal{background:var(--sf);border:1px solid var(--br2);border-radius:14px;padding:22px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+.mtitle{font-family:var(--fh);font-size:1.1rem;letter-spacing:2px;color:var(--gold);margin-bottom:16px}
+.mf{margin-bottom:11px}.mact{display:flex;gap:9px;justify-content:flex-end;margin-top:16px}
+.wdstar{width:30px;height:30px;border-radius:50%;background:var(--sf2);border:2px solid var(--br2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.76rem;font-weight:600;color:var(--mt2);transition:all .15s}
+.wdstar.on{background:var(--grn);border-color:var(--grn);color:#000}
+.exblock{background:var(--sf2);border-left:3px solid var(--gold);border-radius:0 8px 8px 0;padding:9px 12px;margin-bottom:7px}
+.exde{font-family:var(--fm);font-size:.83rem;color:var(--gold);margin-bottom:3px;line-height:1.4}
+.exuk{font-size:.78rem;color:var(--mt2);line-height:1.4}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.pill{background:var(--sf2);border:1px solid var(--br);border-radius:7px;color:var(--mt2);font-size:.77rem;font-weight:500;padding:7px 12px;cursor:pointer;transition:all .15s;user-select:none}
+.pill.on{background:var(--sf);border-color:var(--gold);color:var(--gold)}
+.qpr{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.qctr{font-family:var(--fm);font-size:.77rem;color:var(--mt2);white-space:nowrap}
+.qsc{margin-left:auto;font-family:var(--fm);font-size:.77rem;white-space:nowrap}
+.qbox{background:var(--sf);border:1px solid var(--br);border-radius:14px;padding:26px 20px;text-align:center;min-height:245px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.qq{font-family:var(--fh);font-size:2.5rem;letter-spacing:3px;color:var(--gold);line-height:1.1;margin-bottom:6px;word-break:break-word;overflow-wrap:break-word}
+.qhint{font-size:.72rem;color:var(--mt2);margin-bottom:20px}
+.qinp{background:var(--sf2);border:2px solid var(--br2);border-radius:10px;color:var(--tx);font-family:var(--fm);font-size:1rem;padding:10px 16px;width:100%;max-width:280px;text-align:center;outline:none;transition:border-color .2s}
+.qinp:focus{border-color:var(--gold)}.qinp.ok{border-color:var(--grn);background:#071a10}
+.qinp.close{border-color:var(--org);background:#1e1400}.qinp.bad{border-color:var(--red);background:#1f0a0a}
+.qfb{margin-top:10px;font-size:.85rem;font-weight:500;min-height:20px}
+.qfb.ok{color:var(--grn)}.qfb.close{color:var(--org)}.qfb.bad{color:var(--red)}
+.qbtns{display:flex;gap:9px;margin-top:14px;justify-content:center;flex-wrap:wrap}
+.rscore{font-family:var(--fh);font-size:4rem;letter-spacing:3px;line-height:1}
+.ritem{background:var(--sf2);border-radius:8px;padding:8px 11px;margin-bottom:5px;display:flex;align-items:center;gap:9px;font-size:.79rem;flex-wrap:wrap}
+.ride{font-family:var(--fm);color:var(--gold);min-width:90px}
+.tc{background:var(--sf);border:1px solid var(--br);border-radius:10px;overflow:hidden;margin-bottom:11px}
+.th{display:flex;align-items:center;padding:13px 16px;cursor:pointer;user-select:none;transition:background .15s}
+.th:hover{background:var(--sf2)}.tn{font-family:var(--fh);font-size:1.2rem;letter-spacing:3px}
+.tco{font-size:.66rem;color:var(--mt2);margin-left:9px;margin-top:3px}
+.tchev{margin-left:auto;color:var(--mt2);font-size:1.1rem;transition:transform .22s}.tchev.open{transform:rotate(90deg)}
+.tb{display:none;padding:0 16px 18px;border-top:1px solid var(--br)}.tb.open{display:block}
+.tsl{font-size:.61rem;color:var(--mt2);letter-spacing:1px;text-transform:uppercase;margin:12px 0 6px}
+.twrap{display:flex;flex-direction:column;gap:5px;margin-bottom:7px}
+.tchip{background:var(--sf2);border:1px solid var(--br);border-radius:8px;padding:7px 11px;font-size:.82rem;font-family:var(--fm);display:flex;align-items:center;gap:6px}
+.tchip.fm{border-color:var(--pur)}.tcu{color:var(--mt2);font-size:.67rem}
+.tcd{background:none;border:none;color:var(--mt);cursor:pointer;font-size:.71rem;padding:0 0 0 3px}.tcd:hover{color:var(--red)}
+.tadd{display:flex;gap:6px;margin-top:7px}
+.tadd input{flex:1;background:var(--sf2);border:1px solid var(--br);border-radius:8px;color:var(--tx);font-family:var(--ff);font-size:.81rem;padding:7px 10px;outline:none;transition:border-color .2s}
+.tadd input:focus{border-color:var(--gold)}
+/* NOTES */
+.note-item{border:1px solid var(--br);border-radius:8px;margin-bottom:8px;overflow:hidden}
+.note-hdr{padding:10px 14px;background:var(--sf2);display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.note-hdr:active{background:var(--sf3)}
+.note-body{display:none;padding:10px}
+.note-body textarea{width:100%;min-height:320px;background:var(--sf2);border:1px solid var(--gold);border-radius:8px;color:var(--tx);font-family:var(--ff);font-size:.88rem;padding:10px;outline:none;resize:vertical;line-height:1.6}
+/* FLASHCARDS */
+.fcwrap{width:100%;height:205px;perspective:1000px;cursor:pointer;margin-bottom:12px;user-select:none}
+.fcin{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .4s ease}
+.fcin.flipped{transform:rotateY(180deg)}
+.fcf,.fcb{position:absolute;inset:0;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;backface-visibility:hidden;-webkit-backface-visibility:hidden;-moz-backface-visibility:hidden}
+.fcf{background:var(--sf);border:1px solid var(--br2)}.fcb{background:#0f2a1c;border:1px solid var(--grn);transform:rotateY(180deg)}
+.fclbl{font-size:.62rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--mt2);margin-bottom:8px}
+.fcword{font-family:var(--fh);letter-spacing:2px;color:var(--gold);text-align:center;line-height:1.2;word-break:break-word;overflow-wrap:break-word;max-width:100%;padding:0 4px}
+.fcb .fcword{color:var(--grn)}.fctap{font-size:.65rem;color:var(--mt);margin-top:12px}
+.cbtns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
+.cbtn{border:none;border-radius:10px;padding:13px;font-family:var(--ff);font-size:.94rem;font-weight:600;cursor:pointer;transition:all .15s}
+.cbtn:active{transform:scale(.97)}
+.cbtn-bad{background:#2a0f0f;border:1px solid var(--red);color:var(--red)}.cbtn-bad:hover{background:var(--red);color:#fff}
+.cbtn-ok{background:#0f2a1c;border:1px solid var(--grn);color:var(--grn)}.cbtn-ok:hover{background:var(--grn);color:#000}
+.extoggle{width:100%;background:var(--sf2);border:1px solid var(--br2);color:var(--mt2);font-family:var(--ff);font-size:.8rem;padding:10px;border-radius:10px;cursor:pointer;transition:all .15s;text-align:center;margin-bottom:8px}
+.extoggle.open{border-color:var(--gold);color:var(--gold)}
+.exitem{background:var(--sf);border:1px solid var(--br2);border-radius:10px;padding:11px 13px;margin-bottom:7px;animation:si .2s ease}
+.exde{font-family:var(--fm);font-size:.85rem;color:var(--gold);margin-bottom:4px;line-height:1.4}
+.exuk{font-size:.79rem;color:var(--mt2);line-height:1.4}
+.exde .hl{color:var(--grn);font-weight:600}
+.daypick{display:flex;flex-wrap:wrap;gap:5px;max-height:150px;overflow-y:auto;margin-top:6px}
+.dchip{background:var(--sf2);border:1px solid var(--br);border-radius:8px;padding:5px 9px;font-size:.72rem;cursor:pointer;color:var(--mt2);transition:all .15s;white-space:nowrap}
+.dchip.on{background:var(--sf);border-color:var(--gold);color:var(--gold)}
+.ebox{background:var(--sf2);border:1px solid var(--br);border-radius:8px;padding:9px;font-family:var(--fm);font-size:.68rem;color:var(--mt2);word-break:break-all;max-height:100px;overflow-y:auto;margin-bottom:9px}
+.hw-task{background:var(--sf);border:1px solid var(--br);border-radius:10px;padding:14px 16px;margin-bottom:10px}
+.hw-task-title{font-size:.82rem;font-weight:600;margin-bottom:4px}
+.hw-task-sub{font-size:.72rem;color:var(--mt2);margin-bottom:10px}
+.hw-prog{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.hw-prog-lbl{font-size:.7rem;color:var(--mt2);white-space:nowrap;min-width:60px}
+.hw-done{background:var(--sf2);border:1px solid var(--br);border-radius:20px;font-size:.65rem;padding:2px 9px;color:var(--mt2);white-space:nowrap}
+.hw-done.ok{background:#071a10;border-color:var(--grn);color:var(--grn)}
+.hw-circles{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.hw-circle{width:28px;height:28px;border-radius:50%;border:2px solid var(--br2);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:var(--mt2);transition:all .2s;cursor:default}
+.hw-circle.done{background:var(--grn);border-color:var(--grn);color:#000}
+.hw-circle.cur{border-color:var(--gold);color:var(--gold)}
+.hw-dir{display:flex;gap:6px;margin-bottom:10px}
+.hw-dir-btn{flex:1;background:var(--sf2);border:1px solid var(--br);border-radius:7px;color:var(--mt2);font-family:var(--ff);font-size:.75rem;font-weight:500;padding:6px;cursor:pointer;transition:all .15s;text-align:center}
+.hw-dir-btn.on{background:var(--sf);border-color:var(--gold);color:var(--gold)}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--sf);border:1px solid var(--grn);color:var(--grn);padding:9px 16px;border-radius:9px;font-size:.78rem;font-weight:500;opacity:0;transform:translateY(8px);transition:all .22s;z-index:9999;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.empty{text-align:center;padding:28px;color:var(--mt2)}.empty .ei{font-size:2rem;margin-bottom:7px}
+.hw-circle-sm{width:24px;height:24px;font-size:.6rem}
+#view-hw{margin-top:-8px}
+@media(max-width:540px){.aform{grid-template-columns:1fr 1fr}.aform .btn{grid-column:1/-1}.aform2{grid-template-columns:1fr}.qq{font-size:1.9rem}.cnt{padding:12px 14px 60px}.srow{grid-template-columns:repeat(3,1fr)}}
+</style></head><body>
+<header>
+  <div class="logo">DEUTSCH<span>TRACK</span></div>
+  <div class="streak" id="streakEl">&#128293; 0 &#1076;&#1085;&#1110;&#1074;</div>
+  <button class="hbtn" onclick="openExport()">&#128190;</button>
+</header>
+<div class="tabs">
+  <button class="tab active" onclick="goTab('progress',this)">&#128202; &#1055;&#1088;&#1086;&#1075;&#1088;&#1077;&#1089;</button>
+  <button class="tab" onclick="goTab('words',this)">&#128221; &#1057;&#1083;&#1086;&#1074;&#1072;</button>
+  <button class="tab" onclick="goTab('hw',this)">&#128218; &#1044;&#1047;</button>
+  <button class="tab" onclick="goTab('topics',this)">&#128218; &#1058;&#1077;&#1084;&#1080;</button>
+  <button class="tab" onclick="goTab('cards',this)">&#127183; &#1050;&#1072;&#1088;&#1090;&#1082;&#1080;</button>
+</div>
+<div class="cnt">
+
+<div class="view active" id="view-progress">
+  <div id="alertBox"></div>
+  <div class="srow" id="statsRow"></div>
+  <div class="card">
+    <div class="ctitle">&#128218; &#1044;&#1047; &#1079;&#1072; 7 &#1076;&#1085;&#1110;&#1074;</div>
+    <div id="hwStats"></div>
+  </div>
+  <div class="card">
+    <div class="ctitle">&#128197; &#1050;&#1072;&#1083;&#1077;&#1085;&#1076;&#1072;&#1088; <span style="font-family:var(--ff);font-size:.68rem;color:var(--mt2);letter-spacing:0;font-weight:400">&#8212; &#1085;&#1072;&#1090;&#1080;&#1089;&#1085;&#1080; &#1085;&#1072; &#1076;&#1077;&#1085;&#1100;</span></div>
+    <div class="calnr"><button class="calbtn" onclick="calShift(-1)">&#8249;</button><div class="calm" id="calMonth"></div><button class="calbtn" onclick="calShift(1)">&#8250;</button></div>
+    <div class="calgrid" id="calDOW"></div>
+    <div class="calgrid" id="calDays"></div>
+    <div class="calleg">
+      <div class="cll"><div class="cls" style="background:var(--sf2);border:1px solid var(--br2)"></div>&#1053;&#1077;&#1084;&#1072;&#1108;</div>
+      <div class="cll"><div class="cls" style="background:#0f2a1c;border:1px solid var(--grn)"></div>&#1042;&#1095;&#1080;&#1074;</div>
+      <div class="cll"><div class="cls" style="border:1px solid var(--gold)"></div>&#1057;&#1100;&#1086;&#1075;&#1086;&#1076;&#1085;&#1110;</div>
+      <div class="cll"><div style="width:6px;height:6px;border-radius:50%;background:var(--gold)"></div>&#1058;&#1077;&#1089;&#1090;</div>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="view-words">
+  <div class="card">
+    <div class="ctitle">&#10133; &#1053;&#1086;&#1074;&#1077; &#1089;&#1083;&#1086;&#1074;&#1086;</div>
+    <div class="aform">
+      <div class="fl"><label>Deutsch</label><input id="iDe" placeholder="z.B. die Gabel" onkeydown="afKey(event)"></div>
+      <div class="fl"><label>&#1055;&#1077;&#1088;&#1077;&#1082;&#1083;&#1072;&#1076; (&#1091;&#1082;&#1088;)</label><input id="iUk" placeholder="&#1074;&#1080;&#1076;&#1077;&#1083;&#1082;&#1072;" onkeydown="afKey(event)"></div>
+      <button class="btn" onclick="addWord()">+ &#1044;&#1086;&#1076;&#1072;&#1090;&#1080;</button>
+    </div>
+    <div class="aform2">
+      <div class="fl"><label>&#1058;&#1077;&#1084;&#1072;</label><select id="iTopic"><option value="">&#8212; &#1073;&#1077;&#1079; &#1090;&#1077;&#1084;&#1080; &#8212;</option><option value="Lagerlogistik">Lagerlogistik</option><option value="Behandlung">Behandlung</option><option value="Leben">Leben</option></select></div>
+      <div class="fl"><label>&#1044;&#1072;&#1090;&#1072;</label><input type="date" id="iDate"></div>
+    </div>
+    <div class="tcnt" id="todayCnt"></div>
+  </div>
+  <div id="wordList"></div>
+
+</div>
+
+<div class="view" id="view-quiz">
+  <div class="card" id="quizSetup">
+    <div class="ctitle">&#9881;&#65039; &#1053;&#1072;&#1083;&#1072;&#1096;&#1090;&#1091;&#1074;&#1072;&#1085;&#1085;&#1103; &#1090;&#1077;&#1089;&#1090;&#1091;</div>
+    <div style="font-size:.7rem;color:var(--mt2);letter-spacing:.6px;text-transform:uppercase;margin-bottom:7px">&#1071;&#1082;&#1110; &#1089;&#1083;&#1086;&#1074;&#1072;?</div>
+    <div class="pills" id="poolPills">
+      <div class="pill on" data-v="all" onclick="pickPill(this,'poolPills');hideEl('qTSel');hideEl('qDSel')">&#1042;&#1089;&#1110; &#1089;&#1083;&#1086;&#1074;&#1072;</div>
+      <div class="pill" data-v="topic" onclick="pickPill(this,'poolPills');showEl('qTSel');hideEl('qDSel')">&#1055;&#1086; &#1090;&#1077;&#1084;&#1110;</div>
+      <div class="pill" data-v="days" onclick="pickPill(this,'poolPills');showEl('qDSel');hideEl('qTSel');renderDP('qDP',qDays)">&#1057;&#1074;&#1086;&#1111; &#1076;&#1072;&#1090;&#1080;</div>
+    </div>
+    <div id="qTSel" style="display:none;margin-bottom:12px"><div class="fl" style="max-width:220px"><label>&#1058;&#1077;&#1084;&#1072;</label><select id="qTopic"><option>Lagerlogistik</option><option>Behandlung</option><option>Leben</option></select></div></div>
+    <div id="qDSel" style="display:none;margin-bottom:12px"><div style="font-size:.7rem;color:var(--mt2);margin-bottom:5px">&#1054;&#1073;&#1077;&#1088;&#1080; &#1076;&#1085;&#1110;:</div><div class="daypick" id="qDP"></div></div>
+    <div style="font-size:.7rem;color:var(--mt2);letter-spacing:.6px;text-transform:uppercase;margin-bottom:7px">&#1053;&#1072;&#1087;&#1088;&#1103;&#1084;&#1086;&#1082;?</div>
+    <div class="pills" id="dirPills">
+      <div class="pill on" data-v="de2uk" onclick="pickPill(this,'dirPills')">DE &#8594; &#1059;&#1050;&#1056;</div>
+      <div class="pill" data-v="uk2de" onclick="pickPill(this,'dirPills')">&#1059;&#1050;&#1056; &#8594; DE</div>
+      <div class="pill" data-v="mix" onclick="pickPill(this,'dirPills')">&#1052;&#1110;&#1082;&#1089;</div>
+    </div>
+    <div style="font-size:.7rem;color:var(--mt2);letter-spacing:.6px;text-transform:uppercase;margin-bottom:7px">&#1057;&#1091;&#1074;&#1086;&#1088;&#1110;&#1089;&#1090;&#1100;?</div>
+    <div class="pills" id="fuzzyPills">
+      <div class="pill" data-v="0" onclick="pickPill(this,'fuzzyPills')">&#1058;&#1086;&#1095;&#1085;&#1086;</div>
+      <div class="pill on" data-v="1" onclick="pickPill(this,'fuzzyPills')">&#177;1 &#1087;&#1086;&#1084;&#1080;&#1083;&#1082;&#1072;</div>
+      <div class="pill" data-v="2" onclick="pickPill(this,'fuzzyPills')">&#177;2 &#1087;&#1086;&#1084;&#1080;&#1083;&#1082;&#1080;</div>
+    </div>
+    <div class="fl" style="max-width:140px;margin-bottom:14px"><label>&#1050;&#1110;&#1083;&#1100;&#1082;&#1110;&#1089;&#1090;&#1100; &#1089;&#1083;&#1110;&#1074;</label><input type="number" id="qCount" value="10" min="2" max="200"></div>
+    <button class="btn" onclick="startQuiz()">&#9654; &#1055;&#1086;&#1095;&#1072;&#1090;&#1080; &#1090;&#1077;&#1089;&#1090;</button>
+    <div id="qErr" style="display:none;color:var(--red);font-size:.76rem;margin-top:7px">&#1047;&#1072;&#1084;&#1072;&#1083;&#1086; &#1089;&#1083;&#1110;&#1074;!</div>
+  </div>
+  <div id="quizRun" style="display:none">
+    <div class="qpr"><div class="qctr" id="qCtr">1/10</div><div class="pw" style="flex:1;height:5px"><div class="pf" id="qProg" style="width:0%"></div></div><div class="qsc" id="qSc"><span style="color:var(--grn)">0</span>/<span style="color:var(--red)">0</span></div></div>
+    <div class="qbox" id="quizBox">
+      <div class="qq" id="qQ">&#8212;</div>
+      <div class="qhint" id="qHint"></div>
+      <input class="qinp" id="qInp" onkeydown="qKey(event)" autocomplete="off" spellcheck="false">
+      <div class="qfb" id="qFb"></div>
+      <div class="qbtns"><button class="btn btng" onclick="qSkip()">&#1055;&#1088;&#1086;&#1087;&#1091;&#1089;&#1090;&#1080;&#1090;&#1080;</button><button class="btn" id="qBtn" onclick="qCheck()">&#1055;&#1077;&#1088;&#1077;&#1074;&#1110;&#1088;&#1080;&#1090;&#1080;</button></div>
+    </div>
+    <div id="quizResult" style="display:none">
+      <div class="card" style="text-align:center;padding:28px">
+        <div class="rscore" id="rScore">0/0</div>
+        <div style="font-size:.82rem;color:var(--mt2);margin:6px 0 4px" id="rSub"></div>
+        <div style="font-size:1.8rem;margin-bottom:18px" id="rEmoji">&#127881;</div>
+        <div class="qbtns"><button class="btn btng" onclick="showReview()">&#1055;&#1086;&#1084;&#1080;&#1083;&#1082;&#1080;</button><button class="btn" onclick="resetQuiz()">&#1053;&#1086;&#1074;&#1080;&#1081; &#1090;&#1077;&#1089;&#1090;</button></div>
+      </div>
+      <div id="reviewBox" style="display:none" class="card"><div class="ctitle">&#1055;&#1086;&#1084;&#1080;&#1083;&#1082;&#1080;</div><div id="reviewList"></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="view-topics"><div id="topicsWrap"></div></div>
+
+<div class="view" id="view-cards">
+  <div class="card" id="cardsSetup">
+    <div class="ctitle">&#127183; &#1050;&#1072;&#1088;&#1090;&#1082;&#1080;</div>
+    <div style="font-size:.7rem;color:var(--mt2);letter-spacing:.6px;text-transform:uppercase;margin-bottom:7px">&#1071;&#1082;&#1110; &#1089;&#1083;&#1086;&#1074;&#1072;?</div>
+    <div class="pills" id="cPoolPills">
+      <div class="pill on" data-v="all" onclick="pickPill(this,'cPoolPills');hideEl('cTSel');hideEl('cDSel')">&#1042;&#1089;&#1110; &#1089;&#1083;&#1086;&#1074;&#1072;</div>
+      <div class="pill" data-v="topic" onclick="pickPill(this,'cPoolPills');showEl('cTSel');hideEl('cDSel')">&#1055;&#1086; &#1090;&#1077;&#1084;&#1110;</div>
+      <div class="pill" data-v="days" onclick="pickPill(this,'cPoolPills');showEl('cDSel');hideEl('cTSel');renderDP('cDP',cDays)">&#1057;&#1074;&#1086;&#1111; &#1076;&#1072;&#1090;&#1080;</div>
+      <div class="pill" data-v="hard" onclick="pickPill(this,'cPoolPills');hideEl('cTSel');hideEl('cDSel')">&#128293; &#1042;&#1072;&#1078;&#1082;&#1110;</div>
+    </div>
+    <div id="cTSel" style="display:none;margin-bottom:12px"><div class="fl" style="max-width:220px"><label>&#1058;&#1077;&#1084;&#1072;</label><select id="cTopic"><option>Lagerlogistik</option><option>Behandlung</option><option>Leben</option></select></div></div>
+    <div id="cDSel" style="display:none;margin-bottom:12px"><div style="font-size:.7rem;color:var(--mt2);margin-bottom:5px">&#1054;&#1073;&#1077;&#1088;&#1080; &#1076;&#1085;&#1110;:</div><div class="daypick" id="cDP"></div></div>
+    <div style="font-size:.7rem;color:var(--mt2);letter-spacing:.6px;text-transform:uppercase;margin-bottom:7px">&#1053;&#1072;&#1087;&#1088;&#1103;&#1084;&#1086;&#1082;?</div>
+    <div class="pills" id="cDirPills">
+      <div class="pill on" data-v="de2uk" onclick="pickPill(this,'cDirPills')">DE &#8594; &#1059;&#1050;&#1056;</div>
+      <div class="pill" data-v="uk2de" onclick="pickPill(this,'cDirPills')">&#1059;&#1050;&#1056; &#8594; DE</div>
+      <div class="pill" data-v="mix" onclick="pickPill(this,'cDirPills')">&#1052;&#1110;&#1082;&#1089;</div>
+    </div>
+    <button class="btn" onclick="startCards()">&#9654; &#1055;&#1086;&#1095;&#1072;&#1090;&#1080;</button>
+    <div id="cErr" style="display:none;color:var(--red);font-size:.76rem;margin-top:7px">&#1047;&#1072;&#1084;&#1072;&#1083;&#1086; &#1089;&#1083;&#1110;&#1074;!</div>
+    <div id="hardCount" style="font-size:.72rem;color:var(--mt2);margin-top:8px"></div>
+  </div>
+  <div id="cardsRun" style="display:none">
+    <div class="qpr"><div class="qctr" id="cCtr">1/10</div><div class="pw" style="flex:1;height:5px"><div class="pf" id="cProg" style="width:0%"></div></div><button class="btn btng btnsm" onclick="stopCards()">&#10005; &#1042;&#1080;&#1081;&#1090;&#1080;</button></div>
+    <div class="fcwrap" id="fcWrap" onclick="flipCard()">
+      <div class="fcin" id="fcIn">
+        <div class="fcf"><div class="fclbl" id="fcLbl">DEUTSCH</div><div class="fcword" id="fcFront">&#8212;</div><div class="fctap">&#1085;&#1072;&#1090;&#1080;&#1089;&#1085;&#1080; &#1097;&#1086;&#1073; &#1087;&#1077;&#1088;&#1077;&#1075;&#1086;&#1088;&#1085;&#1091;&#1090;&#1080;</div></div>
+        <div class="fcb"><div class="fclbl">&#1055;&#1045;&#1056;&#1045;&#1050;&#1051;&#1040;&#1044;</div><div class="fcword" id="fcBack">&#8212;</div></div>
+      </div>
+    </div>
+    <div id="cBtns" style="display:none">
+      <div class="cbtns">
+        <button class="cbtn cbtn-bad" onclick="rateCard(false)">&#10007; &#1053;&#1077; &#1079;&#1085;&#1072;&#1074;</button>
+        <button class="cbtn cbtn-ok" onclick="rateCard(true)">&#10003; &#1047;&#1085;&#1072;&#1074;</button>
+      </div>
+      <div id="cExArea" style="display:none">
+        <button class="extoggle" id="exTogBtn" onclick="toggleEx()">&#128216; &#1055;&#1086;&#1082;&#1072;&#1079;&#1072;&#1090;&#1080; &#1087;&#1088;&#1080;&#1082;&#1083;&#1072;&#1076;</button>
+        <div id="exListEl" style="display:none"></div>
+      </div>
+    </div>
+    <div id="cResult" style="display:none" class="card">
+      <div style="text-align:center;padding:20px">
+        <div style="font-size:1.8rem;margin-bottom:8px" id="cResEmoji">&#127881;</div>
+        <div class="rscore" id="cResScore" style="color:var(--gold)">0/0</div>
+        <div style="font-size:.82rem;color:var(--mt2);margin:8px 0 18px" id="cResSub"></div>
+        <div class="qbtns"><button class="btn btng" onclick="stopCards()">&#1053;&#1072;&#1079;&#1072;&#1076;</button><button class="btn btng" onclick="startCards()">&#1065;&#1077; &#1088;&#1072;&#1079;</button><button class="btn" id="repeatUnknownBtn" onclick="repeatUnknown()" style="display:none">&#128260; &#1055;&#1086;&#1074;&#1090;&#1086;&#1088;&#1080;&#1090;&#1080; &#1085;&#1077;&#1074;&#1110;&#1076;&#1086;&#1084;&#1110;</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="view" id="view-hw" style="padding-top:0">
+  <div style="background:var(--sf);border:1px solid var(--br);border-radius:10px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between">
+    <div style="font-family:var(--fh);font-size:1.1rem;letter-spacing:2px;color:var(--gold)">ДОМАШНЄ ЗАВДАННЯ</div>
+    <div>
+      <div style="font-size:.68rem;color:var(--mt2);text-align:right" id="hwDate"></div>
+      <div style="font-family:var(--fh);font-size:1.1rem;color:var(--gold);text-align:right" id="hwTotal">0/15</div>
+      <div class="pw" style="width:100px;margin-top:3px"><div class="pf" id="hwTotalBar" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div id="hwTasks"></div>
+</div>
+
+<!-- Edit Modal -->
+<div class="ov" id="editOv" style="display:none" onclick="if(event.target===this)closeEdit()">
+  <div class="modal">
+    <div class="mtitle">&#9999;&#65039; &#1056;&#1077;&#1076;&#1072;&#1075;&#1091;&#1074;&#1072;&#1090;&#1080;</div>
+    <div class="mf fl"><label>Deutsch</label><input id="eDe"></div>
+    <div class="mf fl"><label>&#1055;&#1077;&#1088;&#1077;&#1082;&#1083;&#1072;&#1076;</label><input id="eUk"></div>
+    <div class="mf fl"><label>&#1058;&#1077;&#1084;&#1072;</label><select id="eTopic"><option value="">&#8212; &#1073;&#1077;&#1079; &#1090;&#1077;&#1084;&#1080; &#8212;</option><option value="Lagerlogistik">Lagerlogistik</option><option value="Behandlung">Behandlung</option><option value="Leben">Leben</option></select></div>
+    <div class="mact"><button class="btn btng" onclick="closeEdit()">&#1057;&#1082;&#1072;&#1089;&#1091;&#1074;&#1072;&#1090;&#1080;</button><button class="btn" onclick="saveEdit()">&#128190; &#1047;&#1073;&#1077;&#1088;&#1077;&#1075;&#1090;&#1080;</button></div>
+  </div>
+</div>
+
+<!-- Word Detail Modal -->
+<div class="ov" id="wdOv" style="display:none" onclick="if(event.target===this)closeWD()">
+  <div class="modal">
+    <div class="mtitle" id="wdTitle">&#8212;</div>
+    <div style="font-size:.97rem;color:var(--tx);margin-bottom:14px" id="wdTrans"></div>
+    <div style="font-size:.68rem;color:var(--mt2);letter-spacing:.6px;text-transform:uppercase;margin-bottom:7px">&#1052;&#1072;&#1081;&#1089;&#1090;&#1077;&#1088;&#1085;&#1110;&#1089;&#1090;&#1100;</div>
+    <div style="display:flex;gap:7px;margin-bottom:14px" id="wdStars"></div>
+    <div style="font-size:.68rem;color:var(--mt2);letter-spacing:.6px;text-transform:uppercase;margin-bottom:7px">&#1055;&#1088;&#1080;&#1082;&#1083;&#1072;&#1076; &#1088;&#1077;&#1095;&#1077;&#1085;&#1085;&#1103; (DE)</div>
+    <textarea id="ex1de" style="width:100%;background:var(--sf2);border:1px solid var(--br);border-radius:8px;color:var(--tx);font-family:var(--fm);font-size:.84rem;padding:9px 11px;outline:none;resize:none;height:110px;transition:border-color .2s" placeholder="&#1056;&#1077;&#1095;&#1077;&#1085;&#1085;&#1103; &#1087;&#1086;-&#1085;&#1110;&#1084;&#1077;&#1094;&#1100;&#1082;&#1080;..." onfocus="this.style.borderColor=&apos;var(--gold)&apos;" onblur="this.style.borderColor=&apos;var(--br)&apos;"></textarea>
+    <div class="mact">
+      <button class="btn btng" onclick="closeWD()">&#1047;&#1072;&#1082;&#1088;&#1080;&#1090;&#1080; &#1073;&#1077;&#1079; &#1079;&#1073;&#1077;&#1088;&#1077;&#1078;&#1077;&#1085;&#1085;&#1103;</button>
+      <button class="btn" onclick="saveWD()">&#128190; &#1047;&#1073;&#1077;&#1088;&#1077;&#1075;&#1090;&#1080;</button>
+    </div>
+  </div>
+</div>
+
+<!-- Day Modal -->
+<div class="ov" id="dayOv" style="display:none" onclick="if(event.target===this)closeDayOv()">
+  <div class="modal">
+    <div class="mtitle" id="dayTitle">&#128197; &#8212;</div>
+    <div id="dayWL" style="margin-bottom:14px"></div>
+    <div style="border-top:1px solid var(--br);padding-top:13px">
+      <div style="font-size:.68rem;color:var(--mt2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">&#1044;&#1086;&#1076;&#1072;&#1090;&#1080; &#1089;&#1083;&#1086;&#1074;&#1086;</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <div class="fl"><label>Deutsch</label><input id="dmDe" onkeydown="dmKey(event)"></div>
+        <div class="fl"><label>&#1055;&#1077;&#1088;&#1077;&#1082;&#1083;&#1072;&#1076;</label><input id="dmUk" onkeydown="dmKey(event)"></div>
+      </div>
+      <div class="fl" style="margin-bottom:10px"><label>&#1058;&#1077;&#1084;&#1072;</label><select id="dmTopic"><option value="">&#8212; &#1073;&#1077;&#1079; &#1090;&#1077;&#1084;&#1080; &#8212;</option><option value="Lagerlogistik">Lagerlogistik</option><option value="Behandlung">Behandlung</option><option value="Leben">Leben</option></select></div>
+      <button class="btn btnsm" onclick="addDayWord()">+ &#1044;&#1086;&#1076;&#1072;&#1090;&#1080;</button>
+    </div>
+    <div class="mact"><button class="btn btng btnsm" onclick="closeDayOv()">&#1047;&#1072;&#1082;&#1088;&#1080;&#1090;&#1080;</button></div>
+  </div>
+</div>
+
+<!-- HW Day Modal -->
+<div class="ov" id="hwDayOv" style="display:none" onclick="if(event.target===this)closeHWDay()">
+  <div class="modal">
+    <div class="mtitle" id="hwDayTitle">ДЗ</div>
+    <div style="font-size:.7rem;color:var(--mt2);margin-bottom:14px" id="hwDayDate"></div>
+    <div id="hwDayBody"></div>
+    <div class="mact"><button class="btn btng" onclick="closeHWDay()">Закрити</button></div>
+  </div>
+</div>
+
+<!-- Export Modal -->
+<div class="ov" id="exportOv" style="display:none" onclick="if(event.target===this)closeExport()">
+  <div class="modal">
+    <div class="mtitle">&#128190; &#1045;&#1082;&#1089;&#1087;&#1086;&#1088;&#1090; / &#1030;&#1084;&#1087;&#1086;&#1088;&#1090;</div>
+    <div class="ebox" id="exportBox"></div>
+    <div style="display:flex;gap:8px;margin-bottom:14px"><button class="btn btnsm" onclick="copyExport()">&#128203; &#1050;&#1086;&#1087;&#1110;&#1102;&#1074;&#1072;&#1090;&#1080;</button></div>
+    <div style="border-top:1px solid var(--br);padding-top:13px">
+      <div style="font-size:.78rem;color:var(--mt2);margin-bottom:7px">&#1030;&#1084;&#1087;&#1086;&#1088;&#1090;:</div>
+      <div class="fl" style="margin-bottom:9px"><textarea id="importBox" placeholder="&#1042;&#1089;&#1090;&#1072;&#1074;&#1080;&#1090;&#1080; JSON..." style="height:75px"></textarea></div>
+      <button class="btn btnsm" onclick="doImport()">&#128229; &#1030;&#1084;&#1087;&#1086;&#1088;&#1090;&#1091;&#1074;&#1072;&#1090;&#1080;</button>
+    </div>
+    <div class="mact"><button class="btn btng" onclick="closeExport()">&#1047;&#1072;&#1082;&#1088;&#1080;&#1090;&#1080;</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+const TOPICS=['Lagerlogistik','Behandlung','Leben'];
+const KEY='dt_v4';
+const OLDKEYS=['deutschtrack_v3','dt2_data','dt_data'];
+
+function blank(){return{words:[],topicNotes:{Lagerlogistik:[],Behandlung:[],Leben:[]},topicWords:{Lagerlogistik:[],Behandlung:[],Leben:[]},activity:{},quizHistory:[]};}
+
+function migrateNotes(v){
+  if(!v)return[];
+  if(typeof v==='string')return v?[{date:'',text:v}]:[];
+  if(Array.isArray(v))return v.map(function(n){return typeof n==='string'?{date:'',text:n}:{date:n.date||'',text:n.text||''};});
+  return[];
+}
+
+function loadD(){
+  try{const c=localStorage.getItem(KEY);if(c){const p=JSON.parse(c);if(p&&p.words)return p;}}catch{}
+  for(var i=0;i<OLDKEYS.length;i++){try{const o=localStorage.getItem(OLDKEYS[i]);if(o){const p=JSON.parse(o);if(p&&p.words&&p.words.length){
+    const m={words:p.words.map(function(w){return{id:w.id||uid(),de:w.de||'',uk:w.uk||'',topic:w.topic||'',date:w.date||tod(),mastery:w.mastery||0,testCount:w.testCount||0,correct:w.correct||0,examples:w.examples||[]};}),
+      topicNotes:{Lagerlogistik:migrateNotes((p.topicNotes||{}).Lagerlogistik),Behandlung:migrateNotes((p.topicNotes||{}).Behandlung),Leben:migrateNotes((p.topicNotes||{}).Leben)},
+      topicWords:p.topicWords||{Lagerlogistik:[],Behandlung:[],Leben:[]},
+      activity:(function(){var act={};Object.entries(p.activity||{}).forEach(function(e){var k=e[0],v=e[1];if(v===true)act[k]={w:1,t:0};else if(typeof v==='object')act[k]={w:v.w||v.words||0,t:v.t||v.tests||0};});return act;})(),
+      quizHistory:p.quizHistory||[]};
+    localStorage.setItem(KEY,JSON.stringify(m));return m;}}}catch{}}
+  return blank();
+}
+function saveD(){localStorage.setItem(KEY,JSON.stringify(D));}
+let D=loadD();
+
+function tod(){return new Date().toISOString().split('T')[0];}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtDate(s){const d=new Date(s+'T12:00:00');return d.toLocaleDateString('uk-UA',{day:'numeric',month:'long',weekday:'long'});}
+function fmtShort(s){const d=new Date(s+'T12:00:00');return d.toLocaleDateString('uk-UA',{day:'numeric',month:'short'});}
+function plural(n){return n===1?'день':n<5?'дні':'днів';}
+function showEl(id){document.getElementById(id).style.display='block';}
+function hideEl(id){document.getElementById(id).style.display='none';}
+function toast(msg,col){const t=document.getElementById('toast');t.textContent=msg;t.style.borderColor=col||'var(--grn)';t.style.color=col||'var(--grn)';t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
+function bump(type,date){const k=date||tod();if(!D.activity[k])D.activity[k]={w:0,t:0};if(type==='w')D.activity[k].w++;if(type==='t')D.activity[k].t++;saveD();}
+function getStreak(){let s=0;const d=new Date();for(;;){const k=d.toISOString().split('T')[0];const a=D.activity[k];if(a&&(a.w||a.t)){s++;d.setDate(d.getDate()-1);}else break;}return s;}
+function gapDays(){const keys=Object.keys(D.activity).filter(k=>D.activity[k].w||D.activity[k].t).sort();if(!keys.length)return 999;return Math.round((new Date(tod()+'T12:00:00')-new Date(keys[keys.length-1]+'T12:00:00'))/86400000);}
+function refreshStreak(){const s=getStreak();document.getElementById('streakEl').textContent='🔥 '+s+' '+plural(s);}
+function pickPill(el,gid){document.querySelectorAll('#'+gid+' .pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');}
+function getVal(gid){const el=document.querySelector('#'+gid+' .pill.on');return el?el.dataset.v:'';}
+
+function goTab(tab,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  btn.classList.add('active');document.getElementById('view-'+tab).classList.add('active');
+  if(tab==='progress')renderProgress();
+  if(tab==='words')renderWords();
+  if(tab==='topics')renderTopics();
+  if(tab==='hw')renderHW();
+  if(tab==='cards')renderHardCount();
+}
+
+let period=7,calY,calM;
+function initCal(){const n=new Date();calY=n.getFullYear();calM=n.getMonth();}
+
+function renderProgress(){
+  refreshStreak();
+
+  // HW alert
+  const hwAlert = getHWAlert();
+  const el=document.getElementById('alertBox');
+  el.innerHTML = hwAlert;
+
+  // Stats
+  const total=D.words.length;
+  const mastered=D.words.filter(w=>w.mastery>=4).length;
+  const todW=D.words.filter(w=>w.date===tod()).length;
+  const s=getStreak();
+  // Words this week
+  const weekAgo=new Date();weekAgo.setDate(weekAgo.getDate()-7);
+  const weekW=D.words.filter(w=>new Date(w.date+'T12:00:00')>=weekAgo).length;
+
+  document.getElementById('statsRow').innerHTML=
+    `<div class="stat"><div class="sn">${total}</div><div class="sl">Всього слів</div></div>`+
+    `<div class="stat"><div class="sn" style="color:var(--grn)">${mastered}</div><div class="sl">Вивчено</div></div>`+
+    `<div class="stat"><div class="sn" style="color:var(--blu)">${weekW}</div><div class="sl">Цього тижня</div></div>`;
+
+  // HW stats for last 7 days
+  renderHWStats();
+  renderCal();
+}
+
+function getHWAlert(){
+  const hw=D.homework||{};
+  // Only show alerts if HW was done at least once ever
+  const hwKeys=Object.keys(hw);
+  if(!hwKeys.length) return '';
+
+  const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+  const y1=yesterday.toISOString().split('T')[0];
+  const d2=new Date();d2.setDate(d2.getDate()-2);
+  const y2=d2.toISOString().split('T')[0];
+
+  const yHW=hw[y1];
+  const y2HW=hw[y2];
+
+  const yDone=yHW&&yHW.task1>=10&&yHW.task2>=5;
+  const yPartial=yHW&&(yHW.task1>0||yHW.task2>0)&&!yDone;
+  const y2None=!y2HW||(y2HW.task1===0&&y2HW.task2===0);
+
+  // Only alert about yesterday if user did HW at least 2 days ago
+  const hasPastHW = hwKeys.some(k => k < y1);
+  if(!hasPastHW) return '';
+
+  if(yDone) return '<div class="alert aok"><div class="ai">✅</div><div class="ab"><strong>Вчора ДЗ виконано!</strong><p>Молодець, Андрій!</p></div></div>';
+  if(yPartial) return '<div class="alert awarn"><div class="ai">⚠️</div><div class="ab"><strong>Андрій, ти не доробив ДЗ за вчора!</strong><p>Завершуй сьогодні!</p></div></div>';
+  if(!yHW&&!y2None) return '<div class="alert adanger"><div class="ai">😤</div><div class="ab"><strong>Андрій, ти вже не робив ДЗ два дні!</strong><p>Повертайся до навчання!</p></div></div>';
+  if(!yHW) return '<div class="alert adanger"><div class="ai">😴</div><div class="ab"><strong>Андрій, ти не виконав ДЗ за вчора!</strong><p>Зроби сьогодні!</p></div></div>';
+  return '';
+}
+
+function renderHWStats(){
+  const hw=D.homework||{};
+  let html='';
+  for(let i=0;i<=6;i++){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const k=d.toISOString().split('T')[0];
+    const day=d.toLocaleDateString('uk-UA',{weekday:'short',day:'numeric',month:'numeric'});
+    const h=hw[k]||{task1:0,task2:0};
+    const t1=Math.min(h.task1||0,10),t2=Math.min(h.task2||0,5);
+    const done1=t1>=10,done2=t2>=5;
+    const isToday=k===tod();
+    html+=`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--br);cursor:pointer" onclick="openHWDay('${k}')" title="Натисни щоб відкрити ДЗ за цей день">`;
+    html+=`<div style="font-size:.78rem;color:${isToday?'var(--gold)':'var(--mt2)'};min-width:80px">${isToday?'Сьогодні':day}</div>`;
+    html+=`<div style="flex:1">`;
+    html+=`<div style="display:flex;gap:4px;margin-bottom:3px">`;
+    html+=`<div style="font-size:.65rem;color:var(--mt2);width:60px">День:</div>`;
+    html+=`<div class="pw" style="flex:1"><div class="pf" style="width:${Math.round(t1/10*100)}%"></div></div>`;
+    html+=`<div style="font-size:.65rem;color:${done1?'var(--grn)':'var(--mt2)'};min-width:32px">${t1}/10 ${done1?'✓':''}</div>`;
+    html+=`</div>`;
+    html+=`<div style="display:flex;gap:4px">`;
+    html+=`<div style="font-size:.65rem;color:var(--mt2);width:60px">5 днів:</div>`;
+    html+=`<div class="pw" style="flex:1"><div class="pf" style="width:${Math.round(t2/5*100)}%"></div></div>`;
+    html+=`<div style="font-size:.65rem;color:${done2?'var(--grn)':'var(--mt2)'};min-width:32px">${t2}/5 ${done2?'✓':''}</div>`;
+    html+=`</div></div>`;
+    html+=`<div style="font-size:1.2rem">${done1&&done2?'🏆':done1||done2?'⚡':'○'}</div>`;
+    html+=`</div>`;
+  }
+  document.getElementById('hwStats').innerHTML=html;
+}
+
+function setPeriod(d,btn){period=d;document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');renderChart();}
+
+function renderChart(){
+  const now=new Date();let bk=[];
+  if(period<=30){for(let i=period-1;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);const k=d.toISOString().split('T')[0];const a=D.activity[k]||{w:0,t:0};bk.push({lbl:period<=7?['Нд','Пн','Вт','Ср','Чт','Пт','Сб'][d.getDay()]:`${d.getDate()}`,w:a.w||0,t:a.t||0});}}
+  else{for(let wk=12;wk>=0;wk--){const d=new Date(now);d.setDate(d.getDate()-wk*7);let sw=0,st=0;for(let dd=0;dd<7;dd++){const dx=new Date(d);dx.setDate(dx.getDate()-dd);const k=dx.toISOString().split('T')[0];const a=D.activity[k]||{w:0,t:0};sw+=a.w||0;st+=a.t||0;}bk.push({lbl:d.getDate()+'.'+(d.getMonth()+1),w:sw,t:st});}}
+  const mW=Math.max(...bk.map(b=>b.w),1),W=500,H=135,pL=6,pR=6,pT=10,pB=20,gW=W-pL-pR,gH=H-pT-pB,n=bk.length,bw=Math.max(3,gW/n-2.5);
+  let svg='';
+  for(let yi=0;yi<=4;yi++){const y=pT+gH*(1-yi/4);svg+=`<line x1="${pL}" y1="${y}" x2="${W-pR}" y2="${y}" stroke="#2a2a35" stroke-width="1"/>`;if(yi>0)svg+=`<text x="${pL+1}" y="${y-2}" font-size="7" fill="#5a5a70">${Math.round(mW*yi/4)}</text>`;}
+  bk.forEach((b,i)=>{const x=pL+i*(gW/n)+1,hw=Math.max(2,(b.w/mW)*gH),yw=pT+gH-hw;svg+=`<rect x="${x}" y="${yw}" width="${bw}" height="${hw}" rx="2" fill="#d4a843" opacity=".9"/>`;if(b.t>0){const ht=Math.min(hw*.5,13);svg+=`<rect x="${x}" y="${yw}" width="${bw}" height="${ht}" rx="2" fill="#7b61ff"/>`;}});
+  document.getElementById('chartSvg').innerHTML=svg;
+  const skip=Math.ceil(n/9);
+  document.getElementById('chartXL').innerHTML=bk.map((b,i)=>`<div class="xl" style="opacity:${i%skip===0?1:0}">${b.lbl}</div>`).join('');
+  const tW=bk.reduce((s,b)=>s+b.w,0),aD=bk.filter(b=>b.w>0||b.t>0).length;
+  document.getElementById('insBox').innerHTML=`<div class="card" style="padding:9px 11px"><div class="iv">${tW}</div><div class="il">слів</div></div><div class="card" style="padding:9px 11px"><div class="iv">${aD}</div><div class="il">днів</div></div><div class="card" style="padding:9px 11px"><div class="iv">${aD?Math.round(tW/aD):0}</div><div class="il">слів/день</div></div><div class="card" style="padding:9px 11px"><div class="iv">${Math.max(...bk.map(b=>b.w))}</div><div class="il">рекорд</div></div>`;
+}
+
+function renderTopicBars(){
+  const el=document.getElementById('topicBars');el.innerHTML='';
+  TOPICS.forEach(t=>{const tw=D.topicWords[t]||[],pw=D.words.filter(w=>w.topic===t),total=tw.length+pw.length,mastered=pw.filter(w=>w.mastery>=4).length,pct=total?Math.round(mastered/total*100):0;
+    el.innerHTML+=`<div class="tbar"><div class="tbh"><span class="tbn">${t}</span><span class="tbp">${mastered}/${total} · ${pct}%</span></div><div class="pw"><div class="pf" style="width:${pct}%"></div></div></div>`;});
+}
+
+function calShift(d){calM+=d;if(calM>11){calM=0;calY++;}if(calM<0){calM=11;calY--;}renderCal();}
+function renderCal(){
+  const DOWS=['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
+  document.getElementById('calDOW').innerHTML=DOWS.map(d=>`<div class="cdow">${d}</div>`).join('');
+  const lbl=new Date(calY,calM,1).toLocaleDateString('uk-UA',{month:'long',year:'numeric'});
+  document.getElementById('calMonth').textContent=lbl.charAt(0).toUpperCase()+lbl.slice(1);
+  const ts=tod(),fd=(new Date(calY,calM,1).getDay()+6)%7,dim=new Date(calY,calM+1,0).getDate();
+  let h='';
+  for(let e=0;e<fd;e++)h+=`<div class="cc emp"></div>`;
+  for(let day=1;day<=dim;day++){
+    const k=`${calY}-${String(calM+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const a=D.activity[k]||{w:0,t:0};
+    const cls=`cc${a.w?' hw':''}${ts===k?' tod':''}${a.t?' ht':''}`;
+    h+=`<div class="${cls}" onclick="openDayOv('${k}')">${day}<div class="cdot"></div></div>`;
+  }
+  document.getElementById('calDays').innerHTML=h;
+}
+
+// WORDS
+function addWord(){
+  const de=document.getElementById('iDe').value.trim(),uk=document.getElementById('iUk').value.trim(),topic=document.getElementById('iTopic').value,dateVal=document.getElementById('iDate').value||tod();
+  if(!de||!uk){toast('Введи слово і переклад!','var(--red)');return;}
+  D.words.push({id:uid(),de,uk,topic,date:dateVal,mastery:0,testCount:0,correct:0,examples:[]});
+  bump('w',dateVal);saveD();document.getElementById('iDe').value='';document.getElementById('iUk').value='';toast(`"${de}" додано ✓`);renderWords();
+}
+function afKey(e){if(e.key==='Enter'){const uk=document.getElementById('iUk').value.trim();if(!uk)document.getElementById('iUk').focus();else addWord();}}
+function delWord(id,fromDay){D.words=D.words.filter(w=>w.id!==id);saveD();if(fromDay)renderDayWL();renderWords();toast('Видалено','var(--red)');}
+
+let editId=null;
+function openEdit(id){const w=D.words.find(x=>x.id===id);if(!w)return;editId=id;document.getElementById('eDe').value=w.de;document.getElementById('eUk').value=w.uk;document.getElementById('eTopic').value=w.topic||'';document.getElementById('editOv').style.display='flex';setTimeout(()=>document.getElementById('eDe').focus(),80);}
+function closeEdit(){document.getElementById('editOv').style.display='none';editId=null;}
+function saveEdit(){const w=D.words.find(x=>x.id===editId);if(!w)return;const de=document.getElementById('eDe').value.trim(),uk=document.getElementById('eUk').value.trim();if(!de||!uk){toast('Поля порожні!','var(--red)');return;}w.de=de;w.uk=uk;w.topic=document.getElementById('eTopic').value;saveD();closeEdit();renderWords();toast(`"${de}" оновлено ✓`);}
+
+let wdId=null;
+function openWD(id){const w=D.words.find(x=>x.id===id);if(!w)return;wdId=id;document.getElementById('wdTitle').textContent=w.de;document.getElementById('wdTrans').textContent='→ '+w.uk+(w.topic?' · '+w.topic:'');document.getElementById('ex1de').value=(w.examples&&w.examples[0])?w.examples[0].de:'';document.getElementById('wdStars').innerHTML=[1,2,3,4,5].map(i=>`<div class="wdstar${w.mastery>=i?' on':''}" onclick="setMastery(${i})">${i}</div>`).join('');document.getElementById('wdOv').style.display='flex';}
+function closeWD(){document.getElementById('wdOv').style.display='none';wdId=null;}
+function setMastery(val){const w=D.words.find(x=>x.id===wdId);if(!w)return;w.mastery=val;saveD();document.getElementById('wdStars').innerHTML=[1,2,3,4,5].map(i=>`<div class="wdstar${w.mastery>=i?' on':''}" onclick="setMastery(${i})">${i}</div>`).join('');renderWords();toast(val+'★');}
+function saveWD(){const w=D.words.find(x=>x.id===wdId);if(!w)return;const de=(document.getElementById('ex1de').value||'').trim();w.examples=de?[{de,uk:''}]:[];saveD();closeWD();toast('Збережено ✓');}
+
+function renderWords(){
+  const todW=D.words.filter(w=>w.date===tod()).length;
+  document.getElementById('todayCnt').innerHTML=`Сьогодні: <span>${todW}</span>/5 слів`;
+  const byDate={};D.words.forEach(w=>{if(!byDate[w.date])byDate[w.date]=[];byDate[w.date].push(w);});
+  const container=document.getElementById('wordList');
+  if(!D.words.length){container.innerHTML='<div class="empty"><div class="ei">📝</div>Поки немає слів.</div>';return;}
+  container.innerHTML='';
+  Object.keys(byDate).sort((a,b)=>b.localeCompare(a)).forEach(date=>{
+    const words=byDate[date],lbl=date===tod()?'Сьогодні':fmtDate(date);
+    container.innerHTML+=`<div class="ssep"><h3>${lbl}</h3><div class="sbadge">${words.length}</div><div class="sline"></div></div>`+
+      words.map(function(w){return`<div class="wrow" onclick="openWD('${w.id}')"><div class="wde">${esc(w.de)}</div><div class="warr">→</div><div class="wuk">${esc(w.uk)}</div><button class="ibtn" onclick="event.stopPropagation();openEdit('${w.id}')">✏️</button><button class="ibtn del" onclick="event.stopPropagation();delWord('${w.id}',false)">✕</button></div>`;}).join('');
+  });
+}
+
+// DAY MODAL
+let dayDate='';
+function openDayOv(d){dayDate=d;document.getElementById('dayTitle').textContent='📅 '+fmtDate(d);document.getElementById('dmDe').value='';document.getElementById('dmUk').value='';document.getElementById('dmTopic').value='';renderDayWL();document.getElementById('dayOv').style.display='flex';setTimeout(()=>document.getElementById('dmDe').focus(),80);}
+function closeDayOv(){document.getElementById('dayOv').style.display='none';dayDate='';}
+function renderDayWL(){
+  const words=D.words.filter(w=>w.date===dayDate),el=document.getElementById('dayWL');
+  if(!words.length){el.innerHTML='<div style="text-align:center;color:var(--mt2);font-size:.81rem;padding:8px 0">Немає слів за цей день</div>';return;}
+  el.innerHTML=`<div style="font-size:.68rem;color:var(--mt2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">${words.length} слів</div>`+
+    words.map(function(w){return`<div style="background:var(--sf2);border:1px solid var(--br);border-radius:8px;padding:8px 11px;display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:.83rem"><div style="font-family:var(--fm);color:var(--gold);min-width:85px">${esc(w.de)}</div><div style="flex:1">${esc(w.uk)}</div><button class="ibtn del" onclick="delWord('${w.id}',true)">✕</button></div>`;}).join('');
+}
+function dmKey(e){if(e.key==='Enter')addDayWord();}
+function addDayWord(){
+  const de=document.getElementById('dmDe').value.trim(),uk=document.getElementById('dmUk').value.trim(),topic=document.getElementById('dmTopic').value;
+  if(!de||!uk){toast('Введи слово і переклад!','var(--red)');return;}
+  D.words.push({id:uid(),de,uk,topic,date:dayDate,mastery:0,testCount:0,correct:0,examples:[]});
+  bump('w',dayDate);saveD();document.getElementById('dmDe').value='';document.getElementById('dmUk').value='';toast(`"${de}" додано ✓`);renderDayWL();renderWords();
+}
+
+// EXPORT/IMPORT
+function openExport(){document.getElementById('exportBox').textContent=localStorage.getItem(KEY)||'{}';document.getElementById('importBox').value='';document.getElementById('exportOv').style.display='flex';}
+function closeExport(){document.getElementById('exportOv').style.display='none';}
+function copyExport(){
+  const data=localStorage.getItem(KEY)||'{}';
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(data).then(()=>toast('Скопійовано ✓')).catch(()=>fbCopy(data));}
+  else fbCopy(data);
+}
+function fbCopy(text){const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');toast('Скопійовано ✓');}catch{toast('Не вдалось','var(--org)');}document.body.removeChild(ta);}
+function doImport(){try{const p=JSON.parse(document.getElementById('importBox').value.trim());if(!p.words)throw 1;D=p;saveD();closeExport();renderProgress();renderWords();toast('Імпортовано ✓');}catch{toast('Невірний формат!','var(--red)');}}
+
+// QUIZ
+let qDays=[],cDays=[];
+function renderDP(elId,arr){
+  const days=[...new Set(D.words.map(w=>w.date))].sort((a,b)=>b.localeCompare(a));
+  document.getElementById(elId).innerHTML=days.map(d=>`<div class="dchip${arr.includes(d)?' on':''}" onclick="toggleDay('${d}','${elId}','${elId==='qDP'?'q':'c'}')">${fmtShort(d)}</div>`).join('');
+}
+function toggleDay(d,elId,which){
+  const arr=which==='q'?qDays:cDays;
+  const i=arr.indexOf(d);if(i>=0)arr.splice(i,1);else arr.push(d);
+  renderDP(elId,arr);
+}
+function getPool(poolId,topicId,days){
+  const mode=getVal(poolId);let pool=[...D.words];
+  if(mode==='topic')pool=pool.filter(w=>w.topic===document.getElementById(topicId).value);
+  else if(mode==='days')pool=pool.filter(w=>days.includes(w.date));
+  else if(mode==='hard')pool=pool.filter(w=>w.hardCount>=5&&(w.learnCount||0)<5);
+  return pool;
+}
+function lev(a,b){const m=a.length,n=b.length,dp=Array.from({length:m+1},(_,i)=>Array.from({length:n+1},(_,j)=>i?j?0:i:j));for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);return dp[m][n];}
+function norm(s){return s.trim().toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[^\wа-яёіїє]/gi,'');}
+function checkMatch(inp,exp,tol){const a=norm(inp),b=norm(exp);if(a===b)return'exact';if(lev(a,b)<=parseInt(tol||1))return'close';const sa=norm(inp.replace(/^(der|die|das|ein|eine)\s+/i,'')),sb=norm(exp.replace(/^(der|die|das|ein|eine)\s+/i,''));if(sa===sb)return'exact';if(lev(sa,sb)<=parseInt(tol||1))return'close';return'wrong';}
+
+let Q={};
+function startQuiz(){
+  const dir=getVal('dirPills'),tol=getVal('fuzzyPills'),count=parseInt(document.getElementById('qCount').value)||10;
+  let pool=getPool('poolPills','qTopic',qDays);
+  if(pool.length<2){showEl('qErr');return;}hideEl('qErr');
+  pool=pool.sort(()=>Math.random()-.5).slice(0,Math.min(count,pool.length));
+  Q={words:pool,idx:0,cor:0,wrg:0,answered:false,dir,tol,curDir:dir,mistakes:[]};
+  hideEl('quizSetup');showEl('quizRun');hideEl('quizResult');document.getElementById('quizBox').style.display='flex';showQWord();
+}
+function showQWord(){
+  if(Q.idx>=Q.words.length){endQuiz();return;}
+  const w=Q.words[Q.idx],d=Q.dir==='mix'?(Math.random()>.5?'de2uk':'uk2de'):Q.dir;Q.curDir=d;
+  document.getElementById('qQ').textContent=d==='de2uk'?w.de:w.uk;
+  document.getElementById('qHint').textContent=d==='de2uk'?'Введи переклад українською':'Введи слово по-німецьки';
+  const inp=document.getElementById('qInp');inp.value='';inp.className='qinp';
+  document.getElementById('qFb').textContent='';document.getElementById('qFb').className='qfb';
+  document.getElementById('qBtn').textContent='Перевірити';Q.answered=false;inp.focus();
+  document.getElementById('qProg').style.width=Math.round(Q.idx/Q.words.length*100)+'%';
+  document.getElementById('qCtr').textContent=`${Q.idx+1}/${Q.words.length}`;
+  document.getElementById('qSc').innerHTML=`<span style="color:var(--grn)">${Q.cor}</span>/<span style="color:var(--red)">${Q.wrg}</span>`;
+}
+function qCheck(){
+  if(Q.answered){qNext();return;}
+  const w=Q.words[Q.idx],inp=document.getElementById('qInp'),ans=inp.value.trim(),exp=Q.curDir==='de2uk'?w.uk:w.de;
+  const res=checkMatch(ans,exp,Q.tol);Q.answered=true;
+  if(res==='exact'||res==='close'){
+    Q.cor++;w.mastery=Math.min(5,(w.mastery||0)+1);w.correct=(w.correct||0)+1;
+    if(res==='close'){inp.classList.add('close');document.getElementById('qFb').textContent=`~ Майже! Правильно: ${exp}`;document.getElementById('qFb').className='qfb close';}
+    else{inp.classList.add('ok');document.getElementById('qFb').textContent=['✓ Правильно!','✓ Чудово!','✓ Молодець!'][Math.floor(Math.random()*3)];document.getElementById('qFb').className='qfb ok';}
+  }else{
+    Q.wrg++;Q.mistakes.push({w,your:ans,dir:Q.curDir});w.mastery=Math.max(0,(w.mastery||0)-1);
+    inp.classList.add('bad');document.getElementById('qFb').textContent=`✗ Правильно: ${exp}`;document.getElementById('qFb').className='qfb bad';
+  }
+  w.testCount=(w.testCount||0)+1;saveD();
+  document.getElementById('qBtn').textContent='Далі →';
+  document.getElementById('qSc').innerHTML=`<span style="color:var(--grn)">${Q.cor}</span>/<span style="color:var(--red)">${Q.wrg}</span>`;
+}
+function qKey(e){if(e.key==='Enter')qCheck();}
+function qSkip(){if(!Q.answered){Q.wrg++;Q.mistakes.push({w:Q.words[Q.idx],your:'—',dir:Q.curDir});Q.words[Q.idx].mastery=Math.max(0,(Q.words[Q.idx].mastery||0)-1);saveD();}qNext();}
+function qNext(){Q.idx++;if(Q.idx>=Q.words.length)endQuiz();else showQWord();}
+function endQuiz(){
+  document.getElementById('quizBox').style.display='none';showEl('quizResult');
+  const tot=Q.cor+Q.wrg,pct=tot?Math.round(Q.cor/tot*100):0;
+  D.quizHistory.push({date:tod(),score:Q.cor,total:tot});bump('t');saveD();
+  const sc=document.getElementById('rScore');sc.textContent=`${Q.cor}/${tot}`;sc.style.color=pct>=80?'var(--grn)':pct>=50?'var(--gold)':'var(--red)';
+  document.getElementById('rSub').textContent=`${pct}% правильних`;
+  document.getElementById('rEmoji').textContent=pct===100?'🏆':pct>=80?'🎉':pct>=50?'💪':'📖';
+  hideEl('reviewBox');
+}
+function showReview(){
+  showEl('reviewBox');
+  document.getElementById('reviewList').innerHTML=Q.mistakes.length
+    ?Q.mistakes.map(m=>`<div class="ritem"><span class="ride">${esc(m.dir==='de2uk'?m.w.de:m.w.uk)}</span><span style="color:var(--br2)">→</span><span style="color:var(--grn)">${esc(m.dir==='de2uk'?m.w.uk:m.w.de)}</span>${m.your!=='—'?`<span style="color:var(--mt2);font-size:.72rem">(ти: <span style="color:var(--red)">${esc(m.your)}</span>)</span>`:''}</div>`).join('')
+    :'<div style="text-align:center;color:var(--grn);padding:10px">Жодної помилки! 🎉</div>';
+}
+function resetQuiz(){showEl('quizSetup');hideEl('quizRun');}
+
+// TOPICS with simple notes
+function renderTopics(){
+  const c=document.getElementById('topicsWrap');c.innerHTML='';
+  TOPICS.forEach(function(topic){
+    const tw=D.topicWords[topic]||[],pw=D.words.filter(w=>w.topic===topic);
+    const total=tw.length+pw.length,mastered=pw.filter(w=>w.mastery>=4).length,pct=total?Math.round(mastered/total*100):0;
+    const notes=Array.isArray(D.topicNotes[topic])?D.topicNotes[topic]:[];
+    let notesHtml='';
+    for(let i=0;i<notes.length;i++){
+      const n=notes[i];
+      const isToday=n.date===tod();
+      notesHtml+=`<div class="note-item">`;
+      notesHtml+=`<div class="note-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'">`;
+      notesHtml+=`<span style="font-size:.8rem;color:${isToday?'var(--gold)':'var(--mt2)'}">${n.date||'без дати'}${isToday?' · сьогодні':''}</span>`;
+      notesHtml+=`<span style="color:var(--mt2)">›</span></div>`;
+      notesHtml+=`<div class="note-body"><textarea data-topic="${topic}" data-idx="${i}">${esc(n.text||'')}</textarea>`;
+      notesHtml+=`<div style="display:flex;gap:8px;margin-top:8px">`;
+      notesHtml+=`<button class="btn" style="flex:1" onclick="saveNoteFromBtn(this)">💾 Зберегти</button>`;
+      notesHtml+=`<button class="btn" style="background:transparent;color:var(--red);border:1px solid var(--red);padding:9px 14px" onclick="delNoteFromBtn(this)">✕</button>`;
+      notesHtml+=`</div></div></div>`;
+    }
+    const hasToday=notes.some(n=>n.date===tod());
+    if(!hasToday){notesHtml+=`<button class="btn" style="width:100%;margin-top:4px" onclick="addTodayNote('${topic}')">📝 Нова нотатка на сьогодні</button>`;}
+
+    const twHtml=tw.map((w,i)=>`<div class="tchip"><span>${esc(w.de)}</span><span class="tcu">— ${esc(w.uk)}</span><button class="tcd" onclick="delTW('${topic}',${i})">✕</button></div>`).join('');
+    const pwHtml=pw.map(w=>`<div class="tchip fm"><span>${esc(w.de)}</span><span class="tcu">— ${esc(w.uk)}</span></div>`).join('');
+
+    c.innerHTML+=`<div class="tc"><div class="th" onclick="togT('${topic}')"><div><div class="tn">${topic}</div><div class="tco">${total} слів · ${pct}%</div></div><div class="tchev" id="tch-${topic}">›</div></div>
+    <div class="tb" id="tb-${topic}">
+      <div style="margin-top:12px"><div class="tsl">Прогрес</div><div class="pw"><div class="pf" style="width:${pct}%"></div></div><div style="display:flex;justify-content:space-between;font-size:.65rem;color:var(--mt2);margin-top:3px"><span>${mastered} вивчено</span><span>${total} всього</span></div></div>
+      <div style="margin-top:12px"><div class="tsl">Нотатки</div>${notesHtml}</div>
+      <div style="margin-top:12px"><div class="tsl">Слова</div><div class="twrap">${twHtml}${pwHtml}</div>
+        <div class="tadd"><input type="text" id="tadd-de-${topic}" placeholder="слово DE"><input type="text" id="tadd-uk-${topic}" placeholder="переклад"><button class="btn btnsm" onclick="addTW('${topic}')">+</button></div>
+      </div>
+    </div></div>`;
+  });
+}
+
+function saveNoteFromBtn(btn){
+  const ta=btn.closest('.note-body').querySelector('textarea');
+  const t=ta.dataset.topic,i=parseInt(ta.dataset.idx);
+  if(!Array.isArray(D.topicNotes[t]))D.topicNotes[t]=[];
+  D.topicNotes[t][i].text=ta.value;
+  saveD();toast('Збережено ✓');
+}
+
+function delNoteFromBtn(btn){
+  if(!confirm('Видалити нотатку?'))return;
+  const ta=btn.closest('.note-body').querySelector('textarea');
+  const t=ta.dataset.topic,i=parseInt(ta.dataset.idx);
+  D.topicNotes[t].splice(i,1);
+  saveD();renderTopics();reopen(t);
+}
+
+function addTodayNote(t){
+  if(!Array.isArray(D.topicNotes[t]))D.topicNotes[t]=[];
+  D.topicNotes[t].unshift({date:tod(),text:''});
+  saveD();renderTopics();reopen(t);
+  setTimeout(function(){
+    const tb=document.getElementById('tb-'+t);
+    if(!tb)return;
+    const body=tb.querySelector('.note-body');
+    if(body){body.style.display='block';body.querySelector('textarea').focus();}
+  },60);
+}
+
+function reopen(t){setTimeout(function(){const tb=document.getElementById('tb-'+t);const ch=document.getElementById('tch-'+t);if(tb)tb.classList.add('open');if(ch)ch.classList.add('open');},30);}
+function togT(t){document.getElementById('tb-'+t).classList.toggle('open');document.getElementById('tch-'+t).classList.toggle('open');}
+function addTW(t){const de=document.getElementById('tadd-de-'+t).value.trim(),uk=document.getElementById('tadd-uk-'+t).value.trim();if(!de||!uk)return;if(!D.topicWords[t])D.topicWords[t]=[];D.topicWords[t].push({de,uk});saveD();document.getElementById('tadd-de-'+t).value='';document.getElementById('tadd-uk-'+t).value='';toast(`"${de}" додано`);renderTopics();reopen(t);}
+function delTW(t,i){D.topicWords[t].splice(i,1);saveD();renderTopics();reopen(t);}
+
+// CARDS
+let C={};let exVisible=false;
+function startCards(){
+  const dir=getVal('cDirPills');
+  let pool=getPool('cPoolPills','cTopic',cDays);
+  if(pool.length<1){showEl('cErr');return;}hideEl('cErr');
+  pool=pool.sort(()=>Math.random()-.5);
+  C={words:pool,idx:0,knew:0,didnt:0,dir,unknown:[]};
+  hideEl('cardsSetup');showEl('cardsRun');hideEl('cResult');
+  document.getElementById('fcWrap').style.display='block';
+  document.getElementById('cBtns').style.display='none';
+  showCard();
+}
+function showCard(){
+  if(C.idx>=C.words.length){endCards();return;}
+  const w=C.words[C.idx];
+  const d=C.dir==='mix'?(Math.random()>.5?'de2uk':'uk2de'):C.dir;C.curDir=d;C.flipped=false;exVisible=false;
+  document.getElementById('fcIn').classList.remove('flipped');
+  document.getElementById('fcBack').style.visibility='hidden';
+  document.getElementById('fcFront').style.visibility='visible';
+  document.getElementById('fcLbl').textContent=d==='de2uk'?'DEUTSCH':'ПЕРЕКЛАД';
+  const ft=d==='de2uk'?w.de:w.uk,bt=d==='de2uk'?w.uk:w.de;
+  const fe=document.getElementById('fcFront'),be=document.getElementById('fcBack');
+  fe.textContent=ft;be.textContent=bt;
+  const sz=ft.length>22?'1.4rem':ft.length>15?'1.85rem':ft.length>10?'2.15rem':'2.3rem';
+  const szB=bt.length>22?'1.4rem':bt.length>15?'1.85rem':bt.length>10?'2.15rem':'2.3rem';
+  fe.style.fontSize=sz;be.style.fontSize=szB;
+  document.getElementById('cBtns').style.display='none';
+  hideEl('cExArea');
+  document.getElementById('exListEl').style.display='none';
+  document.getElementById('exTogBtn').textContent='📖 Показати приклад';
+  document.getElementById('exTogBtn').classList.remove('open');
+  document.getElementById('cProg').style.width=Math.round(C.idx/C.words.length*100)+'%';
+  document.getElementById('cCtr').textContent=`${C.idx+1}/${C.words.length}`;
+}
+function flipCard(){
+  const inner=document.getElementById('fcIn');
+  if(!C.flipped){
+    // Flip to back - show buttons
+    C.flipped=true;
+    document.getElementById('fcBack').style.visibility='hidden';
+    inner.classList.add('flipped');
+    setTimeout(function(){document.getElementById('fcBack').style.visibility='visible';},200);
+    setTimeout(function(){
+      document.getElementById('cBtns').style.display='block';
+      const w=C.words[C.idx];
+      if(w&&w.examples&&w.examples.length>0)showEl('cExArea');
+    },410);
+  } else {
+    // Flip back to front - keep buttons visible
+    C.flipped=false;
+    document.getElementById('fcFront').style.visibility='hidden';
+    inner.classList.remove('flipped');
+    setTimeout(function(){document.getElementById('fcFront').style.visibility='visible';},200);
+  }
+}
+function toggleEx(){
+  exVisible=!exVisible;
+  const btn=document.getElementById('exTogBtn'),list=document.getElementById('exListEl');
+  if(exVisible){
+    const w=C.words[C.idx];
+    list.innerHTML=(w.examples||[]).map(function(e){
+      const de=esc(e.de||''),wde=w.de.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+      const hl=de.replace(new RegExp('('+wde+')','gi'),'<span class="hl">$1</span>');
+      return`<div class="exitem"><div class="exde">${hl}</div><div class="exuk">${esc(e.uk||'')}</div></div>`;
+    }).join('');
+    list.style.display='block';btn.textContent='📖 Сховати приклад';btn.classList.add('open');
+  }else{list.style.display='none';btn.textContent='📖 Показати приклад';btn.classList.remove('open');}
+}
+function rateCard(knew){
+  const w=C.words[C.idx];
+  if(knew){
+    C.knew++;
+    w.mastery=Math.min(5,(w.mastery||0)+1);
+    // Track "knew" streak for hard words
+    w.learnCount=(w.learnCount||0)+1;
+    // Reset hardCount streak when knew
+    if((w.hardCount||0)>=5){
+      // still hard until 5 consecutive knew
+      if(w.learnCount>=5){
+        w.hardCount=0;w.learnCount=0;
+        toast('"'+w.de+'" більше не важке! 🎉','var(--grn)');
+      }
+    } else {
+      w.hardCount=0; // reset if not yet hard
+    }
+  } else {
+    C.didnt++;C.unknown.push(w);
+    w.mastery=Math.max(0,(w.mastery||0)-1);
+    w.hardCount=(w.hardCount||0)+1;
+    w.learnCount=0; // reset learn streak
+    if(w.hardCount===5){
+      toast('"'+w.de+'" додано до важких 🔥','var(--red)');
+    }
+  }
+  w.testCount=(w.testCount||0)+1;saveD();C.idx++;showCard();
+}
+function endCards(){
+  document.getElementById('fcWrap').style.display='none';document.getElementById('cBtns').style.display='none';showEl('cResult');
+  const tot=C.knew+C.didnt,pct=tot?Math.round(C.knew/tot*100):0;
+  document.getElementById('cResScore').textContent=`${C.knew}/${tot}`;document.getElementById('cResSub').textContent=`${pct}% знав`;
+  document.getElementById('cResEmoji').textContent=pct>=80?'🏆':pct>=50?'💪':'📖';
+  const repeatBtn=document.getElementById('repeatUnknownBtn');
+  if(C.unknown&&C.unknown.length>0){
+    repeatBtn.style.display='inline-block';
+    repeatBtn.textContent=`🔄 Повторити невідомі (${C.unknown.length})`;
+  } else {
+    repeatBtn.style.display='none';
+  }
+  // Track HW progress
+  if(C.hwTask){
+    const dateKey = C.hwDate || tod();
+    if(!D.homework)D.homework={};
+    if(!D.homework[dateKey])D.homework[dateKey]={task1:0,task2:0};
+    const key='task'+C.hwTask;
+    const goal=C.hwTask===1?10:5;
+    if(D.homework[dateKey][key]<goal){
+      D.homework[dateKey][key]++;
+      saveD();
+      toast(C.hwTask===1?'Сесія 1 зарахована ✓':'Сесія 2 зарахована ✓');
+    }
+  }
+}
+function repeatUnknown(){
+  const unknown=[...C.unknown];
+  if(!unknown.length)return;
+  C={words:unknown.sort(()=>Math.random()-.5),idx:0,knew:0,didnt:0,dir:C.dir,unknown:[]};
+  hideEl('cResult');
+  document.getElementById('fcWrap').style.display='block';
+  document.getElementById('cBtns').style.display='none';
+  showCard();
+}
+function stopCards(){showEl('cardsSetup');hideEl('cardsRun');document.getElementById('fcWrap').style.display='block';hideEl('cResult');}
+
+
+// ═══ AI FUNCTIONS (Gemini) ═══
+const GEMINI_KEY = 'AIzaSyACTLqrtR1mp9Ewx2qiNjEL4pZauNRsOiU';
+
+async function callClaude(systemPrompt, userMsg, resultElId){
+  const el = document.getElementById(resultElId);
+  el.innerHTML = '<div class="ai-loading"><div class="ai-spin"></div>AI думає...</div>';
+  try {
+    const prompt = systemPrompt + '\n\n' + userMsg;
+    const resp = await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_KEY,
+      {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          contents: [{parts: [{text: prompt}]}],
+          generationConfig: {temperature: 0.3, maxOutputTokens: 400}
+        })
+      }
+    );
+    const data = await resp.json();
+    if(data.error){
+      el.innerHTML = "<div class='ai-result' style='color:var(--red)'>" + data.error.message + "</div>";
+      return;
+    }
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Немає відповіді';
+    el.innerHTML = '<div class="ai-result"><div class="ai-lbl">AI відповідь</div>' + text.replace(/\n/g,'<br>') + '</div>';
+  } catch(e) {
+    el.innerHTML = "<div class='ai-result' style='color:var(--red)'>Помилка з’єднання</div>";
+  }
+}
+
+function aiExample(){
+  const w = D.words.find(x => x.id === wdId);
+  if(!w) return;
+  callClaude(
+    'Ти помічник для вивчення німецької мови. Відповідай коротко і чітко.',
+    `Склади 2 приклади речень з німецьким словом "${w.de}" (переклад: ${w.uk}). Формат: 1. речення по-німецьки → переклад українською. 2. речення → переклад.`,
+    'aiWdResult'
+  );
+}
+
+function aiExplain(){
+  const w = D.words.find(x => x.id === wdId);
+  if(!w) return;
+  callClaude(
+    'Ти помічник для вивчення німецької мови. Відповідай коротко і структуровано.',
+    `Поясни слово "${w.de}" (${w.uk}): артикль (якщо іменник), частина мови, коли вживається, синоніми якщо є. Коротко, 4-5 рядків.`,
+    'aiWdResult'
+  );
+}
+
+function aiCheck(){
+  const txt = document.getElementById('aiCheckInput').value.trim();
+  if(!txt){toast('Введи речення!','var(--red)');return;}
+  const words = D.words.map(w=>w.de).join(', ');
+  callClaude(
+    "Ти вчитель німецької мови. Перевіряй речення і давай чіткий зворотній зв’язок українською.",
+    `Перевір це речення по-німецьки: "${txt}"
+
+Якщо є помилки — вкажи їх і дай правильний варіант. Якщо правильно — похвали і поясни чому правильно. Відповідь: коротко, 3-5 рядків.`,
+    'aiCheckResult'
+  );
+}
+
+
+// ═══ HOMEWORK ═══
+let hwDir1='de2uk', hwDir2='de2uk';
+function renderHW(){
+  const today = tod();
+  document.getElementById('hwDate').textContent = fmtDate(today);
+
+  // Get last 5 days including today
+  const days = [];
+  for(let i=0;i<5;i++){
+    const d=new Date();d.setDate(d.getDate()-i);
+    days.push(d.toISOString().split('T')[0]);
+  }
+
+  // Task 1: today's words x10
+  const todayWords = D.words.filter(w=>w.date===today);
+  const hw = D.homework || {};
+  if(!hw[today]) hw[today]={task1:0,task2:0};
+  D.homework = hw;
+
+  // Task 2: last 5 days words x5
+  const recentWords = D.words.filter(w=>days.includes(w.date));
+
+  const t1done = hw[today].task1;
+  const t2done = hw[today].task2;
+  const total = t1done + t2done;
+  const totalGoal = 10 + 5;
+
+  // Render tasks
+  document.getElementById('hwTasks').innerHTML =
+    renderHWTask(
+      1, '📅 Картки сьогоднішнього дня', 
+      `${todayWords.length} слів × 10 повторень`,
+      t1done, 10, todayWords.length > 0, today, 'task1'
+    ) +
+    renderHWTask(
+      2, '📚 Картки за 5 днів',
+      `${recentWords.length} слів × 5 повторень`,
+      t2done, 5, recentWords.length > 0, today, 'task2'
+    );
+
+  document.getElementById('hwTotal').textContent = total+'/'+totalGoal;
+  document.getElementById('hwTotalBar').style.width = Math.round(total/totalGoal*100)+'%';
+}
+
+function renderHWTask(num, title, sub, done, goal, hasWords, today, taskKey){
+  const circles = [];
+  for(let i=1;i<=goal;i++){
+    const cls = i<=done ? 'done' : i===done+1 ? 'cur' : '';
+    circles.push('<div class="hw-circle '+cls+'">'+i+'</div>');
+  }
+  const isDone = done>=goal;
+    const dirVal = num===1 ? hwDir1 : hwDir2;
+  const q="'";
+  const dirBtns = '<div class="hw-dir">'
+    +'<div class="hw-dir-btn'+(dirVal==='de2uk'?' on':'')+'" onclick="setHWDir('+num+',\x27de2uk\x27)">DE → УКР</div>'
+    +'<div class="hw-dir-btn'+(dirVal==='uk2de'?' on':'')+'" onclick="setHWDir('+num+',\x27uk2de\x27)">УКР → DE</div>'
+    +'<div class="hw-dir-btn'+(dirVal==='mix'?' on':'')+'" onclick="setHWDir('+num+',\x27mix\x27)">Мікс</div>'
+    +'</div>';
+  const btnHtml = !hasWords
+    ? '<div style="font-size:.75rem;color:var(--mt2);text-align:center">Немає слів за цей день</div>'
+    : isDone
+    ? dirBtns+'<div style="text-align:center;color:var(--grn);font-weight:600;font-size:.85rem">✅ Виконано!</div>'
+    : dirBtns+'<button class="btn" style="width:100%" onclick="startHWTask('+num+')">▶ Почати сесію ('+(done+1)+'/'+goal+')</button>';
+
+  return '<div class="hw-task">'+
+    '<div class="hw-task-title">'+title+'</div>'+
+    '<div class="hw-task-sub">'+sub+'</div>'+
+    '<div class="hw-circles">'+circles.join('')+'</div>'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'+
+    '<div class="pw" style="flex:1;margin-right:10px"><div class="pf" style="width:'+Math.round(done/goal*100)+'%"></div></div>'+
+    '<div class="hw-done'+(isDone?' ok':'')+'">'+done+'/'+goal+'</div>'+
+    '</div>'+
+    btnHtml+
+    '</div>';
+}
+
+function setHWDir(num, dir){
+  if(num===1) hwDir1=dir; else hwDir2=dir;
+  renderHW();
+}
+
+function startHWTask(taskNum){
+  const today = tod();
+  const days = [];
+  for(let i=0;i<5;i++){const d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().split('T')[0]);}
+
+  let pool;
+  if(taskNum===1){
+    pool = D.words.filter(w=>w.date===today);
+  } else {
+    pool = D.words.filter(w=>days.includes(w.date));
+  }
+
+  if(!pool.length){toast('Немає слів!','var(--red)');return;}
+
+  // Start cards session with this pool
+  pool = pool.sort(()=>Math.random()-.5);
+  const dir = taskNum===1 ? hwDir1 : hwDir2;
+  C = {words:pool, idx:0, knew:0, didnt:0, dir:dir, unknown:[], hwTask:taskNum};
+
+  // Switch to cards tab and start
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelector('.tab:nth-child(5)').classList.add('active');
+  document.getElementById('view-cards').classList.add('active');
+
+  hideEl('cardsSetup');showEl('cardsRun');hideEl('cResult');
+  document.getElementById('fcWrap').style.display='block';
+  document.getElementById('cBtns').style.display='none';
+  showCard();
+}
+
+
+function openHWDay(dateStr){
+  const hw = D.homework || {};
+  if(!hw[dateStr]) hw[dateStr] = {task1:0, task2:0};
+  D.homework = hw;
+
+  const d = new Date(dateStr+'T12:00:00');
+  const dayLabel = dateStr === tod() ? 'Сьогодні' : d.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
+
+  // Get words for this specific day (task1) and last 5 days from this date (task2)
+  const days5 = [];
+  for(let i=0;i<5;i++){const dx=new Date(dateStr+'T12:00:00');dx.setDate(dx.getDate()-i);days5.push(dx.toISOString().split('T')[0]);}
+
+  const words1 = D.words.filter(w=>w.date===dateStr);
+  const words2 = D.words.filter(w=>days5.includes(w.date));
+
+  const h = hw[dateStr];
+  const t1 = h.task1||0, t2 = h.task2||0;
+
+  document.getElementById('hwDayTitle').textContent = dayLabel;
+  document.getElementById('hwDayDate').textContent = dateStr;
+  document.getElementById('hwDayBody').innerHTML =
+    renderHWTaskModal(1, '📅 Картки дня', words1.length, t1, 10, dateStr) +
+    renderHWTaskModal(2, '📚 Картки за 5 днів', words2.length, t2, 5, dateStr);
+
+  document.getElementById('hwDayOv').style.display='flex';
+}
+
+function renderHWTaskModal(num, title, wordCount, done, goal, dateStr){
+  const isDone = done >= goal;
+  const circles = [];
+  for(let i=1;i<=goal;i++){
+    const cls = i<=done?'done':i===done+1?'cur':'';
+    circles.push('<div class="hw-circle hw-circle-sm '+cls+'">'+i+'</div>');
+  }
+  const dirVal = num===1 ? hwDir1 : hwDir2;
+  let html = '<div style="margin-bottom:14px">';
+  html += '<div style="font-size:.82rem;font-weight:600;margin-bottom:4px">'+title+'</div>';
+  html += '<div class="hw-circles">'+circles.join('')+'</div>';
+  html += '<div style="display:flex;align-items:center;gap:8px;margin:6px 0">';
+  html += '<div class="pw" style="flex:1"><div class="pf" style="width:'+Math.round(done/goal*100)+'%"></div></div>';
+  html += '<div style="font-size:.7rem;color:'+(isDone?'var(--grn)':'var(--mt2)')+'">' +done+'/'+goal+(isDone?' ✓':'')+'</div>';
+  html += '</div>';
+  if(!wordCount){
+    html += '<div style="font-size:.75rem;color:var(--mt2);text-align:center">Немає слів за цей день</div>';
+  } else if(isDone){
+    html += '<div style="text-align:center;color:var(--grn);font-weight:600">✓ Виконано!</div>';
+  } else {
+    html += '<div class="hw-dir" style="margin-bottom:8px">';
+    html += '<div class="hw-dir-btn'+(dirVal==='de2uk'?' on':'')+' hw-day-dir-btn" data-task="'+num+'" data-dir="de2uk" data-date="'+dateStr+'">DE → УКР</div>';
+    html += '<div class="hw-dir-btn'+(dirVal==='uk2de'?' on':'')+' hw-day-dir-btn" data-task="'+num+'" data-dir="uk2de" data-date="'+dateStr+'">УКР → DE</div>';
+    html += '<div class="hw-dir-btn'+(dirVal==='mix'?' on':'')+' hw-day-dir-btn" data-task="'+num+'" data-dir="mix" data-date="'+dateStr+'">Мікс</div>';
+    html += '</div>';
+    html += '<button class="btn hw-day-start-btn" style="width:100%" data-task="'+num+'" data-date="'+dateStr+'">▶ Почати сесію ('+(done+1)+'/'+goal+')</button>';
+  }
+  html += '</div>';
+  return html;
+}
+
+
+function startHWDayTask(taskNum, dateStr){
+  const days5 = [];
+  for(let i=0;i<5;i++){const dx=new Date(dateStr+'T12:00:00');dx.setDate(dx.getDate()-i);days5.push(dx.toISOString().split('T')[0]);}
+
+  let pool = taskNum===1
+    ? D.words.filter(w=>w.date===dateStr)
+    : D.words.filter(w=>days5.includes(w.date));
+
+  if(!pool.length){toast('Немає слів!','var(--red)');return;}
+  pool = pool.sort(()=>Math.random()-.5);
+
+  const dir = taskNum===1 ? hwDir1 : hwDir2;
+  C = {words:pool, idx:0, knew:0, didnt:0, dir:dir, unknown:[], hwTask:taskNum, hwDate:dateStr};
+
+  document.getElementById('hwDayOv').style.display='none';
+
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelector('.tab:nth-child(5)').classList.add('active');
+  document.getElementById('view-cards').classList.add('active');
+
+  hideEl('cardsSetup');showEl('cardsRun');hideEl('cResult');
+  document.getElementById('fcWrap').style.display='block';
+  document.getElementById('cBtns').style.display='none';
+  showCard();
+}
+
+function closeHWDay(){document.getElementById('hwDayOv').style.display='none';}
+
+function renderHardCount(){
+  const hard=D.words.filter(w=>(w.hardCount||0)>=5&&(w.learnCount||0)<5);
+  const el=document.getElementById('hardCount');
+  if(el) el.innerHTML=hard.length
+    ?'&#128293; <span style="color:var(--red);font-weight:600">'+hard.length+'</span> важких слів'
+    :'&#128293; Важких слів немає';
+}
+
+document.addEventListener('click', function(e){
+  var btn = e.target.closest('.hw-day-start-btn');
+  if(btn){
+    var task = parseInt(btn.dataset.task);
+    var date = btn.dataset.date;
+    startHWDayTask(task, date);
+    return;
+  }
+  var dirBtn = e.target.closest('.hw-day-dir-btn');
+  if(dirBtn){
+    var task = parseInt(dirBtn.dataset.task);
+    var dir = dirBtn.dataset.dir;
+    var date = dirBtn.dataset.date;
+    if(task===1) hwDir1=dir; else hwDir2=dir;
+    // Re-render the modal
+    openHWDay(date);
+    return;
+  }
+});
+
+document.addEventListener('keydown'
+
+
+
+,function(e){if(e.key==='Escape'){closeEdit();closeWD();closeDayOv();closeExport();}});
+document.getElementById('iDate').value=tod();
+initCal();refreshStreak();renderProgress();renderWords();
+</script></body></html>
