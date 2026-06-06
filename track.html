@@ -1119,14 +1119,19 @@ function renderWords(){
   let html='';
   dates.forEach(date=>{
     const label=date===tod()?'Сьогодні':new Date(date+'T12:00:00').toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
-    html+=`<div class="word-sep"><h3>${label}</h3><span class="word-sep-badge">${groups[date].length}</span><div class="word-sep-line"></div></div>`;
+    const noEx=groups[date].filter(w=>!w.examples||!w.examples.length).length;
+    const aiBtn=noEx>0
+      ? `<button class="btn btn-sm" style="padding:3px 10px;font-size:.68rem;background:linear-gradient(135deg,#1a3a6b,#7b61ff);color:#fff;border:none;margin-left:4px;border-radius:6px" onclick="event.stopPropagation();startExampleSession('${date}')">🤖 ${noEx}</button>`
+      : `<span style="font-size:.65rem;color:var(--grn);margin-left:6px">✓</span>`;
+    html+=`<div class="word-sep"><h3>${label}</h3><span class="word-sep-badge">${groups[date].length}</span>${aiBtn}<div class="word-sep-line"></div></div>`;
     groups[date].forEach(w=>{
-      const dots=Array.from({length:5},(_,i)=>`<div class="mastery-dot${i<(w.mastery||0)?' on':''}"></div>`).join('');
+      const hasEx=w.examples&&w.examples.length>0;
       html+=`<div class="word-row" onclick="openWordDetail('${w.id}')">
         <div class="word-de">${esc(w.de)}</div>
         <div class="word-arr">→</div>
-        <div class="word-ua">${esc(w.uk)}</div>
-        <div class="word-mastery">${dots}</div>
+        <div class="word-ua" style="flex:1">${esc(w.uk)}</div>
+        <span style="font-size:.75rem;color:${hasEx?'var(--grn)':'var(--br2)'};flex-shrink:0">${hasEx?'●':'○'}</span>
+        <button class="word-icon" onclick="event.stopPropagation();startSingleExample('${w.id}')" title="Генерувати приклад">🤖</button>
         <button class="word-icon del" onclick="event.stopPropagation();deleteWord('${w.id}')" title="Видалити">✕</button>
       </div>`;
     });
