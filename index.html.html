@@ -7254,8 +7254,11 @@ function dtUid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
 
-function dtAddWord(de, ua, btn) {
-  if (btn) btn.stopPropagation ? btn.stopPropagation() : null;
+async function dtAddWord(de, ua, btn, lk) {
+  if (btn) {
+    btn.textContent = '⏳';
+    btn.disabled = true;
+  }
 
   const data = dtLoad();
   const today = dtTod();
@@ -7264,8 +7267,26 @@ function dtAddWord(de, ua, btn) {
   const exists = data.words.find(w => w.de.trim() === de.trim());
   if (exists) {
     dtShowToast('Вже є в DeutschTrack!', '#d4a843');
-    if (btn) { btn.textContent = '✓ Є'; btn.classList.add('added'); }
+    if (btn) { btn.textContent = '✓ Є'; btn.classList.add('added'); btn.disabled = false; }
     return;
+  }
+
+  // Auto-generate example via AI
+  let examples = [];
+  try {
+    const level = (typeof lk === 'string' && lk.startsWith('b1_')) ? 'B1' : 'B2';
+    const prompt = 'Erstelle 1 Beispielsatz auf ' + level + '-Niveau für: "' + de + '" (' + ua + '). Nur JSON: {"de":"Satz auf Deutsch","ua":"Переклад українською"}';
+    const text = await callAI(prompt);
+    const clean = text.replace(/```json|```/g, '').trim();
+    const m = clean.match(/\{[^}]+\}/);
+    if (m) {
+      const ex = JSON.parse(m[0]);
+      if (ex.de && ex.ua) {
+        examples = [{ de: ex.de, ua: ex.ua }];
+      }
+    }
+  } catch(e) {
+    // example generation failed — add word without example
   }
 
   // Find next available date (max 5 words per day)
@@ -7278,7 +7299,7 @@ function dtAddWord(de, ua, btn) {
     if (wordsOnDay < 5) { targetDate = k; break; }
   }
 
-  // Add word
+  // Add word with example
   const newWord = {
     id: dtUid(),
     de: de,
@@ -7288,7 +7309,7 @@ function dtAddWord(de, ua, btn) {
     mastery: 0,
     testCount: 0,
     correct: 0,
-    examples: [],
+    examples: examples,
     hardCount: 0,
     learnCount: 0
   };
@@ -7303,17 +7324,18 @@ function dtAddWord(de, ua, btn) {
   dtSave(data);
 
   // UI feedback
+  const isToday = targetDate === today;
+  const hasEx = examples.length > 0;
+
   if (btn) {
-    const isToday = targetDate === today;
     btn.textContent = isToday ? '✓ Сьогодні' : '✓ ' + targetDate.slice(5);
     btn.classList.add('added');
+    btn.disabled = false;
   }
 
-  const isToday = targetDate === today;
   dtShowToast(
-    isToday
-      ? '➕ Додано в DeutschTrack на сьогодні!'
-      : '➕ Додано на ' + targetDate.slice(5) + ' (сьогодні вже 5 слів)',
+    (isToday ? '➕ Додано на сьогодні' : '➕ Додано на ' + targetDate.slice(5)) +
+    (hasEx ? ' + приклад ✓' : ''),
     '#3ecf8e'
   );
 }
@@ -7357,7 +7379,7 @@ initDictClicks = function(lk) {
     btn.title = 'Додати в DeutschTrack';
     btn.onclick = (e) => {
       e.stopPropagation();
-      dtAddWord(de, ua, btn);
+      dtAddWord(de, ua, btn, lk);
     };
 
     // Add after word-ua
