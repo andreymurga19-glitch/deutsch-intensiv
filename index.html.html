@@ -283,7 +283,8 @@
     grid-template-columns: 1fr 1fr;
     border-bottom: 1px solid var(--border);
     transition: background .12s;
-    align-items: stretch;
+    align-items: start;
+    min-width: 0;
   }
   .word-row:last-child { border-bottom: none; }
   .word-row:hover { background: var(--surface2); }
@@ -296,10 +297,12 @@
 
   .word-de {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--text);
-    padding-right: 14px;
+    padding-right: 10px;
     border-right: 1px solid var(--border);
+    word-break: break-word;
+    min-width: 0;
   }
 
   .word-de .art { color: var(--klett-pink); font-weight: 500; margin-right: 3px; }
@@ -307,8 +310,10 @@
 
   .word-ua {
     color: var(--green);
-    padding-left: 14px;
-    font-size: 13px;
+    padding-left: 10px;
+    font-size: 12px;
+    word-break: break-word;
+    min-width: 0;
   }
 
   .word-row.idiom .word-de { color: var(--idiom-color); font-style: italic; }
@@ -931,8 +936,7 @@
     <div class="lk-btn" onclick="switchLektion(13, this)">13 · Behörden und Institutionen</div>
   </div>
 
-  <!-- Stats in menu -->
-  <div id="menu-stats" style="padding:0 16px 20px;"></div>
+
 </div>
 
 <!-- ═══ TOP BAR ═══ -->
@@ -5042,9 +5046,11 @@ function initDictClicks(lk) {
 
 function renderExPopup(popup, ex, lk, idx) {
   const isCustom = ex.custom ? '✎ Mein Beispiel' : '';
+  const deSafe = (ex.de||'').replace(/'/g,"\'");
+  const uaSafe = (ex.ua||'').replace(/'/g,"\'");
   popup.innerHTML = `
-    <div class="ex-de">${ex.de}</div>
-    <div class="ex-ua">${ex.ua}</div>
+    <div class="ex-de">${ex.de} <button class="speak-btn" onclick="speakDe('${deSafe}',event)" title="Вимовити">🔊</button></div>
+    <div class="ex-ua">${ex.ua} <button class="speak-btn" onclick="speakUa('${uaSafe}',event)" title="Вимовити">🔊</button></div>
     ${isCustom ? `<div style="font-size:10px;color:var(--klett-mid);margin-top:3px">${isCustom}</div>` : ''}`;
 }
 
@@ -5146,9 +5152,6 @@ function saveMyExample(lk, idx, originalSentence, correctedSentence) {
 function toggleMenu() {
   document.getElementById('side-menu').classList.toggle('open');
   document.getElementById('menu-overlay').classList.toggle('open');
-  // Update stats
-  const statsEl = document.getElementById('menu-stats');
-  if (statsEl) statsEl.innerHTML = getProgressHtml();
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -6034,6 +6037,7 @@ function switchLektion(n, btn) {
   document.getElementById('side-menu').classList.remove('open');
   document.getElementById('menu-overlay').classList.remove('open');
   initCards(n);
+  setTimeout(() => initDictClicks(n), 100);
 }
 
 // ══════════════════════════════════════════════════════════════
