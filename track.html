@@ -239,6 +239,9 @@ body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh
       <div class="fl"><label>Переклад</label><input id="iUk" placeholder="Слово..."></div>
       <button class="btn" onclick="addWordManual()">+ Додати</button>
     </div>
+    <div style="margin-top:8px">
+      <div class="fl"><label>Дата (якщо не сьогодні)</label><input type="date" id="iDate"></div>
+    </div>
 
   </div>
 
@@ -300,12 +303,17 @@ body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh
         <div class="fc-pill" data-v="today" onclick="pickPill(this,'cardsPillsWords')">Сьогодні</div>
         <div class="fc-pill" data-v="5days" onclick="pickPill(this,'cardsPillsWords')">За 5 днів</div>
         <div class="fc-pill" data-v="hard" onclick="pickPill(this,'cardsPillsWords')">🔥 Важкі</div>
+        <div class="fc-pill" data-v="custom" onclick="pickPill(this,'cardsPillsWords');showDatePicker()">📅 Дати</div>
       </div>
       <div style="font-size:.72rem;color:var(--mt2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px">Напрямок?</div>
       <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px" id="cardsPillsDir">
         <div class="fc-pill on" data-v="de2uk" onclick="pickPill(this,'cardsPillsDir')">DE → УКР</div>
         <div class="fc-pill" data-v="uk2de" onclick="pickPill(this,'cardsPillsDir')">УКР → DE</div>
         <div class="fc-pill" data-v="mix" onclick="pickPill(this,'cardsPillsDir')">Мікс</div>
+      </div>
+      <div id="customDatePicker" style="display:none;margin-bottom:10px">
+        <div style="font-size:.72rem;color:var(--mt2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">Обери дати:</div>
+        <div id="customDateList" style="display:flex;gap:6px;flex-wrap:wrap"></div>
       </div>
       <button class="btn btn-full" onclick="startCards()">▶ Почати</button>
       <div style="font-size:.72rem;color:var(--mt2);margin-top:8px" id="hardCount"></div>
@@ -782,7 +790,7 @@ function addWordManual(){
   const de=document.getElementById('iDe').value.trim();
   const uk=document.getElementById('iUk').value.trim();
   const topic='';
-  const date=tod();
+  const date=document.getElementById('iDate')?.value||tod();
   if(!de||!uk){toast('Введи слово і переклад!','var(--pink)');return;}
 
   // Find target date with max 5 words
@@ -1025,13 +1033,21 @@ function vtShowResult(ok,heard,target){
 // ══════════════════════════════════════════════════════════════
 // FLASHCARDS
 // ══════════════════════════════════════════════════════════════
-function pickPill(el,gid){document.querySelectorAll('#'+gid+' .fc-pill').forEach(p=>p.classList.remove('on'));el.classList.add('on');}
+function pickPill(el,gid){
+  document.querySelectorAll('#'+gid+' .fc-pill').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  if(gid==='cardsPillsWords' && el.dataset.v !== 'custom'){
+    const dp=document.getElementById('customDatePicker');
+    if(dp) dp.style.display='none';
+  }
+}
 function getVal(gid){const el=document.querySelector('#'+gid+' .fc-pill.on');return el?el.dataset.v:'';}
 
 function getFilteredWords(filter){
   if(filter==='today') return D.words.filter(w=>w.date===tod());
   if(filter==='5days'){const days5=[];for(let i=0;i<5;i++){const d=new Date();d.setDate(d.getDate()-i);days5.push(d.toISOString().split('T')[0]);}return D.words.filter(w=>days5.includes(w.date));}
   if(filter==='hard') return D.words.filter(w=>(w.hardCount||0)>=3&&(w.mastery||0)<4);
+  if(filter==='custom'){const dates=getCustomDates();return dates.length?D.words.filter(w=>dates.includes(w.date)):[...D.words];}
   return [...D.words];
 }
 
@@ -1041,6 +1057,28 @@ function renderHardCount(){
   if(el)el.innerHTML=hard.length?'🔥 <span style="color:var(--pink);font-weight:600">'+hard.length+'</span> важких слів':'🔥 Важких слів немає';
 }
 
+
+function showDatePicker() {
+  const dp = document.getElementById('customDatePicker');
+  if (!dp) return;
+  dp.style.display = 'block';
+  // Get unique dates that have words
+  const dates = [...new Set(D.words.map(w=>w.date))].sort((a,b)=>b.localeCompare(a));
+  const selected = new Set();
+  document.getElementById('customDateList').innerHTML = dates.map(d => {
+    const cnt = D.words.filter(w=>w.date===d).length;
+    const lbl = d===tod()?'Сьогодні':new Date(d+'T12:00:00').toLocaleDateString('uk-UA',{day:'numeric',month:'short'});
+    return `<div class="fc-pill" data-date="${d}" onclick="toggleCustomDate(this)" style="font-size:.72rem">${lbl} (${cnt})</div>`;
+  }).join('');
+}
+
+function toggleCustomDate(el) {
+  el.classList.toggle('on');
+}
+
+function getCustomDates() {
+  return [...document.querySelectorAll('#customDateList .fc-pill.on')].map(el=>el.dataset.date);
+}
 function startCards(){
   const filter=getVal('cardsPillsWords')||'all';
   const dir=getVal('cardsPillsDir')||'de2uk';
@@ -1232,7 +1270,7 @@ function levenshtein(a,b){
 // ══════════════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════════════
-document.getElementById('iDate').value=tod();
+const idEl=document.getElementById('iDate');if(idEl)idEl.value=tod();
 renderProgress();
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeWordDetail();closeExport();closeHWDay();}});
 </script>
