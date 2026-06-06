@@ -674,6 +674,19 @@
   .hist-item .hist-badge.ok { background: #fef9e7; color: #b8860b; }
   .hist-item .hist-badge.bad { background: #fde8f0; color: var(--klett-pink); }
 
+
+  .speak-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 0 3px;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    vertical-align: middle;
+    line-height: 1;
+  }
+  .speak-btn:hover { opacity: 1; }
   @media (max-width: 600px) {
     .ai-panel { padding: 16px; }
     .trn-word-select { grid-template-columns: 1fr; }
@@ -4894,37 +4907,75 @@ Antworte NUR im folgenden JSON-Format (kein Markdown, keine Backticks, kein Komm
 function initDictClicks(lk) {
   const page = document.getElementById('lk' + lk);
   if (!page) return;
-  const data = getWordData(lk);
-  if (!data) return;
 
-  page.querySelectorAll('#dict-panel-' + lk + ' .word-row').forEach((row, idx) => {
+  page.querySelectorAll('#dict-panel-' + lk + ' .word-row').forEach((row) => {
     if (row.classList.contains('hidden')) return;
-    // Add popup div if not already there
+    const deEl = row.querySelector('.word-de');
+    const uaEl = row.querySelector('.word-ua');
+    if (!deEl || !uaEl) return;
+
+    const wordDe = deEl.textContent.trim();
+    const wordUa = uaEl.textContent.trim();
+    const cacheKey = 'dict|' + lk + '|' + wordDe;
+
+    // Add speak buttons to word cells
+    if (!deEl.querySelector('.speak-btn')) {
+      const btnDe = document.createElement('button');
+      btnDe.className = 'speak-btn';
+      btnDe.textContent = '🔊';
+      btnDe.title = 'Вимовити по-німецьки';
+      btnDe.onclick = (e) => speakDe(wordDe, e);
+      deEl.appendChild(btnDe);
+    }
+    if (!uaEl.querySelector('.speak-btn')) {
+      const btnUa = document.createElement('button');
+      btnUa.className = 'speak-btn';
+      btnUa.textContent = '🔊';
+      btnUa.title = 'Вимовити по-українськи';
+      btnUa.onclick = (e) => speakUa(wordUa, e);
+      uaEl.appendChild(btnUa);
+    }
+
     if (!row.querySelector('.ex-popup')) {
       const popup = document.createElement('div');
       popup.className = 'ex-popup';
       popup.style.gridColumn = '1 / -1';
-      popup.innerHTML = `<div class="ex-loading"><div class="bsp-loading"></div> Generiere Beispiel…</div>`;
+      popup.innerHTML = '<div class="ex-loading"><div class="bsp-loading"></div> Generiere Beispiel…</div>';
       row.appendChild(popup);
     }
+
     row.addEventListener('click', async (e) => {
+      if (e.target.classList.contains('speak-btn')) return;
       if (e.target.classList.contains('ex-save-btn')) return;
       const wasOpen = row.classList.contains('ex-open');
-      // Close all others in this panel
-      page.querySelectorAll('#dict-panel-' + lk + ' .word-row.ex-open').forEach(r => r.classList.remove('ex-open'));
+      page.querySelectorAll('#dict-panel-' + lk + ' .word-row.ex-open')
+        .forEach(r => r.classList.remove('ex-open'));
       if (wasOpen) return;
       row.classList.add('ex-open');
+
       const popup = row.querySelector('.ex-popup');
-      const key = exKey(lk, idx);
-      const cached = exampleCache[key];
-      if (cached) {
-        renderExPopup(popup, cached, lk, idx);
+      if (exampleCache[cacheKey]) {
+        const ex = exampleCache[cacheKey];
+        popup.innerHTML = '<div class="ex-de">' + ex.de + ' <button class="speak-btn" onclick="speakDe(\'' + ex.de.replace(/'/g,"\\'") + '\',event)">🔊</button></div><div class="ex-ua">' + ex.ua + '</div>';
         return;
       }
-      popup.innerHTML = `<div class="ex-loading"><div class="bsp-loading"></div> Generiere…</div>`;
-      const ex = await fetchExample(lk, idx);
-      if (ex) renderExPopup(popup, ex, lk, idx);
-      else popup.innerHTML = `<div class="ex-de" style="color:var(--muted)">Fehler beim Generieren</div>`;
+
+      popup.innerHTML = '<div class="ex-loading"><div class="bsp-loading"></div> Generiere…</div>';
+
+      const level = (typeof lk === 'string' && lk.startsWith('b1_')) ? 'B1' : 'B2';
+      const prompt = 'Du bist ein Deutschlehrer. Erstelle 1 kurzen Beispielsatz auf Niveau ' + level + ' für das Wort: "' + wordDe + '" (Bedeutung: ' + wordUa + '). Antworte NUR mit JSON ohne Markdown: {"de":"Beispielsatz","ua":"Переклад українською"}';
+
+      try {
+        const text = await callAI(prompt);
+        const clean = text.replace(/```json|```/g, '').trim();
+        const m = clean.match(/\{[\s\S]*?\}/);
+        if (!m) throw new Error('no json');
+        const ex = JSON.parse(m[0]);
+        exampleCache[cacheKey] = ex;
+        popup.innerHTML = '<div class="ex-de">' + ex.de + ' <button class="speak-btn" onclick="speakDe(\'' + ex.de.replace(/'/g,"\\'") + '\',event)">🔊</button></div><div class="ex-ua">' + ex.ua + '</div>';
+      } catch {
+        popup.innerHTML = '<div class="ex-de" style="color:var(--muted)">Не вдалося згенерувати</div>';
+      }
     });
   });
 }
@@ -5943,6 +5994,42 @@ function switchTab(lk, name, el) {
 // BEISPIELE ENGINE
 // ══════════════════════════════════════════════════════════════
 const beispieleCache = {}; // lk -> array of {de, ua} examples
+
+// ══════════════════════════════════════════════════════════════
+// SPEECH (Web Speech API)
+// ══════════════════════════════════════════════════════════════
+function speakDe(text, e) {
+  if (e) e.stopPropagation();
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text.replace(/[+()=]/g, '').trim());
+  u.lang = 'de-DE';
+  u.rate = 0.85;
+  // Try to find a German voice
+  const voices = speechSynthesis.getVoices();
+  const deVoice = voices.find(v => v.lang.startsWith('de'));
+  if (deVoice) u.voice = deVoice;
+  speechSynthesis.speak(u);
+}
+
+function speakUa(text, e) {
+  if (e) e.stopPropagation();
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text.trim());
+  u.lang = 'uk-UA';
+  u.rate = 0.85;
+  const voices = speechSynthesis.getVoices();
+  const uaVoice = voices.find(v => v.lang.startsWith('uk'));
+  if (uaVoice) u.voice = uaVoice;
+  speechSynthesis.speak(u);
+}
+
+// Preload voices
+if ('speechSynthesis' in window) {
+  speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+}
 
 async function callAI(prompt) {
   const resp = await fetch('/api/claude', {
