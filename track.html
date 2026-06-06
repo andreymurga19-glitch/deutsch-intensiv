@@ -438,8 +438,12 @@ body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh
 <!-- MODALS -->
 <div class="overlay" id="wordDetailOv" style="display:none" onclick="if(event.target===this)closeWordDetail()">
   <div class="modal">
-    <div class="modal-title" id="wdTitle">—</div>
-    <div style="font-size:.95rem;color:var(--tx);margin-bottom:14px" id="wdTrans"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <div style="font-size:.62rem;color:var(--mt2);letter-spacing:.6px;text-transform:uppercase">Слово (DE)</div>
+    </div>
+    <input id="wdDeInput" style="width:100%;background:var(--sf2);border:1px solid var(--br);border-radius:8px;color:var(--gold);font-family:var(--fm);font-size:1rem;font-weight:600;padding:8px 11px;outline:none;margin-bottom:10px;transition:border-color .2s" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--br)'">
+    <div style="font-size:.62rem;color:var(--mt2);letter-spacing:.6px;text-transform:uppercase;margin-bottom:4px">Переклад (УКР)</div>
+    <input id="wdUkInput" style="width:100%;background:var(--sf2);border:1px solid var(--br);border-radius:8px;color:var(--tx);font-family:var(--ff);font-size:.9rem;padding:8px 11px;outline:none;margin-bottom:12px;transition:border-color .2s" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--br)'">
     <div style="font-size:.68rem;color:var(--mt2);letter-spacing:.6px;text-transform:uppercase;margin-bottom:7px">Майстерність</div>
     <div style="display:flex;gap:7px;margin-bottom:14px" id="wdStars"></div>
     <div style="font-size:.68rem;color:var(--mt2);letter-spacing:.6px;text-transform:uppercase;margin-bottom:6px">Приклад (DE)</div>
@@ -743,27 +747,38 @@ function showExampleCard(w, ex, idx, total) {
   div.innerHTML = `
     <div class="agent-avatar">🤖</div>
     <div class="agent-bubble" style="width:100%">
-      <div style="font-size:.7rem;color:var(--mt2);margin-bottom:6px">${idx+1}/${total} · <b style="color:var(--gold)">${esc(w.de)}</b> — ${esc(w.uk)}</div>
-      <div class="agent-word-card" id="ex-preview">
+      <div style="font-size:.7rem;color:var(--mt2);margin-bottom:8px">${idx+1}/${total} · <b style="color:var(--gold)">${esc(w.de)}</b> — ${esc(w.uk)}</div>
+      <div class="agent-word-card">
         <div class="agent-word-ex">${esc(ex.example_de)}<div class="agent-word-ex-ua">${esc(ex.example_ua)}</div></div>
-      </div>
-      <div style="margin-top:10px">
-        <div style="font-size:.72rem;color:var(--mt2);margin-bottom:5px">Або напиши свій варіант:</div>
-        <div style="display:flex;gap:7px">
-          <input id="ownEx" class="agent-input" style="flex:1;border-radius:8px" placeholder="Моє речення по-німецьки...">
-          <button class="btn btn-sm" onclick="checkOwnExample()">Перевірити</button>
-        </div>
       </div>
       <div class="agent-word-btns" style="margin-top:10px">
         <button class="btn btn-sm" onclick="acceptCurrentExample()">✅ Прийняти</button>
         <button class="btn btn-sm btn-ghost" onclick="newExampleForCurrent()">🔄 Інший</button>
+        <button class="btn btn-sm btn-ghost" onclick="toggleOwnInput()">✏️ Свій</button>
         <button class="btn btn-sm btn-ghost" onclick="skipExample()">⏭ Пропустити</button>
+      </div>
+      <div id="ownExArea" style="display:none;margin-top:10px">
+        <div style="display:flex;gap:7px">
+          <input id="ownEx" class="agent-input" style="flex:1;border-radius:8px" placeholder="Моє речення по-німецьки...">
+          <button class="btn btn-sm" onclick="checkOwnExample()">✓</button>
+        </div>
       </div>
     </div>`;
   msgs.appendChild(div);
   msgs.scrollTop = 99999;
 }
 
+
+function toggleOwnInput() {
+  const area = document.getElementById('ownExArea');
+  if (!area) return;
+  if (area.style.display === 'none') {
+    area.style.display = 'block';
+    setTimeout(() => document.getElementById('ownEx')?.focus(), 100);
+  } else {
+    area.style.display = 'none';
+  }
+}
 function showWriteOwn(w, idx, total) {
   const msgs = document.getElementById('agentMessages');
   const div = document.createElement('div');
@@ -1119,11 +1134,7 @@ function renderWords(){
   let html='';
   dates.forEach(date=>{
     const label=date===tod()?'Сьогодні':new Date(date+'T12:00:00').toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
-    const noEx=groups[date].filter(w=>!w.examples||!w.examples.length).length;
-    const aiBtn=noEx>0
-      ? `<button class="btn btn-sm" style="padding:3px 10px;font-size:.68rem;background:linear-gradient(135deg,#1a3a6b,#7b61ff);color:#fff;border:none;margin-left:4px;border-radius:6px" onclick="event.stopPropagation();startExampleSession('${date}')">🤖 ${noEx}</button>`
-      : `<span style="font-size:.65rem;color:var(--grn);margin-left:6px">✓</span>`;
-    html+=`<div class="word-sep"><h3>${label}</h3><span class="word-sep-badge">${groups[date].length}</span>${aiBtn}<div class="word-sep-line"></div></div>`;
+    html+=`<div class="word-sep"><h3>${label}</h3><span class="word-sep-badge">${groups[date].length}</span><div class="word-sep-line"></div></div>`;
     groups[date].forEach(w=>{
       const hasEx=w.examples&&w.examples.length>0;
       html+=`<div class="word-row" onclick="openWordDetail('${w.id}')">
@@ -1151,8 +1162,8 @@ function openWordDetail(id){
   const w=D.words.find(x=>x.id===id);
   if(!w)return;
   currentWordId=id;
-  document.getElementById('wdTitle').textContent=w.de;
-  document.getElementById('wdTrans').textContent=w.uk;
+  document.getElementById('wdDeInput').value=w.de;
+  document.getElementById('wdUkInput').value=w.uk;
   const ex=w.examples&&w.examples[0]||{};
   document.getElementById('wdEx1').value=ex.de||'';
   document.getElementById('wdEx2').value=ex.ua||'';
@@ -1168,6 +1179,10 @@ function setMastery(id,val){
 }
 function saveWordDetail(){
   const w=D.words.find(x=>x.id===currentWordId);if(!w)return;
+  const newDe=document.getElementById('wdDeInput').value.trim();
+  const newUk=document.getElementById('wdUkInput').value.trim();
+  if(newDe)w.de=newDe;
+  if(newUk)w.uk=newUk;
   const exDe=document.getElementById('wdEx1').value.trim();
   const exUa=document.getElementById('wdEx2').value.trim();
   w.examples=exDe?[{de:exDe,ua:exUa}]:[];
