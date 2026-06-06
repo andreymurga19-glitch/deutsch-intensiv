@@ -538,20 +538,50 @@ async function callAI(systemPrompt, userMessage) {
 // ══════════════════════════════════════════════════════════════
 // SPEECH
 // ══════════════════════════════════════════════════════════════
+// Best German voice - priority list
+function getBestDeVoice() {
+  const voices = speechSynthesis.getVoices();
+  // Priority: Google DE > Microsoft DE > any DE
+  const priority = [
+    v => v.name.includes('Google') && v.lang.startsWith('de'),
+    v => v.name.includes('Microsoft') && v.lang === 'de-DE',
+    v => v.name.includes('Anna') && v.lang.startsWith('de'),
+    v => v.name.includes('Petra') && v.lang.startsWith('de'),
+    v => v.lang === 'de-DE',
+    v => v.lang.startsWith('de'),
+  ];
+  for (const fn of priority) {
+    const v = voices.find(fn);
+    if (v) return v;
+  }
+  return null;
+}
+
 function speak(text, onEnd) {
   if (!('speechSynthesis' in window)) { if (onEnd) onEnd(); return; }
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'de-DE';
-  u.rate = 0.88;
-  u.pitch = 1;
+
+  const doSpeak = () => {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'de-DE';
+    u.rate = 0.82;  // slightly slower = more natural
+    u.pitch = 1.0;
+    u.volume = 1.0;
+    const voice = getBestDeVoice();
+    if (voice) u.voice = voice;
+    u.onend = () => { aiSpeaking = false; if (onEnd) onEnd(); };
+    u.onerror = () => { aiSpeaking = false; if (onEnd) onEnd(); };
+    aiSpeaking = true;
+    speechSynthesis.speak(u);
+  };
+
+  // Wait for voices to load if not ready
   const voices = speechSynthesis.getVoices();
-  const deVoice = voices.find(v => v.lang.startsWith('de'));
-  if (deVoice) u.voice = deVoice;
-  u.onend = () => { aiSpeaking = false; if (onEnd) onEnd(); };
-  u.onerror = () => { aiSpeaking = false; if (onEnd) onEnd(); };
-  aiSpeaking = true;
-  speechSynthesis.speak(u);
+  if (voices.length === 0) {
+    speechSynthesis.onvoiceschanged = () => { doSpeak(); };
+  } else {
+    doSpeak();
+  }
 }
 
 function speakUa(text) {
@@ -559,14 +589,21 @@ function speakUa(text) {
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'uk-UA';
-  u.rate = 0.9;
+  u.rate = 0.88;
+  const voices = speechSynthesis.getVoices();
+  const uaVoice = voices.find(v => v.lang.startsWith('uk')) ||
+                  voices.find(v => v.lang.startsWith('ru')); // fallback
+  if (uaVoice) u.voice = uaVoice;
   speechSynthesis.speak(u);
 }
 
-// Preload voices
+// Preload voices immediately
 if ('speechSynthesis' in window) {
   speechSynthesis.getVoices();
-  speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged = () => {
+    const v = speechSynthesis.getVoices();
+    console.log('Voices loaded:', v.filter(x=>x.lang.startsWith('de')).map(x=>x.name));
+  };
 }
 
 // ══════════════════════════════════════════════════════════════
