@@ -6609,7 +6609,11 @@ function closeLanding() {
   if (!lp) return;
   lp.style.transition = 'opacity .5s ease';
   lp.style.opacity = '0';
-  setTimeout(() => { lp.style.display = 'none'; }, 500);
+  setTimeout(() => {
+    lp.style.display = 'none';
+    // Init dict clicks after landing closes and DOM is visible
+    setTimeout(() => initDictClicks('b1_1'), 100);
+  }, 500);
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -6984,7 +6988,7 @@ function spLevenshtein(a, b) {
 
 // init — show B1 lektion 1 first
 switchLevel('B1');
-setTimeout(() => initDictClicks('b1_1'), 300);
+// initDictClicks called in closeLanding() after DOM is visible
 </script>
 
 </body>
