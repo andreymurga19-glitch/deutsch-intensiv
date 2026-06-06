@@ -687,6 +687,47 @@
     line-height: 1;
   }
   .speak-btn:hover { opacity: 1; }
+
+  /* DeutschTrack integration button */
+  .dt-add-btn {
+    background: none;
+    border: 1px solid var(--klett-mid);
+    color: var(--klett-mid);
+    border-radius: 4px;
+    font-size: 11px;
+    padding: 2px 7px;
+    cursor: pointer;
+    margin-left: 6px;
+    opacity: 0;
+    transition: all .2s;
+    vertical-align: middle;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .word-row:hover .dt-add-btn { opacity: 1; }
+  .dt-add-btn.added {
+    background: var(--green-bg);
+    border-color: var(--green);
+    color: var(--green);
+    opacity: 1;
+  }
+  .dt-link {
+    position: fixed;
+    bottom: 90px;
+    right: 24px;
+    z-index: 501;
+    background: #161619;
+    border: 1px solid #d4a843;
+    color: #d4a843;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    text-decoration: none;
+    box-shadow: 0 2px 12px rgba(212,168,67,.3);
+    transition: all .2s;
+  }
+  .dt-link:hover { background: #d4a843; color: #000; }
   @media (max-width: 600px) {
     .ai-panel { padding: 16px; }
     .trn-word-select { grid-template-columns: 1fr; }
@@ -7187,6 +7228,143 @@ function spLevenshtein(a, b) {
   return dp[a.length][b.length];
 }
 
+
+// ══════════════════════════════════════════════════════════════
+// DEUTSCHTRACK INTEGRATION
+// ══════════════════════════════════════════════════════════════
+const DT_KEY = 'dt_v4';
+
+function dtLoad() {
+  try {
+    const c = localStorage.getItem(DT_KEY);
+    if (c) { const p = JSON.parse(c); if (p && p.words) return p; }
+  } catch {}
+  return { words: [], topicNotes: {}, topicWords: {}, activity: {}, quizHistory: [] };
+}
+
+function dtSave(data) {
+  localStorage.setItem(DT_KEY, JSON.stringify(data));
+}
+
+function dtTod() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function dtUid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+function dtAddWord(de, ua, btn) {
+  if (btn) btn.stopPropagation ? btn.stopPropagation() : null;
+
+  const data = dtLoad();
+  const today = dtTod();
+
+  // Check if already added
+  const exists = data.words.find(w => w.de.trim() === de.trim());
+  if (exists) {
+    dtShowToast('Вже є в DeutschTrack!', '#d4a843');
+    if (btn) { btn.textContent = '✓ Є'; btn.classList.add('added'); }
+    return;
+  }
+
+  // Find next available date (max 5 words per day)
+  let targetDate = today;
+  for (let d = 0; d < 30; d++) {
+    const dt = new Date(today + 'T12:00:00');
+    dt.setDate(dt.getDate() + d);
+    const k = dt.toISOString().split('T')[0];
+    const wordsOnDay = data.words.filter(w => w.date === k).length;
+    if (wordsOnDay < 5) { targetDate = k; break; }
+  }
+
+  // Add word
+  const newWord = {
+    id: dtUid(),
+    de: de,
+    uk: ua,
+    topic: '',
+    date: targetDate,
+    mastery: 0,
+    testCount: 0,
+    correct: 0,
+    examples: [],
+    hardCount: 0,
+    learnCount: 0
+  };
+
+  data.words.push(newWord);
+
+  // Update activity
+  if (!data.activity) data.activity = {};
+  if (!data.activity[today]) data.activity[today] = { w: 0, t: 0 };
+  data.activity[today].w++;
+
+  dtSave(data);
+
+  // UI feedback
+  if (btn) {
+    const isToday = targetDate === today;
+    btn.textContent = isToday ? '✓ Сьогодні' : '✓ ' + targetDate.slice(5);
+    btn.classList.add('added');
+  }
+
+  const isToday = targetDate === today;
+  dtShowToast(
+    isToday
+      ? '➕ Додано в DeutschTrack на сьогодні!'
+      : '➕ Додано на ' + targetDate.slice(5) + ' (сьогодні вже 5 слів)',
+    '#3ecf8e'
+  );
+}
+
+function dtShowToast(msg, color) {
+  let t = document.getElementById('dt-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'dt-toast';
+    t.style.cssText = 'position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#161619;border:1px solid #3ecf8e;color:#3ecf8e;padding:9px 18px;border-radius:20px;font-family:"IBM Plex Mono",monospace;font-size:12px;z-index:9999;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.borderColor = color || '#3ecf8e';
+  t.style.color = color || '#3ecf8e';
+  t.style.opacity = '1';
+  setTimeout(() => t.style.opacity = '0', 2500);
+}
+
+// Add ➕ buttons to dict rows after initDictClicks
+const _origInitDictClicks = initDictClicks;
+initDictClicks = function(lk) {
+  _origInitDictClicks(lk);
+  // Add DT buttons
+  const page = document.getElementById('lk' + lk);
+  if (!page) return;
+  const dtData = dtLoad();
+  const existingWords = new Set(dtData.words.map(w => w.de.trim()));
+
+  page.querySelectorAll('#dict-panel-' + lk + ' .word-row').forEach(row => {
+    if (row.querySelector('.dt-add-btn')) return;
+    const deEl = row.querySelector('.word-de');
+    const uaEl = row.querySelector('.word-ua');
+    if (!deEl || !uaEl) return;
+    const de = deEl.textContent.replace('🔊', '').trim();
+    const ua = uaEl.textContent.replace('🔊', '').trim();
+
+    const btn = document.createElement('button');
+    btn.className = 'dt-add-btn' + (existingWords.has(de) ? ' added' : '');
+    btn.textContent = existingWords.has(de) ? '✓ Є' : '+ DT';
+    btn.title = 'Додати в DeutschTrack';
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      dtAddWord(de, ua, btn);
+    };
+
+    // Add after word-ua
+    uaEl.after(btn);
+  });
+};
+
 // init — show B1 lektion 1 first
 switchLevel('B1');
 setTimeout(() => initDictClicks('b1_1'), 300);
@@ -7315,6 +7493,9 @@ setTimeout(() => initDictClicks('b1_1'), 300);
     </div>
   </div>
 </div>
+
+
+<a class="dt-link" href="/track.html" target="_blank">📊 DeutschTrack</a>
 
 </body>
 </html>
