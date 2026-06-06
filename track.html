@@ -245,7 +245,6 @@ body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh
   <button class="tab active" onclick="goTab('progress',this)">📊 Прогрес</button>
   <button class="tab" onclick="goTab('agent',this)">🤖 AI Агент</button>
   <button class="tab" onclick="goTab('words',this)">📝 Слова</button>
-  <button class="tab" onclick="goTab('hw',this)">📚 ДЗ</button>
   <button class="tab" onclick="goTab('voice',this)">🎤 Голос</button>
   <button class="tab" onclick="goTab('cards',this)">🃏 Картки</button>
 </nav>
@@ -331,21 +330,6 @@ body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh
   </div>
 
   <div id="wordsList"></div>
-</div>
-
-<!-- ══════════ ДЗ ══════════ -->
-<div class="view" id="view-hw">
-  <div class="card">
-    <div class="card-title">📚 Домашнє завдання</div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <div style="font-size:.78rem;color:var(--mt2)" id="hwDateLabel"></div>
-      <div>
-        <div style="font-family:var(--fh);font-size:1.2rem;color:var(--gold)" id="hwTotal">0/15</div>
-        <div class="pbar" style="width:100px;margin-top:3px"><div class="pbar-fill" id="hwTotalBar" style="width:0%"></div></div>
-      </div>
-    </div>
-    <div id="hwTasks"></div>
-  </div>
 </div>
 
 <!-- ══════════ ГОЛОС ══════════ -->
@@ -533,7 +517,6 @@ function goTab(tab,btn){
   document.getElementById('view-'+tab).classList.add('active');
   if(tab==='progress')renderProgress();
   if(tab==='words')renderWords();
-  if(tab==='hw')renderHW();
   if(tab==='agent')initAgent();
   if(tab==='voice')vtInit();
   if(tab==='cards')renderHardCount();
@@ -1239,7 +1222,56 @@ if('speechSynthesis' in window){speechSynthesis.getVoices();speechSynthesis.onvo
 // ══════════════════════════════════════════════════════════════
 // HW DAY MODAL
 // ══════════════════════════════════════════════════════════════
-function openHWDay(date){openCalDay(date);}
+function openHWDay(dateStr){
+  const hw = D.homework || {};
+  if(!hw[dateStr]) hw[dateStr] = {task1:0, task2:0};
+  D.homework = hw;
+
+  const d = new Date(dateStr+'T12:00:00');
+  const isToday = dateStr === tod();
+  const dayLabel = isToday ? 'Сьогодні' : d.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
+
+  // Get words for task1 (day) and task2 (5 days)
+  const days5 = [];
+  for(let i=0;i<5;i++){const dx=new Date(dateStr+'T12:00:00');dx.setDate(dx.getDate()-i);days5.push(dx.toISOString().split('T')[0]);}
+  const words1 = D.words.filter(w=>w.date===dateStr);
+  const words2 = D.words.filter(w=>days5.includes(w.date));
+  const h = hw[dateStr];
+  const t1=h.task1||0, t2=h.task2||0;
+
+  document.getElementById('hwDayTitle').textContent = '📚 ' + dayLabel;
+  document.getElementById('hwDayDateLabel').textContent = dateStr;
+
+  const circles1 = Array.from({length:10},(_,i)=>`<div class="hw-circle${i<t1?' done':i===t1?' cur':''}">${i+1}</div>`).join('');
+  const circles2 = Array.from({length:5},(_,i)=>`<div class="hw-circle${i<t2?' done':i===t2?' cur':''}">${i+1}</div>`).join('');
+
+  const taskBtn = (num, wordCount, done, goal, dir) => {
+    if(!wordCount) return '<div style="font-size:.75rem;color:var(--mt2);padding:6px 0">Немає слів</div>';
+    if(done>=goal) return '<div style="color:var(--grn);font-weight:600;padding:6px 0">✅ Виконано!</div>';
+    return `<div class="hw-dir" style="margin:8px 0">
+      <div class="hw-dir-btn${(num===1?hwDir1:hwDir2)==='de2uk'?' on':''}" onclick="setHWDir(${num},'de2uk','${dateStr}');openHWDay('${dateStr}')">DE→УКР</div>
+      <div class="hw-dir-btn${(num===1?hwDir1:hwDir2)==='uk2de'?' on':''}" onclick="setHWDir(${num},'uk2de','${dateStr}');openHWDay('${dateStr}')">УКР→DE</div>
+      <div class="hw-dir-btn${(num===1?hwDir1:hwDir2)==='mix'?' on':''}" onclick="setHWDir(${num},'mix','${dateStr}');openHWDay('${dateStr}')">Мікс</div>
+    </div>
+    <button class="btn btn-full" onclick="closeHWDay();startHWTask(${num},'${dateStr}')">▶ Почати (${done+1}/${goal})</button>`;
+  };
+
+  document.getElementById('hwDayBody').innerHTML = `
+    <div style="margin-bottom:16px">
+      <div style="font-size:.78rem;font-weight:600;margin-bottom:8px">📅 Картки дня (${words1.length} слів)</div>
+      <div class="hw-circles">${circles1}</div>
+      <div style="display:flex;gap:4px;margin:6px 0"><div class="pbar" style="flex:1"><div class="pbar-fill" style="width:${Math.round(t1/10*100)}%"></div></div><div style="font-size:.7rem;color:${t1>=10?'var(--grn)':'var(--mt2)'};margin-left:6px">${t1}/10</div></div>
+      ${taskBtn(1, words1.length, t1, 10, hwDir1)}
+    </div>
+    <div>
+      <div style="font-size:.78rem;font-weight:600;margin-bottom:8px">📚 Картки за 5 днів (${words2.length} слів)</div>
+      <div class="hw-circles">${circles2}</div>
+      <div style="display:flex;gap:4px;margin:6px 0"><div class="pbar" style="flex:1"><div class="pbar-fill" style="width:${Math.round(t2/5*100)}%"></div></div><div style="font-size:.7rem;color:${t2>=5?'var(--grn)':'var(--mt2)'};margin-left:6px">${t2}/5</div></div>
+      ${taskBtn(2, words2.length, t2, 5, hwDir2)}
+    </div>`;
+
+  document.getElementById('hwDayOv').style.display='flex';
+}
 function closeHWDay(){document.getElementById('hwDayOv').style.display='none';}
 
 // ══════════════════════════════════════════════════════════════
