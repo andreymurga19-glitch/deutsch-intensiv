@@ -6623,9 +6623,355 @@ function getProgressHtml() {
 }
 
 // ══════════════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════════════
+// ГОЛОСОВИЙ ТРЕНАЖЕР JS
+// ══════════════════════════════════════════════════════════════
+let vtWords = [];
+let vtIdx = 0;
+let vtCurrentWord = '';
+let vtCorrectCount = 0;
+let vtWrongCount = 0;
+let vtRecognition = null;
+let vtRevealed = false;
+
+function openVoiceTrainer() {
+  const modal = document.getElementById('voice-modal');
+  modal.style.display = 'flex';
+  vtLoadWords();
+}
+
+function closeVoiceTrainer() {
+  const modal = document.getElementById('voice-modal');
+  modal.style.display = 'none';
+  if (vtRecognition) vtRecognition.abort();
+  speechSynthesis.cancel();
+}
+
+function vtLoadWords() {
+  const sel = document.getElementById('vt-level');
+  const lk = sel.value;
+  const data = getWordData(isNaN(lk) ? lk : parseInt(lk));
+  if (!data) return;
+  vtWords = data.words.filter(w => w.de && !w.de.includes('/') || w.de.length < 40);
+  vtIdx = 0;
+  vtCorrectCount = 0;
+  vtWrongCount = 0;
+  vtShuffle();
+  vtShowWord();
+}
+
+function vtShuffle() {
+  const sel = document.getElementById('vt-level');
+  const lk = sel.value;
+  const data = getWordData(isNaN(lk) ? lk : parseInt(lk));
+  if (!data) return;
+  vtWords = [...data.words];
+  for (let i = vtWords.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [vtWords[i], vtWords[j]] = [vtWords[j], vtWords[i]];
+  }
+  vtIdx = 0;
+  vtShowWord();
+}
+
+function vtShowWord() {
+  if (vtWords.length === 0) return;
+  const w = vtWords[vtIdx % vtWords.length];
+  // Extract clean German word (remove articles and grammar notes)
+  vtCurrentWord = w.de
+    .replace(/^(der|die|das|der\/die)\s+/i, '')
+    .replace(/,.*$/, '')
+    .replace(/\(.*?\)/g, '')
+    .replace(/\+.*$/, '')
+    .trim();
+
+  document.getElementById('vt-ua').textContent = w.ua;
+  const deEl = document.getElementById('vt-de-hidden');
+  deEl.textContent = w.de;
+  deEl.style.filter = 'blur(8px)';
+  deEl.style.fontSize = w.de.length > 30 ? '18px' : '28px';
+  document.getElementById('vt-hint').textContent = 'Натисни щоб підказати';
+  document.getElementById('vt-result').style.display = 'none';
+  document.getElementById('vt-progress').textContent = (vtIdx + 1) + '/' + vtWords.length;
+  document.getElementById('vt-status').textContent = 'Натисни 🎤 і говори по-німецьки';
+  document.getElementById('vt-correct').textContent = vtCorrectCount;
+  document.getElementById('vt-wrong').textContent = vtWrongCount;
+  vtRevealed = false;
+
+  // Reset mic button
+  const btn = document.getElementById('vt-mic-btn');
+  btn.style.background = 'linear-gradient(135deg,#c0185a,#e8266e)';
+  btn.textContent = '🎤';
+}
+
+function vtReveal() {
+  const deEl = document.getElementById('vt-de-hidden');
+  deEl.style.filter = 'none';
+  document.getElementById('vt-hint').textContent = '← Слово розкрите';
+  vtRevealed = true;
+  // Auto-speak
+  speakDe(vtCurrentWord);
+}
+
+function vtNext() {
+  vtIdx = (vtIdx + 1) % vtWords.length;
+  vtShowWord();
+  if (vtRecognition) vtRecognition.abort();
+}
+
+function vtPrev() {
+  vtIdx = (vtIdx - 1 + vtWords.length) % vtWords.length;
+  vtShowWord();
+  if (vtRecognition) vtRecognition.abort();
+}
+
+function vtStartListening() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert('Розпізнавання голосу не підтримується. Використовуй Chrome.');
+    return;
+  }
+
+  if (vtRecognition) vtRecognition.abort();
+
+  vtRecognition = new SpeechRecognition();
+  vtRecognition.lang = 'de-DE';
+  vtRecognition.interimResults = false;
+  vtRecognition.maxAlternatives = 5;
+
+  const btn = document.getElementById('vt-mic-btn');
+  const status = document.getElementById('vt-status');
+
+  // Animate button
+  btn.style.background = 'linear-gradient(135deg,#e8266e,#ff4d9e)';
+  btn.textContent = '⏺️';
+  btn.style.animation = 'pulse 1s infinite';
+  status.textContent = '🎙️ Слухаю…';
+
+  vtRecognition.onresult = (event) => {
+    btn.style.animation = '';
+    btn.textContent = '🎤';
+    btn.style.background = 'linear-gradient(135deg,#c0185a,#e8266e)';
+
+    // Get all alternatives
+    const alternatives = [];
+    for (let i = 0; i < event.results[0].length; i++) {
+      alternatives.push(event.results[0][i].transcript.toLowerCase().trim());
+    }
+
+    const heard = alternatives[0];
+    const target = vtCurrentWord.toLowerCase().trim();
+
+    // Check if any alternative matches
+    const isCorrect = alternatives.some(alt => {
+      const a = alt.replace(/[^a-zäöüß\s]/gi, '').trim();
+      const t = target.replace(/[^a-zäöüß\s]/gi, '').trim();
+      return a === t || a.includes(t) || t.includes(a) ||
+             vtLevenshtein(a, t) <= Math.max(1, Math.floor(t.length * 0.25));
+    });
+
+    vtShowResult(isCorrect, heard, target);
+  };
+
+  vtRecognition.onerror = (event) => {
+    btn.style.animation = '';
+    btn.textContent = '🎤';
+    btn.style.background = 'linear-gradient(135deg,#c0185a,#e8266e)';
+    if (event.error === 'no-speech') {
+      status.textContent = 'Не почув. Спробуй ще раз.';
+    } else if (event.error === 'not-allowed') {
+      status.textContent = '❌ Дозволь доступ до мікрофона!';
+    } else {
+      status.textContent = 'Помилка: ' + event.error;
+    }
+  };
+
+  vtRecognition.onend = () => {
+    btn.style.animation = '';
+    if (btn.textContent === '⏺️') {
+      btn.textContent = '🎤';
+      btn.style.background = 'linear-gradient(135deg,#c0185a,#e8266e)';
+    }
+  };
+
+  vtRecognition.start();
+}
+
+function vtShowResult(isCorrect, heard, target) {
+  const resultEl = document.getElementById('vt-result');
+  const iconEl = document.getElementById('vt-result-icon');
+  const textEl = document.getElementById('vt-result-text');
+  const heardEl = document.getElementById('vt-result-heard');
+
+  // Reveal the word
+  document.getElementById('vt-de-hidden').style.filter = 'none';
+
+  resultEl.style.display = 'block';
+
+  if (isCorrect) {
+    vtCorrectCount++;
+    resultEl.style.background = 'rgba(26,107,69,.3)';
+    resultEl.style.border = '1px solid rgba(46,204,113,.4)';
+    iconEl.textContent = '✅';
+    textEl.textContent = 'Чудово! Правильно!';
+    heardEl.textContent = 'Почув: "' + heard + '"';
+    document.getElementById('vt-correct').textContent = vtCorrectCount;
+    // Auto advance after 1.5s
+    setTimeout(() => vtNext(), 1500);
+  } else {
+    vtWrongCount++;
+    resultEl.style.background = 'rgba(192,24,90,.2)';
+    resultEl.style.border = '1px solid rgba(232,38,110,.4)';
+    iconEl.textContent = '❌';
+    textEl.textContent = 'Правильно: "' + target + '"';
+    heardEl.textContent = 'Почув: "' + heard + '"';
+    document.getElementById('vt-wrong').textContent = vtWrongCount;
+    // Speak correct word
+    setTimeout(() => speakDe(target), 300);
+  }
+
+  document.getElementById('vt-status').textContent = isCorrect ? '🎉 Відмінно!' : '🔄 Спробуй ще';
+}
+
+// Levenshtein distance for fuzzy matching
+function vtLevenshtein(a, b) {
+  const m = a.length, n = b.length;
+  const dp = Array.from({length: m+1}, (_, i) => Array.from({length: n+1}, (_, j) => i === 0 ? j : j === 0 ? i : 0));
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
+      dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+  return dp[m][n];
+}
+
 // init — show B1 lektion 1 first
 switchLevel('B1');
 setTimeout(() => initDictClicks('b1_1'), 300);
 </script>
+
+<!-- ══════════════════════════════════════════════════════════════
+     ГОЛОСОВИЙ ТРЕНАЖЕР
+══════════════════════════════════════════════════════════════ -->
+
+<!-- Floating mic button -->
+<button id="voice-fab" onclick="openVoiceTrainer()" style="
+  position:fixed;bottom:24px;right:24px;z-index:500;
+  width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(135deg,#c0185a,#e8266e);
+  border:none;color:#fff;font-size:24px;cursor:pointer;
+  box-shadow:0 4px 20px rgba(192,24,90,.5);
+  transition:all .2s;display:flex;align-items:center;justify-content:center;
+" title="Голосовий тренажер">🎤</button>
+
+<!-- Voice trainer modal -->
+<div id="voice-modal" style="
+  display:none;position:fixed;inset:0;z-index:600;
+  background:rgba(0,0,0,.6);backdrop-filter:blur(4px);
+  align-items:flex-end;justify-content:center;
+">
+  <div style="
+    background:linear-gradient(180deg,#1a1a2e 0%,#16213e 100%);
+    width:100%;max-width:500px;border-radius:24px 24px 0 0;
+    padding:24px 20px 40px;color:#fff;
+    max-height:90vh;overflow-y:auto;
+  ">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div>
+        <div style="font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.5);text-transform:uppercase;">Голосовий тренажер</div>
+        <div style="font-size:18px;font-weight:700;margin-top:2px;">Вимова 🎤</div>
+      </div>
+      <button onclick="closeVoiceTrainer()" style="background:rgba(255,255,255,.1);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;">✕</button>
+    </div>
+
+    <!-- Level & Lektion selector -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <select id="vt-level" onchange="vtLoadWords()" style="flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:8px 12px;border-radius:10px;font-size:13px;">
+        <option value="b1_1">B1 · Menschen</option>
+        <option value="b1_2">B1 · Stationen</option>
+        <option value="b1_3">B1 · Wohnen</option>
+        <option value="b1_4">B1 · Einkaufen</option>
+        <option value="b1_5">B1 · Lernen</option>
+        <option value="b1_6">B1 · Freizeit</option>
+        <option value="b1_7">B1 · Reisen</option>
+        <option value="b1_8">B1 · Gesundheit</option>
+        <option value="b1_9">B1 · Umwelt</option>
+        <option value="b1_10">B1 · Beruf</option>
+        <option value="b1_11">B1 · Unternehmen</option>
+        <option value="b1_12">B1 · Behörden</option>
+        <option value="1">B2 · Lektion 1</option>
+        <option value="2">B2 · Lektion 2</option>
+        <option value="3">B2 · Lektion 3</option>
+        <option value="4">B2 · Lektion 4</option>
+        <option value="5">B2 · Lektion 5</option>
+        <option value="6">B2 · Lektion 6</option>
+        <option value="7">B2 · Lektion 7</option>
+        <option value="8">B2 · Lektion 8</option>
+        <option value="9">B2 · Lektion 9</option>
+        <option value="10">B2 · Lektion 10</option>
+        <option value="11">B2 · Lektion 11</option>
+        <option value="12">B2 · Lektion 12</option>
+        <option value="13">B2 · Lektion 13</option>
+      </select>
+      <button onclick="vtShuffle()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:8px 14px;border-radius:10px;font-size:13px;cursor:pointer;">🔀</button>
+    </div>
+
+    <!-- Word display -->
+    <div id="vt-word-card" style="
+      background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);
+      border-radius:16px;padding:24px;text-align:center;margin-bottom:20px;
+      min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    ">
+      <div id="vt-ua" style="font-size:14px;color:rgba(255,255,255,.6);margin-bottom:8px;"></div>
+      <div id="vt-de-hidden" style="font-size:28px;font-weight:700;letter-spacing:1px;filter:blur(8px);transition:filter .3s;cursor:pointer;" onclick="vtReveal()">???</div>
+      <div id="vt-hint" style="font-size:11px;color:rgba(255,255,255,.4);margin-top:8px;">Натисни щоб підказати</div>
+      <button onclick="speakDe(vtCurrentWord)" style="margin-top:12px;background:rgba(192,24,90,.3);border:1px solid rgba(192,24,90,.5);color:#fff;padding:6px 16px;border-radius:20px;font-size:13px;cursor:pointer;">🔊 Послухати</button>
+    </div>
+
+    <!-- Result display -->
+    <div id="vt-result" style="
+      display:none;border-radius:12px;padding:16px;margin-bottom:16px;text-align:center;
+    ">
+      <div id="vt-result-icon" style="font-size:36px;margin-bottom:6px;"></div>
+      <div id="vt-result-text" style="font-size:14px;"></div>
+      <div id="vt-result-heard" style="font-size:12px;color:rgba(255,255,255,.5);margin-top:4px;"></div>
+    </div>
+
+    <!-- Mic button -->
+    <div style="text-align:center;margin-bottom:16px;">
+      <button id="vt-mic-btn" onclick="vtStartListening()" style="
+        width:80px;height:80px;border-radius:50%;
+        background:linear-gradient(135deg,#c0185a,#e8266e);
+        border:none;color:#fff;font-size:32px;cursor:pointer;
+        box-shadow:0 4px 20px rgba(192,24,90,.5);
+        transition:all .3s;
+      ">🎤</button>
+      <div id="vt-status" style="font-size:12px;color:rgba(255,255,255,.5);margin-top:8px;">Натисни і говори по-німецьки</div>
+    </div>
+
+    <!-- Navigation -->
+    <div style="display:flex;gap:10px;">
+      <button onclick="vtPrev()" style="flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:12px;border-radius:12px;font-size:14px;cursor:pointer;">← Назад</button>
+      <button onclick="vtNext()" style="flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:12px;border-radius:12px;font-size:14px;cursor:pointer;">Далі →</button>
+    </div>
+
+    <!-- Stats -->
+    <div style="display:flex;gap:12px;margin-top:16px;text-align:center;">
+      <div style="flex:1;background:rgba(26,107,69,.2);border-radius:10px;padding:10px;">
+        <div id="vt-correct" style="font-size:22px;font-weight:700;color:#2ecc71;">0</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.5);">Правильно</div>
+      </div>
+      <div style="flex:1;background:rgba(192,24,90,.2);border-radius:10px;padding:10px;">
+        <div id="vt-wrong" style="font-size:22px;font-weight:700;color:#e8266e;">0</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.5);">Помилок</div>
+      </div>
+      <div style="flex:1;background:rgba(255,255,255,.05);border-radius:10px;padding:10px;">
+        <div id="vt-progress" style="font-size:22px;font-weight:700;">0/0</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.5);">Прогрес</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
