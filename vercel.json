@@ -4,8 +4,8 @@
       "maxDuration": 30
     }
   },
-  "routes": [
-    { "src": "/track", "dest": "/track.html" },
-    { "src": "/track.html", "dest": "/track.html" }
+  "rewrites": [
+    { "source": "/track", "destination": "/track.html" },
+    { "source": "/lesson", "destination": "/lesson.html" }
   ]
 }
