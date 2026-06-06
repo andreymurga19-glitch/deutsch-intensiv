@@ -239,27 +239,10 @@ body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh
       <div class="fl"><label>Переклад</label><input id="iUk" placeholder="Слово..."></div>
       <button class="btn" onclick="addWordManual()">+ Додати</button>
     </div>
-    <div style="display:flex;gap:8px;margin-top:8px;">
-      <div class="fl" style="flex:1"><label>Дата</label><input type="date" id="iDate"></div>
-      <div class="fl" style="flex:1"><label>Тема</label>
-        <select id="iTopic">
-          <option value="">— без теми —</option>
-          <option>Lagerlogistik</option><option>Behandlung</option><option>Leben</option>
-          <option>Reisen</option><option>Arbeit</option><option>Familie</option><option>Freizeit</option>
-        </select>
-      </div>
-    </div>
+
   </div>
 
-  <div style="display:flex;gap:8px;margin-bottom:10px">
-    <input style="flex:1;background:var(--sf2);border:1px solid var(--br);border-radius:8px;color:var(--tx);font-family:var(--ff);font-size:.84rem;padding:8px 12px;outline:none" placeholder="🔍 Пошук..." id="searchInput" oninput="renderWords()">
-    <select style="background:var(--sf2);border:1px solid var(--br);border-radius:8px;color:var(--tx);font-family:var(--ff);font-size:.82rem;padding:8px 10px;outline:none" id="sortSelect" onchange="renderWords()">
-      <option value="date-desc">Нові ↓</option>
-      <option value="date-asc">Старі ↑</option>
-      <option value="alpha">А-Я</option>
-      <option value="mastery">Майстерність</option>
-    </select>
-  </div>
+
 
   <div id="wordsList"></div>
 </div>
@@ -708,14 +691,98 @@ function closeAiEx() {
   aiExWordId = null;
 }
 
+
+// ══════════════════════════════════════════════════════════════
+// AI EXAMPLE MODAL
+// ══════════════════════════════════════════════════════════════
+let aiExWordId = null;
+
+async function openAiEx(wordId) {
+  const w = D.words.find(x => x.id === wordId);
+  if (!w) return;
+  aiExWordId = wordId;
+
+  document.getElementById('aiExWord').textContent = w.de;
+  document.getElementById('aiExTrans').textContent = w.uk;
+  document.getElementById('aiExOwn').value = '';
+  document.getElementById('aiExFeedback').style.display = 'none';
+  document.getElementById('aiExList').innerHTML = '<div style="text-align:center;padding:24px;color:var(--mt2);font-size:.82rem"><div style="width:22px;height:22px;border:2px solid var(--br);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px"></div>Генерую приклади...</div>';
+  document.getElementById('aiExOv').style.display = 'flex';
+
+  try {
+    const prompt = `Придумай 3 різних живих приклади речень рівня B1-B2 для слова: "${w.de}" (${w.uk}).
+Кожен приклад в іншому контексті. ТІЛЬКИ JSON масив без markdown:
+[{"de":"речення1","ua":"переклад1"},{"de":"речення2","ua":"переклад2"},{"de":"речення3","ua":"переклад3"}]`;
+    const text = await callAI(prompt);
+    const clean = text.replace(/\`\`\`json|\`\`\`/g,'').trim();
+    const m = clean.match(/\[[\s\S]*\]/);
+    if (!m) throw new Error('no json');
+    const examples = JSON.parse(m[0]);
+    document.getElementById('aiExList').innerHTML = examples.map((ex,i) => `
+      <div style="background:var(--sf2);border:1px solid var(--br);border-radius:10px;padding:12px 14px;margin-bottom:8px">
+        <div style="font-family:var(--fm);font-size:.82rem;line-height:1.5;margin-bottom:4px">${esc(ex.de)}</div>
+        <div style="font-size:.74rem;color:var(--mt2);font-style:italic;margin-bottom:8px">${esc(ex.ua)}</div>
+        <button class="btn btn-sm" onclick="saveAiExample('${wordId}',${JSON.stringify(ex.de)},${JSON.stringify(ex.ua)})">✅ Зберегти</button>
+      </div>`).join('');
+  } catch(e) {
+    document.getElementById('aiExList').innerHTML = '<div style="color:var(--pink);font-size:.8rem;padding:12px">Помилка. Спробуй ще раз.</div>';
+  }
+}
+
+function saveAiExample(wordId, de, ua) {
+  const w = D.words.find(x => x.id === wordId);
+  if (!w) return;
+  w.examples = [{de, ua}];
+  saveD(); renderWords();
+  toast('✅ Приклад збережено!', 'var(--grn)');
+  closeAiEx();
+}
+
+async function checkAiOwn() {
+  const own = document.getElementById('aiExOwn').value.trim();
+  if (!own) { toast('Напиши речення!', 'var(--pink)'); return; }
+  const w = D.words.find(x => x.id === aiExWordId);
+  if (!w) return;
+  const fb = document.getElementById('aiExFeedback');
+  fb.style.display = 'block';
+  fb.style.background = 'var(--sf2)';
+  fb.style.border = '1px solid var(--br)';
+  fb.innerHTML = '<div style="width:16px;height:16px;border:2px solid var(--br);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;display:inline-block"></div> Перевіряю...';
+  try {
+    const prompt = `Перевір речення учня для слова "${w.de}" (${w.uk}).
+Речення: "${own}"
+ТІЛЬКИ JSON: {"correct":true,"comment":"коментар українською","corrected":"виправлене або те саме","corrected_ua":"переклад"}`;
+    const text = await callAI(prompt);
+    const clean = text.replace(/\`\`\`json|\`\`\`/g,'').trim();
+    const m = clean.match(/\{[\s\S]*\}/);
+    if (!m) throw new Error();
+    const res = JSON.parse(m[0]);
+    const ok = res.correct;
+    fb.style.background = ok ? '#071a10' : '#1e1400';
+    fb.style.border = '1px solid ' + (ok ? 'var(--grn)' : 'var(--org)');
+    fb.innerHTML = `<div style="font-weight:600;color:${ok?'var(--grn)':'var(--org)'};margin-bottom:5px">${ok?'✅ Правильно!':'⚠️ Є помилки'}</div>
+      <div style="color:var(--mt2);font-size:.78rem;margin-bottom:6px">${esc(res.comment)}</div>
+      <div style="font-family:var(--fm);font-size:.82rem">${esc(res.corrected)}</div>
+      <div style="font-size:.72rem;color:var(--mt2);font-style:italic;margin-top:3px">${esc(res.corrected_ua||'')}</div>
+      <button class="btn btn-sm" style="margin-top:8px" onclick="saveAiExample('${aiExWordId}',${JSON.stringify(res.corrected||own)},${JSON.stringify(res.corrected_ua||'')})">✅ Зберегти</button>`;
+  } catch(e) {
+    fb.innerHTML = '<div style="color:var(--pink)">Помилка перевірки.</div>';
+  }
+}
+
+function closeAiEx() {
+  document.getElementById('aiExOv').style.display = 'none';
+  aiExWordId = null;
+}
+
 // ══════════════════════════════════════════════════════════════
 // WORDS
 // ══════════════════════════════════════════════════════════════
 function addWordManual(){
   const de=document.getElementById('iDe').value.trim();
   const uk=document.getElementById('iUk').value.trim();
-  const topic=document.getElementById('iTopic').value;
-  const date=document.getElementById('iDate').value||tod();
+  const topic='';
+  const date=tod();
   if(!de||!uk){toast('Введи слово і переклад!','var(--pink)');return;}
 
   // Find target date with max 5 words
@@ -735,15 +802,8 @@ function addWordManual(){
 }
 
 function renderWords(){
-  const q=(document.getElementById('searchInput')?.value||'').toLowerCase();
-  const sort=document.getElementById('sortSelect')?.value||'date-desc';
   let words=[...D.words];
-  if(q) words=words.filter(w=>w.de.toLowerCase().includes(q)||w.uk.toLowerCase().includes(q));
-
-  if(sort==='date-desc') words.sort((a,b)=>b.date.localeCompare(a.date));
-  else if(sort==='date-asc') words.sort((a,b)=>a.date.localeCompare(b.date));
-  else if(sort==='alpha') words.sort((a,b)=>a.de.localeCompare(b.de));
-  else if(sort==='mastery') words.sort((a,b)=>(b.mastery||0)-(a.mastery||0));
+  words.sort((a,b)=>b.date.localeCompare(a.date));
 
   if(!words.length){
     document.getElementById('wordsList').innerHTML='<div style="text-align:center;padding:32px;color:var(--mt2)"><div style="font-size:2rem;margin-bottom:8px">📭</div>Слів поки немає</div>';
@@ -753,7 +813,7 @@ function renderWords(){
   // Group by date
   const groups={};
   words.forEach(w=>{if(!groups[w.date])groups[w.date]=[];groups[w.date].push(w);});
-  const dates=Object.keys(groups).sort((a,b)=>sort==='date-asc'?a.localeCompare(b):b.localeCompare(a));
+  const dates=Object.keys(groups).sort((a,b)=>b.localeCompare(a));
 
   let html='';
   dates.forEach(date=>{
@@ -765,9 +825,9 @@ function renderWords(){
         <div class="word-de">${esc(w.de)}</div>
         <div class="word-arr">→</div>
         <div class="word-ua" style="flex:1">${esc(w.uk)}</div>
-        <span style="font-size:.75rem;color:${hasEx?'var(--grn)':'var(--br2)'};flex-shrink:0">${hasEx?'●':'○'}</span>
-        <button class="word-icon" onclick="event.stopPropagation();openAiEx('${w.id}')" title="AI приклади">🤖</button>
-        <button class="word-icon del" onclick="event.stopPropagation();deleteWord('${w.id}')" title="Видалити">✕</button>
+        <span style="font-size:.75rem;color:${hasEx?'var(--grn)':'var(--br2)'};flex-shrink:0;margin-right:2px">${hasEx?'●':'○'}</span>
+        <button class="word-icon" onclick="event.stopPropagation();openAiEx('${w.id}')" title="AI приклади" style="margin-right:8px">🤖</button>
+        <button class="word-icon del" onclick="event.stopPropagation();deleteWord('${w.id}')" title="Видалити" style="padding:3px 8px">✕</button>
       </div>`;
     });
   });
