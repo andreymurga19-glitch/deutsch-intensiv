@@ -3798,6 +3798,3194 @@
   </div>
   <div id="cards-panel-13" class="panel"><div class="cards-outer" id="co13"></div></div>
 <div id="trainer-panel-13" class="panel"><div class="ai-panel" id="trn13"></div></div>
+<div id="sprechen-panel-13" class="panel"><div id="sp-13" class="sprechen-container"></div></div>
+</div><!-- /lk13 -->
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════════
+const lkData = {
+  1: {
+    title: "Sprache und Kommunikation",
+    words: [
+      {de:"das Bedauern",gr:"nur Sg.",ua:"жаль, шкода"},
+      {de:"das Gegenüber",gr:"nur Sg.",ua:"співрозмовник, людина навпроти"},
+      {de:"die Mehrsprachigkeit",gr:"nur Sg.",ua:"багатомовність"},
+      {de:"der Sachverhalt",gr:"Pl. -e",ua:"стан справ, обставини, факт"},
+      {de:"die (Alltags-/Fach-)Sprache",gr:"Pl. -n",ua:"повсякденна / фахова мова"},
+      {de:"der Spracherwerb",gr:"meist Sg.",ua:"засвоєння мови"},
+      {de:"der (Gesprächs-/Schul-)Stoff",gr:"Pl. -e",ua:"матеріал (розмовний / навчальний)"},
+      {de:"das Themenspektrum",gr:"Pl. -en",ua:"спектр тем"},
+      {de:"der Blickkontakt",gr:"Pl. -e",ua:"зоровий контакт"},
+      {de:"der Gesichtsausdruck",gr:"Pl. -¨e",ua:"вираз обличчя"},
+      {de:"die Körpersprache",gr:"Pl. -n",ua:"мова тіла"},
+      {de:"die Stimmlage",gr:"Pl. -n",ua:"тональність голосу, регістр"},
+      {de:"ansprechen + A",gr:"ein Thema, ein Problem",ua:"порушувати (тему, проблему)"},
+      {de:"ausdrücken + A",gr:"seine Meinung",ua:"висловлювати (думку, погляд)"},
+      {de:"ausreden + D + A",gr:"jdm. einen Plan ausreden",ua:"відмовляти когось від чогось"},
+      {de:"ausreden lassen + A",gr:"sein Gegenüber",ua:"дати комусь договорити"},
+      {de:"ausweichen + D",gr:"einer Frage",ua:"ухилятися від (питання)"},
+      {de:"sich einmischen in + A",gr:"fremde Angelegenheiten",ua:"втручатися в чужі справи"},
+      {de:"gestikulieren",gr:"",ua:"жестикулювати"},
+      {de:"hinzufügen + A zu + D",gr:"etwas zur Diskussion",ua:"додавати щось до дискусії"},
+      {de:"kommunizieren mit + D",gr:"den Kunden",ua:"спілкуватися (з клієнтами)"},
+      {de:"nachfragen bei + D",gr:"seinem Chef",ua:"перепитувати, уточнювати"},
+      {de:"nachhaken bei + D",gr:"einem Kollegen",ua:"допитуватися, наполягати"},
+      {de:"stoßen auf + A",gr:"Kritik, Unverständnis",ua:"натрапляти на (критику)"},
+      {de:"über-/unterbewerten + A",gr:"ein Problem",ua:"переоцінювати / недооцінювати"},
+      {de:"über-/unterfordern + A",gr:"einen Schüler",ua:"перевантажувати / не навантажувати"},
+      {de:"über-/unterschätzen + A",gr:"eine Gefahr",ua:"переоцінювати / недооцінювати небезпеку"},
+      {de:"über-/untertreiben + A",gr:"einen Sachverhalt",ua:"перебільшувати / применшувати"},
+      {de:"vermitteln + A",gr:"einen Eindruck, Wissen",ua:"передавати, доносити (враження)"},
+      {de:"vertreten + A",gr:"einen Standpunkt",ua:"відстоювати (точку зору)"},
+      {de:"zur Sprache bringen + A",gr:"ein Thema",ua:"піднімати тему"},
+      {de:"Kritik üben an + D",gr:"einer Person",ua:"критикувати (людину, стан справ)"},
+      {de:"abstrakt",gr:"",ua:"абстрактний"},
+      {de:"akzentfrei",gr:"sprechen",ua:"без акценту"},
+      {de:"ausführlich",gr:"beschreiben",ua:"детально, докладно"},
+      {de:"ausweichend",gr:"antworten",ua:"ухильно (відповідати)"},
+      {de:"detailliert",gr:"beschreiben",ua:"детально (описувати)"},
+      {de:"hartnäckig",gr:"bleiben",ua:"наполегливий, впертий"},
+      {de:"heftig",gr:"~ Kritik",ua:"жорсткий, сильний"},
+      {de:"komplex",gr:"-e Sachverhalte",ua:"складний, комплексний"},
+      {de:"konkret",gr:"-e Hinweise",ua:"конкретний"},
+      {de:"sich abwenden von + D",gr:"seinem Partner",ua:"відвертатися від (партнера)"},
+      {de:"sich zuwenden + D",gr:"einem Schüler",ua:"звертатися до (учня)"},
+      {de:"abwinken",gr:"",ua:"відмахуватися (жестом відмови)"},
+      {de:"einleuchten + D",gr:"dem Gesprächspartner",ua:"бути зрозумілим, доходити до"},
+      {de:"erschließen + A",gr:"",ua:"розкривати; здогадуватися з контексту"},
+      {de:"flüstern",gr:"",ua:"шепотіти"},
+      {de:"missfallen + D",gr:"mir",ua:"не подобатися (мені)"},
+      {de:"misstrauen + D",gr:"den Nachbarn",ua:"не довіряти (сусідам)"},
+      {de:"missverstehen + A",gr:"ein Verhalten",ua:"неправильно розуміти"},
+      {de:"nachvollziehen + A",gr:"einen Gedanken",ua:"прослідкувати, зрозуміти (думку)"},
+      {de:"signalisieren + D + A",gr:"Einverständnis",ua:"сигналізувати (згоду)"},
+      {de:"vorwerfen + D + A",gr:"Rücksichtslosigkeit",ua:"дорікати, закидати"},
+      {de:"sich wegdrehen",gr:"",ua:"відвертатися, повертатися спиною"},
+      {de:"sich an den Kopf fassen",gr:"",ua:"схопитися за голову"},
+      {de:"in die Hände klatschen",gr:"",ua:"плескати в долоні"},
+      {de:"mit dem Kopf nicken",gr:"",ua:"кивати головою"},
+      {de:"den Kopf schütteln",gr:"",ua:"хитати головою (заперечення)"},
+      {de:"auf Ärger aus sein",gr:"",ua:"шукати сварки"},
+      {de:"das Gesicht verziehen",gr:"vor Ekel, Schmerz",ua:"скривитися (від огиди, болю)"},
+      {de:"mit den Schultern zucken",gr:"",ua:"знизувати плечима"},
+      {de:"jemandem ins Wort fallen",gr:"Redewendung",ua:"перебивати когось"},
+      {de:"zu Wort kommen",gr:"Redewendung",ua:"мати можливість висловитися"},
+      {de:"etwas auf dem Herzen haben",gr:"Redewendung",ua:"мати щось на душі"},
+      {de:"reden wie ein Wasserfall",gr:"Redewendung",ua:"говорити без упину"},
+      {de:"ganz Ohr sein",gr:"Redewendung",ua:"бути весь увага"},
+      {de:"den Faden verlieren",gr:"Redewendung",ua:"загубити нитку думки"},
+      {de:"nur Bahnhof verstehen",gr:"Redewendung",ua:"нічого не розуміти"},
+    ]
+  },
+  2: {
+    title: "Gefühle und Beziehungen",
+    words: [
+      {de:"die Eifersucht (auf + A)",gr:"nur Sg.",ua:"ревнощі"},
+      {de:"der Ekel (vor + D)",gr:"nur Sg.",ua:"огида"},
+      {de:"die Emotion",gr:"Pl. -en",ua:"емоція"},
+      {de:"das Erstaunen",gr:"nur Sg.",ua:"здивування"},
+      {de:"der Frust",gr:"nur Sg.",ua:"розчарування, фрустрація"},
+      {de:"die Gänsehaut",gr:"nur Sg.",ua:"гусяча шкіра (мурашки)"},
+      {de:"das Herzklopfen",gr:"nur Sg.",ua:"серцебиття, хвилювання"},
+      {de:"der Neid (auf + A)",gr:"nur Sg.",ua:"заздрість"},
+      {de:"die Sehnsucht (nach + D)",gr:"Pl. -e",ua:"туга, прагнення"},
+      {de:"der Trost",gr:"nur Sg.",ua:"розрада, втіха"},
+      {de:"die Verlegenheit",gr:"nur Sg.",ua:"збентеженість, ніяковість"},
+      {de:"die Verzweiflung",gr:"nur Sg.",ua:"відчай"},
+      {de:"die Wut (auf + A)",gr:"nur Sg.",ua:"лють, злість"},
+      {de:"sich auswirken auf + A",gr:"eine Situation",ua:"впливати на (ситуацію)"},
+      {de:"sich beklagen über + A",gr:"eine Ungerechtigkeit",ua:"скаржитися на (несправедливість)"},
+      {de:"sich bemühen um + A",gr:"die Gäste",ua:"намагатися, дбати про (гостей)"},
+      {de:"sich erschrecken vor + D",gr:"einem Hund",ua:"злякатися (собаки)"},
+      {de:"flirten mit + D",gr:"einer Frau",ua:"фліртувати"},
+      {de:"sich versetzen in + A",gr:"eine andere Person",ua:"ставати на місце іншої людини"},
+      {de:"sich sehnen nach + D",gr:"Liebe, Familie",ua:"тужити за (коханням, родиною)"},
+      {de:"trösten + A",gr:"ein Kind",ua:"заспокоювати, розважати (дитину)"},
+      {de:"verheimlichen + A vor + D",gr:"eine Entdeckung",ua:"приховувати (від колег)"},
+      {de:"am ganzen Körper zittern",gr:"",ua:"тремтіти всім тілом"},
+      {de:"in Tränen ausbrechen",gr:"",ua:"розплакатися, вибухнути сльозами"},
+      {de:"ein Kompliment machen + D",gr:"seiner Frau",ua:"робити комплімент"},
+      {de:"den Atem verschlagen + D",gr:"den Zuschauern",ua:"захоплювати дух (у глядачів)"},
+      {de:"charmant",gr:"",ua:"чарівний, привабливий"},
+      {de:"eklig",gr:"",ua:"огидний, бридкий"},
+      {de:"entsetzlich",gr:"",ua:"жахливий, страшенний"},
+      {de:"fürchterlich",gr:"",ua:"жахливий, страшний"},
+      {de:"grauenhaft",gr:"",ua:"жахливий, моторошний"},
+      {de:"grauenvoll",gr:"",ua:"огидний, сповнений жахів"},
+      {de:"großartig",gr:"",ua:"чудовий, грандіозний"},
+      {de:"hervorragend",gr:"",ua:"видатний, відмінний"},
+      {de:"neidisch sein auf + A",gr:"einen Kollegen",ua:"заздрити (колезі)"},
+      {de:"traumhaft",gr:"",ua:"казковий, мрійливий"},
+      {de:"verlegen",gr:"",ua:"збентежений, ніяковий"},
+      {de:"wundervoll",gr:"",ua:"чудовий, захопливий"},
+      {de:"der Bekanntenkreis",gr:"Pl. -e",ua:"коло знайомих"},
+      {de:"der Familienkreis",gr:"Pl. -e",ua:"сімейне коло"},
+      {de:"der Freundeskreis",gr:"Pl. -e",ua:"коло друзів"},
+      {de:"das Freundschaftsverhältnis",gr:"Pl. -se",ua:"дружні стосунки"},
+      {de:"die Nachbarschaft",gr:"Pl. -en",ua:"сусідство, сусіди"},
+      {de:"das (Liebes-)Verhältnis",gr:"Pl. -se",ua:"любовні стосунки"},
+      {de:"das Vertrauensverhältnis",gr:"Pl. -se",ua:"довірчі стосунки"},
+      {de:"die Verwandtschaft",gr:"Pl. -en",ua:"родичі, спорідненість"},
+      {de:"ablenken + A von + D",gr:"die Eltern von Problemen",ua:"відволікати від (проблем)"},
+      {de:"aufmuntern + A",gr:"eine Freundin",ua:"підбадьорювати"},
+      {de:"ausnutzen + A",gr:"einen Freund",ua:"використовувати (друга)"},
+      {de:"ermutigen + A",gr:"einen Schüler",ua:"заохочувати, надихати"},
+      {de:"hintergehen + A",gr:"einen Kollegen",ua:"зраджувати, обманювати"},
+      {de:"nerven + A",gr:"die Klassenkameraden",ua:"дратувати (однокласників)"},
+      {de:"sich trauen etw. zu tun",gr:"",ua:"наважуватися щось зробити"},
+      {de:"übergehen + A",gr:"einen Kommentar",ua:"ігнорувати (коментар)"},
+      {de:"vernachlässigen + A",gr:"ein Kind, seine Aufgaben",ua:"нехтувати (обов'язками)"},
+      {de:"befreundet sein mit + D",gr:"einem Mitschüler",ua:"дружити (з однокласником)"},
+      {de:"lästig sein + D",gr:"dem Bruder",ua:"бути набридливим"},
+      {de:"zum Ausdruck bringen + A",gr:"Gefühle",ua:"висловлювати, виражати (почуття)"},
+      {de:"unter Kontrolle bringen + A",gr:"eine Situation",ua:"взяти під контроль"},
+      {de:"in Verlegenheit bringen + A",gr:"eine Freundin",ua:"ставити в незручне становище"},
+      {de:"die Daumen drücken + D",gr:"den Teilnehmern",ua:"тримати кулачки (учасникам)"},
+      {de:"zur Last fallen + D",gr:"den Kindern",ua:"бути тягарем (для дітей)"},
+      {de:"eine Entscheidung fällen",gr:"",ua:"приймати рішення"},
+      {de:"eine Ehe führen",gr:"",ua:"вести подружнє життя"},
+      {de:"ein Gespräch führen",gr:"",ua:"вести розмову"},
+      {de:"einen Kampf führen",gr:"",ua:"вести боротьбу"},
+      {de:"zu Ende gehen",gr:"",ua:"закінчуватися"},
+      {de:"in Erfüllung gehen",gr:"",ua:"здійснюватися (про мрію)"},
+      {de:"auf die Nerven gehen + D",gr:"der Schwester",ua:"діяти на нерви"},
+      {de:"die Nase voll haben von + D",gr:"der Schule",ua:"бути ситим по горло"},
+      {de:"Schmetterlinge im Bauch haben",gr:"Redewendung",ua:"метелики в животі (закохатись)"},
+      {de:"zu Hilfe kommen + D",gr:"dem Verletzten",ua:"прийти на допомогу"},
+      {de:"ins Herz schließen + A",gr:"ein Kind",ua:"прив'язатися до серця"},
+      {de:"vor den Kopf stoßen + A",gr:"den Gesprächspartner",ua:"образити, шокувати"},
+    ]
+  },
+  4: {
+    title: "Dinge, Sachen, Gegenstände",
+    words: [
+      {de:"das Aluminium",gr:"nur Sg.",ua:"алюміній"},
+      {de:"der (An-)Spitzer",gr:"Pl. -",ua:"точилка (для олівців)"},
+      {de:"das Antibiotikum",gr:"Pl. Antibiotika",ua:"антибіотик"},
+      {de:"der (Büro-/Haushalts-)Artikel",gr:"Pl. -",ua:"канцелярський / господарський товар"},
+      {de:"das Arzneimittel",gr:"Pl. -",ua:"лікарський засіб"},
+      {de:"die Baumwolle",gr:"nur Sg.",ua:"бавовна"},
+      {de:"das Besteck",gr:"Pl. -e",ua:"столові прибори"},
+      {de:"der Blumentopf",gr:"Pl. -¨e",ua:"квітковий горщик"},
+      {de:"der Dreitagebart",gr:"Pl. -¨e",ua:"трьохденна щетина"},
+      {de:"der Eierbecher",gr:"Pl. -",ua:"підставка для яйця"},
+      {de:"das Erdöl",gr:"nur Sg.",ua:"нафта"},
+      {de:"das Getreide",gr:"nur Sg.",ua:"зерно, зернові"},
+      {de:"der Impfstoff",gr:"Pl. -e",ua:"вакцина"},
+      {de:"das Kerosin",gr:"nur Sg.",ua:"гас, керосин"},
+      {de:"der Kork",gr:"nur Sg.",ua:"корок (матеріал)"},
+      {de:"das Kuscheltier",gr:"Pl. -e",ua:"м'яка іграшка-тварина"},
+      {de:"das Milchprodukt",gr:"Pl. -e",ua:"молочний продукт"},
+      {de:"der Ohrring",gr:"Pl. -e",ua:"сережка"},
+      {de:"die Pinnwand",gr:"Pl. -¨e",ua:"дошка для оголошень"},
+      {de:"das Porzellan",gr:"nur Sg.",ua:"порцеляна, фарфор"},
+      {de:"der/das Radiergummi",gr:"Pl. -s",ua:"гумка (для стирання)"},
+      {de:"der Rohstoff",gr:"Pl. -e",ua:"сировина"},
+      {de:"die Säge",gr:"Pl. -n",ua:"пила"},
+      {de:"der Schraubenzieher / Schraubendreher",gr:"Pl. -",ua:"викрутка"},
+      {de:"die Schublade",gr:"Pl. -n",ua:"шухляда, ящик"},
+      {de:"das Silber",gr:"nur Sg.",ua:"срібло"},
+      {de:"das Springseil",gr:"Pl. -e",ua:"скакалка"},
+      {de:"der Ton",gr:"nur Sg.",ua:"глина"},
+      {de:"der Treibstoff",gr:"Pl. -e",ua:"паливо, пальне"},
+      {de:"abhanden|kommen",gr:"",ua:"загубитися, зникнути"},
+      {de:"sich anfühlen",gr:"weich, glatt, kalt",ua:"відчуватися навпомацки"},
+      {de:"aufkommen für + A",gr:"einen Schaden",ua:"відшкодовувати (збитки)"},
+      {de:"auftreiben + A",gr:"einen Ersatz",ua:"роздобути (замінник) (розм.)"},
+      {de:"auskommen ohne + A",gr:"Sonnenbrille",ua:"обходитися без"},
+      {de:"begleichen + A",gr:"eine Rechnung",ua:"оплачувати (рахунок)"},
+      {de:"dahinter|kommen",gr:"",ua:"докопатися, розібратися"},
+      {de:"eingestehen + A",gr:"seine Schuld",ua:"визнавати (свою провину)"},
+      {de:"entgegenkommen + D mit + D",gr:"dem Kunden mit dem Preis",ua:"іти назустріч (клієнту в ціні)"},
+      {de:"entsprechen + D",gr:"einem Wert",ua:"відповідати (цінності)"},
+      {de:"erstatten + A",gr:"die Kosten",ua:"відшкодовувати (витрати)"},
+      {de:"leisten + A",gr:"Schadenersatz",ua:"виплачувати (компенсацію)"},
+      {de:"spenden + A",gr:"eine Summe",ua:"жертвувати (суму)"},
+      {de:"zugutekommen + D",gr:"einer Person",ua:"йти на користь"},
+      {de:"einzigartig",gr:"",ua:"унікальний, неповторний"},
+      {de:"flauschig",gr:"",ua:"пухнастий, м'який (як пух)"},
+      {de:"glitschig",gr:"",ua:"слизький"},
+      {de:"klebrig",gr:"",ua:"липкий"},
+      {de:"kratzig",gr:"",ua:"колючий, дряпаючий"},
+      {de:"rau",gr:"",ua:"шорсткий, грубий"},
+      {de:"butterweich",gr:"Verstärkung",ua:"м'який як масло"},
+      {de:"eiskalt",gr:"Verstärkung",ua:"крижаний, холодний як лід"},
+      {de:"hochinteressant",gr:"Verstärkung",ua:"дуже цікавий"},
+      {de:"klitschnass",gr:"Verstärkung",ua:"мокрий до нитки"},
+      {de:"knochentrocken",gr:"Verstärkung",ua:"абсолютно сухий"},
+      {de:"kochend heiß",gr:"Verstärkung",ua:"гарячий як окріп"},
+      {de:"brandneu",gr:"Verstärkung",ua:"абсолютно новий"},
+      {de:"nagelneu",gr:"Verstärkung",ua:"новісінький"},
+      {de:"riesengroß",gr:"Verstärkung",ua:"величезний"},
+      {de:"steinhart",gr:"Verstärkung",ua:"твердий як камінь"},
+      {de:"stinknormal",gr:"Verstärkung",ua:"абсолютно звичайний (розм.)"},
+      {de:"stockdunkel",gr:"Verstärkung",ua:"абсолютно темний"},
+      {de:"taghell",gr:"Verstärkung",ua:"світлий як вдень"},
+      {de:"todlangweilig",gr:"Verstärkung",ua:"смертельно нудний"},
+      {de:"uralt",gr:"Verstärkung",ua:"дуже старий, прадавній"},
+      {de:"winzig (klein)",gr:"Verstärkung",ua:"крихітний, мізерний"},
+      {de:"der Putzlappen",gr:"Pl. -",ua:"ганчірка для прибирання"},
+      {de:"sich abnutzen",gr:"",ua:"зношуватися, спрацьовуватися"},
+      {de:"absaugen + A",gr:"Möbelstücke",ua:"пилосмоктити (меблі)"},
+      {de:"abstauben + A",gr:"Regale, Bücher",ua:"витирати пил (з полиць)"},
+      {de:"abwischen + A",gr:"einen Tisch",ua:"протирати (стіл)"},
+      {de:"aufbewahren + A",gr:"Gegenstände",ua:"зберігати (предмети)"},
+      {de:"aufbrauchen + A",gr:"Nahrungsmittel",ua:"витрачати (продукти)"},
+      {de:"aussortieren + A",gr:"Kleidungsstücke",ua:"відсортовувати"},
+      {de:"erstehen + A",gr:"einen antiken Schrank",ua:"придбати (старовинну шафу)"},
+      {de:"erwerben + A",gr:"ein Haus, Kenntnisse",ua:"набувати, придбавати"},
+      {de:"loswerden + A",gr:"alte Sachen",ua:"позбавлятися (старих речей)"},
+      {de:"missbrauchen + A",gr:"Vertrauen, Geduld",ua:"зловживати (довірою)"},
+      {de:"polieren + A",gr:"Schmuck, Silber",ua:"полірувати"},
+      {de:"unterbringen + A",gr:"in einem Schrank",ua:"розмістити (в шафі)"},
+      {de:"verstauen + A",gr:"Bücher",ua:"укладати, прибирати"},
+      {de:"wegschmeißen + A",gr:"alte Sachen",ua:"викидати (розм.)"},
+      {de:"wischen + A",gr:"den Boden",ua:"мити, витирати (підлогу)"},
+      {de:"zerdrücken + A",gr:"eine Frisur",ua:"зім'яти, роздавити"},
+      {de:"zerfallen",gr:"",ua:"розпадатися, руйнуватися"},
+      {de:"zerschlagen + A",gr:"eine Flasche",ua:"розбити (пляшку)"},
+      {de:"sich zulegen + A",gr:"ein Wörterbuch",ua:"придбати для себе (словник)"},
+      {de:"Gewinn erzielen / machen",gr:"Feste Verbindung",ua:"отримувати прибуток"},
+      {de:"sich Mühe geben",gr:"Feste Verbindung",ua:"намагатися, докладати зусиль"},
+      {de:"zu Bruch gehen",gr:"Feste Verbindung",ua:"розбитися (про посуд)"},
+      {de:"Gebrauch machen von + D",gr:"Feste Verbindung",ua:"скористатися (правом)"},
+      {de:"in Kauf nehmen + A",gr:"Feste Verbindung",ua:"миритися з (поганими умовами)"},
+      {de:"eine Rolle spielen",gr:"Feste Verbindung",ua:"відігравати роль"},
+      {de:"zur Verfügung stellen + A",gr:"Feste Verbindung",ua:"надавати у розпорядження"},
+    ]
+  },
+  5: {
+    title: "Kunst, Musik und Literatur",
+    words: [
+      {de:"das Akkordeon",gr:"Pl. -s",ua:"акордеон"},
+      {de:"die Architektur",gr:"nur Sg.",ua:"архітектура"},
+      {de:"die Atmosphäre",gr:"Pl. -n",ua:"атмосфера"},
+      {de:"das Ballett",gr:"nur Sg.",ua:"балет"},
+      {de:"die Bildhauerei",gr:"nur Sg.",ua:"скульптура (мистецтво ліплення)"},
+      {de:"die Bronze",gr:"Pl. -n",ua:"бронза"},
+      {de:"der E-Bass",gr:"Pl. -¨e",ua:"бас-гітара"},
+      {de:"das Figuren-/Puppentheater",gr:"Pl. -",ua:"ляльковий театр"},
+      {de:"die Geige",gr:"Pl. -n",ua:"скрипка"},
+      {de:"das Gemälde",gr:"Pl. -",ua:"картина (живопис)"},
+      {de:"die Installationskunst",gr:"nur Sg.",ua:"інсталяція (вид мистецтва)"},
+      {de:"die Karikatur",gr:"Pl. -en",ua:"карикатура"},
+      {de:"die Keramik",gr:"Pl. -en",ua:"кераміка"},
+      {de:"das Kunstwerk",gr:"Pl. -e",ua:"твір мистецтва"},
+      {de:"die Leinwand",gr:"Pl. -¨e",ua:"полотно (для живопису); екран"},
+      {de:"die Malerei",gr:"Pl. -en",ua:"живопис, малярство"},
+      {de:"der Marmor",gr:"nur Sg.",ua:"мармур"},
+      {de:"das Mauerwerk",gr:"nur Sg.",ua:"кам'яна кладка"},
+      {de:"das Mosaik",gr:"Pl. -e",ua:"мозаїка"},
+      {de:"das Musical",gr:"Pl. -s",ua:"мюзикл"},
+      {de:"die Ölfarbe / das Öl",gr:"Pl. -n / nur Sg.",ua:"олійна фарба / олія"},
+      {de:"die Pantomime",gr:"nur Sg.",ua:"пантоміма"},
+      {de:"der Pinsel",gr:"Pl. -",ua:"пензель"},
+      {de:"das (Selbst-)Porträt",gr:"Pl. -s",ua:"(авто)портрет"},
+      {de:"das Schlagzeug",gr:"Pl. -e",ua:"ударні, барабанна установка"},
+      {de:"die Skulptur",gr:"Pl. -en",ua:"скульптура"},
+      {de:"der Ton",gr:"nur Sg.",ua:"глина (для ліплення)"},
+      {de:"die Trompete",gr:"Pl. -n",ua:"труба (інструмент)"},
+      {de:"die Violine",gr:"Pl. -n",ua:"скрипка (Violine)"},
+      {de:"der Werkstoff",gr:"Pl. -e",ua:"матеріал, сировина"},
+      {de:"die Ziehharmonika",gr:"Pl. -s",ua:"гармонь, гармоніка"},
+      {de:"gestalten + A",gr:"eine Buchseite, ein Plakat",ua:"оформляти (сторінку, плакат)"},
+      {de:"improvisieren + A",gr:"ein Lied, eine Melodie",ua:"імпровізувати"},
+      {de:"inspirieren + A",gr:"einen Musiker",ua:"надихати (музиканта)"},
+      {de:"interpretieren + A",gr:"ein Gedicht, ein Werk",ua:"інтерпретувати (вірш, твір)"},
+      {de:"nachvollziehen + A",gr:"einen Gedanken",ua:"прослідкувати, зрозуміти"},
+      {de:"proben + A",gr:"eine Szene, ein Stück",ua:"репетирувати"},
+      {de:"veranstalten + A",gr:"ein Konzert, ein Festival",ua:"організовувати (концерт)"},
+      {de:"vermitteln + A",gr:"ein Gefühl, einen Eindruck",ua:"передавати (почуття, враження)"},
+      {de:"wiedergeben + A",gr:"eine Atmosphäre",ua:"відтворювати (атмосферу)"},
+      {de:"den Takt halten",gr:"Feste Verbindung",ua:"тримати ритм"},
+      {de:"die Anspielung (auf + A)",gr:"Pl. -en",ua:"натяк (на щось)"},
+      {de:"die Chronologie",gr:"Pl. -en",ua:"хронологія"},
+      {de:"das Drama",gr:"Pl. Dramen",ua:"драма"},
+      {de:"die Entführung",gr:"Pl. -en",ua:"викрадення (людини)"},
+      {de:"die Erpressung",gr:"Pl. -en",ua:"вимагання, шантаж"},
+      {de:"die Handlung",gr:"Pl. -en",ua:"дія, сюжет"},
+      {de:"die Hauptfigur",gr:"Pl. -en",ua:"головний персонаж"},
+      {de:"der Kommissar / die Kommissarin",gr:"",ua:"комісар, слідчий / слідча"},
+      {de:"das Lösegeld",gr:"Pl. -er",ua:"викуп"},
+      {de:"der Mörder / die Mörderin",gr:"",ua:"вбивця"},
+      {de:"das Rauschgift",gr:"Pl. -e",ua:"наркотик"},
+      {de:"die Schilderung",gr:"Pl. -en",ua:"опис, зображення"},
+      {de:"die Spur",gr:"Pl. -en",ua:"слід"},
+      {de:"der Tatort",gr:"Pl. -e",ua:"місце злочину"},
+      {de:"der/die Verdächtige",gr:"Pl. -n",ua:"підозрюваний / підозрювана"},
+      {de:"die Vernehmung",gr:"Pl. -en",ua:"допит"},
+      {de:"ablegen + A",gr:"ein Geständnis",ua:"давати (зізнання)"},
+      {de:"abstreiten + A",gr:"einen Vorwurf",ua:"заперечувати (звинувачення)"},
+      {de:"ausfallen (mild/hart/gut)",gr:"ein Urteil",ua:"виявлятися (м'яким / суворим)"},
+      {de:"auszeichnen + A mit + D",gr:"ein Buch mit einem Preis",ua:"нагороджувати (книгу премією)"},
+      {de:"basieren auf + D",gr:"der wahren Geschichte",ua:"ґрунтуватися на (реальній події)"},
+      {de:"begehen + A",gr:"ein Verbrechen",ua:"вчиняти (злочин)"},
+      {de:"erstatten + A",gr:"Anzeige, Bericht",ua:"подавати (заяву, звіт)"},
+      {de:"formulieren + A",gr:"einen Brief, eine Bitte",ua:"формулювати (лист, прохання)"},
+      {de:"herausgeben + A",gr:"eine Zeitung, ein Buch",ua:"видавати (газету, книгу)"},
+      {de:"schildern + A",gr:"ein Geschehen, einen Unfall",ua:"описувати, змальовувати"},
+      {de:"verfassen + A",gr:"einen Aufsatz, einen Text",ua:"писати, складати (есе, текст)"},
+      {de:"verfilmen + A",gr:"ein Buch",ua:"екранізувати (книгу)"},
+      {de:"vernehmen + A",gr:"einen Zeugen",ua:"допитувати (свідка)"},
+      {de:"verweigern + A",gr:"die Aussage",ua:"відмовлятися (від свідчень)"},
+      {de:"vorlegen + A",gr:"Beweise",ua:"надавати, пред'являти (докази)"},
+      {de:"chronologisch",gr:"",ua:"хронологічний"},
+      {de:"detailreich",gr:"",ua:"насичений деталями"},
+      {de:"faszinierend",gr:"",ua:"захопливий, чарівний"},
+      {de:"(un)glaubwürdig",gr:"",ua:"(не)правдоподібний"},
+      {de:"hervorragend",gr:"",ua:"видатний, відмінний"},
+      {de:"langatmig",gr:"",ua:"розтягнутий, багатослівний"},
+      {de:"literarisch",gr:"",ua:"літературний"},
+      {de:"meisterhaft",gr:"",ua:"майстерний"},
+      {de:"vorhersehbar",gr:"",ua:"передбачуваний"},
+      {de:"aus der Sicht + G",gr:"des Erzählers",ua:"з точки зору (оповідача)"},
+      {de:"in Worte fassen + A",gr:"seine Eindrücke",ua:"висловити словами (враження)"},
+      {de:"In dem Buch geht es um … + A",gr:"",ua:"У книзі йдеться про…"},
+      {de:"Das Buch handelt von … + D",gr:"",ua:"Книга розповідає про…"},
+      {de:"Das Buch spielt in … + D",gr:"",ua:"Дія книги відбувається в…"},
+    ]
+  },
+  6: {
+    title: "Geschichte",
+    words: [
+      {de:"der Adel",gr:"nur Sg.",ua:"дворянство, шляхта"},
+      {de:"der/die Adlige",gr:"Pl. -n",ua:"дворянин / дворянка"},
+      {de:"das Altgriechisch",gr:"nur Sg.",ua:"давньогрецька мова"},
+      {de:"die Antike",gr:"nur Sg.",ua:"античність"},
+      {de:"die Aufklärung",gr:"nur Sg.",ua:"Просвітництво"},
+      {de:"die Ausbreitung",gr:"nur Sg.",ua:"поширення, розповсюдження"},
+      {de:"die (gesellschaftliche) Bewegung",gr:"Pl. -en",ua:"(суспільний) рух"},
+      {de:"der Bischof",gr:"Pl. -¨e",ua:"єпископ"},
+      {de:"das Christentum",gr:"nur Sg.",ua:"християнство"},
+      {de:"die Entdeckung",gr:"Pl. -en",ua:"відкриття"},
+      {de:"die Epoche",gr:"Pl. -n",ua:"епоха"},
+      {de:"das Erbe",gr:"nur Sg.",ua:"спадщина"},
+      {de:"die Eroberung",gr:"Pl. -en",ua:"завоювання"},
+      {de:"der Fund",gr:"Pl. -e",ua:"знахідка (археологічна)"},
+      {de:"der Gebrauch",gr:"nur Sg.",ua:"вживання, використання"},
+      {de:"der/die Geistliche",gr:"Pl. -n",ua:"священнослужитель"},
+      {de:"der Glaube",gr:"nur Sg.",ua:"віра (релігійна)"},
+      {de:"die Industrialisierung",gr:"nur Sg.",ua:"індустріалізація"},
+      {de:"der Kaiser",gr:"Pl. -",ua:"імператор"},
+      {de:"die Kolonialzeit",gr:"nur Sg.",ua:"колоніальна епоха"},
+      {de:"die Konfession",gr:"Pl. -en",ua:"конфесія, віросповідання"},
+      {de:"das Königreich",gr:"Pl. -e",ua:"королівство"},
+      {de:"das Latein",gr:"nur Sg.",ua:"латинська мова"},
+      {de:"das Mittelalter",gr:"nur Sg.",ua:"Середньовіччя"},
+      {de:"der Nationalstaat",gr:"Pl. -en",ua:"національна держава"},
+      {de:"die Neuzeit",gr:"nur Sg.",ua:"Новий час (епоха)"},
+      {de:"das Oberhaupt",gr:"Pl. -¨er",ua:"глава (держави, церкви)"},
+      {de:"der Papst",gr:"Pl. -¨e",ua:"Папа Римський"},
+      {de:"die Quelle",gr:"Pl. -n",ua:"джерело (інформації)"},
+      {de:"das Randgebiet",gr:"Pl. -e",ua:"прикордонна / периферійна зона"},
+      {de:"die Reform",gr:"Pl. -en",ua:"реформа"},
+      {de:"die Reformation",gr:"nur Sg.",ua:"Реформація"},
+      {de:"das (Römische/Kaiser-/Königs-)Reich",gr:"Pl. -e",ua:"(Римська / Кайзерівська) Імперія"},
+      {de:"der Stadtkern",gr:"Pl. -e",ua:"центр міста, стара частина"},
+      {de:"der Stadtstaat",gr:"Pl. -en",ua:"місто-держава"},
+      {de:"der Stand",gr:"Pl. -¨e",ua:"стан (суспільний)"},
+      {de:"der Übergang",gr:"Pl. -¨e",ua:"перехід (між епохами)"},
+      {de:"die Vernunft",gr:"nur Sg.",ua:"розум, розсудливість"},
+      {de:"die Völkerwanderung",gr:"Pl. -en",ua:"переселення народів"},
+      {de:"der Zerfall",gr:"nur Sg.",ua:"розпад, занепад"},
+      {de:"sich ausbreiten",gr:"",ua:"поширюватися, розширюватися"},
+      {de:"bilden + A",gr:"eine Gruppe",ua:"утворювати (групу)"},
+      {de:"christianisieren + A",gr:"ein Gebiet",ua:"христианизувати (територію)"},
+      {de:"einwandern",gr:"",ua:"іммігрувати, переселятися"},
+      {de:"erobern + A",gr:"Gebiete, Städte",ua:"завойовувати (території)"},
+      {de:"prägen + A",gr:"eine Kultur, eine Sprache",ua:"формувати (культуру, мову)"},
+      {de:"spalten + A",gr:"eine Gruppe",ua:"розколювати (групу)"},
+      {de:"überliefern + A",gr:"eine Geschichte, Quellen",ua:"передавати нащадкам"},
+      {de:"verbreiten + A",gr:"eine Kultur, eine Sprache",ua:"поширювати (культуру, мову)"},
+      {de:"sich zusammensetzen aus + D",gr:"verschiedenen Regionen",ua:"складатися з (різних регіонів)"},
+      {de:"antik",gr:"",ua:"античний, стародавній"},
+      {de:"archäologisch",gr:"",ua:"археологічний"},
+      {de:"christlich",gr:"",ua:"християнський"},
+      {de:"evangelisch",gr:"",ua:"євангельський, протестантський"},
+      {de:"geistig",gr:"",ua:"духовний, інтелектуальний"},
+      {de:"geistlich",gr:"",ua:"духовний (церковний)"},
+      {de:"industriell",gr:"",ua:"промисловий"},
+      {de:"katholisch",gr:"",ua:"католицький"},
+      {de:"lebendig",gr:"",ua:"живий, жвавий"},
+      {de:"mittelalterlich",gr:"",ua:"середньовічний"},
+      {de:"ortsansässig",gr:"",ua:"місцевий (той, хто живе на місці)"},
+      {de:"römisch",gr:"",ua:"римський"},
+      {de:"weltlich",gr:"",ua:"світський (не релігійний)"},
+      {de:"infolge",gr:"",ua:"внаслідок (чогось)"},
+      {de:"an der Spitze stehen + G",gr:"eines Staates",ua:"стояти на чолі (держави)"},
+      {de:"die Blütezeit",gr:"Pl. -en",ua:"розквіт, золота доба"},
+      {de:"die Diktatur",gr:"Pl. -en",ua:"диктатура"},
+      {de:"die Grundlage",gr:"Pl. -n",ua:"основа, підстава"},
+      {de:"die (Kolonial-/Militär-)Herrschaft",gr:"nur Sg.",ua:"колоніальне / військове панування"},
+      {de:"der Herrscher / die Herrscherin",gr:"",ua:"правитель / правителька"},
+      {de:"der Mauerfall",gr:"nur Sg.",ua:"падіння Берлінської стіни"},
+      {de:"das Militär",gr:"nur Sg.",ua:"військо, армія"},
+      {de:"die Moderne",gr:"nur Sg.",ua:"сучасність, модерн"},
+      {de:"die Monarchie",gr:"Pl. -n",ua:"монархія"},
+      {de:"die Nachkriegszeit",gr:"nur Sg.",ua:"повоєнний час"},
+      {de:"der Nationalsozialismus",gr:"nur Sg.",ua:"націонал-соціалізм, нацизм"},
+      {de:"die Sowjetunion",gr:"nur Sg.",ua:"Радянський Союз"},
+      {de:"die (deutsche) Teilung",gr:"nur Sg.",ua:"(німецький) поділ"},
+      {de:"der Überfall auf + A",gr:"",ua:"напад (на людину, країну)"},
+      {de:"die (deutsche) Wiedervereinigung",gr:"nur Sg.",ua:"(німецьке) возз'єднання"},
+      {de:"das Wirtschaftswunder",gr:"nur Sg.",ua:"економічне диво"},
+      {de:"ausbrechen",gr:"",ua:"спалахувати (про війну, пожежу)"},
+      {de:"reformieren + A",gr:"ein Gesetz",ua:"реформувати (закон)"},
+      {de:"sich verstärken",gr:"",ua:"посилюватися"},
+      {de:"erfolglos ↔ erfolgreich",gr:"",ua:"безуспішний ↔ успішний"},
+      {de:"stabil",gr:"",ua:"стабільний"},
+      {de:"einen Vertrag (ab)schließen",gr:"Feste Verbindung",ua:"укладати договір"},
+      {de:"einen Krieg führen — die Kriegsführung",gr:"Feste Verbindung",ua:"вести війну — ведення війни"},
+      {de:"Einfluss nehmen — die Einflussnahme",gr:"Feste Verbindung",ua:"впливати — вплив"},
+      {de:"Frieden schließen — der Friedensschluss",gr:"Feste Verbindung",ua:"укладати мир — мирна угода"},
+      {de:"sich etwas zum Ziel setzen — die Zielsetzung",gr:"Feste Verbindung",ua:"ставити собі ціль — постановка цілі"},
+    ]
+  },
+  7: {
+    title: "Studium und Arbeit",
+    words: [
+      {de:"der Absolvent / die Absolventin",gr:"",ua:"випускник / випускниця"},
+      {de:"der Aushang",gr:"Pl. -¨e",ua:"оголошення (на дошці)"},
+      {de:"der Ausnahmefall",gr:"Pl. -¨e",ua:"виняткова ситуація"},
+      {de:"die Betriebswirtschaft",gr:"nur Sg.",ua:"бізнес-адміністрування, економіка підприємства"},
+      {de:"die Elektrotechnik",gr:"nur Sg.",ua:"електротехніка"},
+      {de:"das Erstsemester",gr:"Pl. -",ua:"першокурсник / студент першого семестру"},
+      {de:"Jura",gr:"nur Sg., kein Artikel",ua:"юриспруденція, право"},
+      {de:"die Kunstgeschichte",gr:"nur Sg.",ua:"історія мистецтв"},
+      {de:"die Lehrveranstaltung",gr:"Pl. -en",ua:"навчальний захід, заняття"},
+      {de:"der Maschinenbau",gr:"nur Sg.",ua:"машинобудування"},
+      {de:"die Orchidee",gr:"Pl. -n",ua:"орхідея (перен. — рідкісна спеціальність)"},
+      {de:"die Pädagogik",gr:"nur Sg.",ua:"педагогіка"},
+      {de:"das Plädoyer",gr:"Pl. -s",ua:"захисна промова; заклик"},
+      {de:"die Soziologie",gr:"nur Sg.",ua:"соціологія"},
+      {de:"die Sprachwissenschaft",gr:"Pl. -en",ua:"мовознавство, лінгвістика"},
+      {de:"der Studiengang",gr:"Pl. -¨e",ua:"навчальний курс / програма"},
+      {de:"das Studiensekretariat",gr:"Pl. -e",ua:"деканат, навчальна частина"},
+      {de:"die Volkswirtschaft",gr:"Pl. -en",ua:"народне господарство, макроекономіка"},
+      {de:"die Zulassung",gr:"Pl. -en",ua:"допуск, зарахування"},
+      {de:"abbrechen + A",gr:"ein Studium, die Schule",ua:"кидати, переривати (навчання)"},
+      {de:"abwenden + A",gr:"eine Katastrophe",ua:"відвернути (катастрофу)"},
+      {de:"beerdigen + A",gr:"eine Idee, ein Projekt",ua:"поховати, зарити (ідею) (перен.)"},
+      {de:"beibehalten + A",gr:"ein Studienfach, eine Gewohnheit",ua:"зберігати (навчальний предмет, звичку)"},
+      {de:"belegen + A",gr:"einen Kurs, ein Seminar",ua:"записатися на (курс, семінар)"},
+      {de:"einhalten + A",gr:"eine Frist, einen Termin",ua:"дотримуватися (дедлайну, терміну)"},
+      {de:"einreichen + A",gr:"Dokumente, Unterlagen",ua:"подавати (документи, матеріали)"},
+      {de:"sich einschreiben (an der Universität)",gr:"",ua:"зареєструватися, вступити до університету"},
+      {de:"entnehmen + D + A",gr:"einem Aushang Informationen",ua:"дізнаватися з оголошення"},
+      {de:"erbringen + A",gr:"eine Leistung",ua:"виконувати, досягати (результату)"},
+      {de:"sich immatrikulieren (an der Universität)",gr:"",ua:"офіційно вступати до вишу"},
+      {de:"nachreichen + A",gr:"Dokumente, Unterlagen",ua:"донести, доподати (документи)"},
+      {de:"nachweisen + A",gr:"einen Abschluss, Leistungen",ua:"підтверджувати (диплом, досягнення)"},
+      {de:"ringen um + A",gr:"Anerkennung",ua:"боротися за (визнання)"},
+      {de:"schwinden",gr:"",ua:"зникати, скорочуватися"},
+      {de:"vermitteln + A",gr:"Interesse",ua:"передавати, прищеплювати (інтерес)"},
+      {de:"effizient",gr:"",ua:"ефективний"},
+      {de:"konstant",gr:"",ua:"постійний, стабільний"},
+      {de:"zulassungsfrei",gr:"",ua:"вільний для вступу (без конкурсу)"},
+      {de:"eine brotlose Kunst sein",gr:"Redewendung",ua:"бути непрактичною справою"},
+      {de:"gefährdet sein",gr:"Redewendung",ua:"бути під загрозою"},
+      {de:"ein Schlag sein (für + A)",gr:"Redewendung",ua:"бути ударом (для когось)"},
+      {de:"eng werden (für + A)",gr:"Redewendung",ua:"ставати складно, тісно (для когось)"},
+      {de:"die Abrechnung",gr:"Pl. -en",ua:"розрахунок, звіт про витрати"},
+      {de:"der Anhang",gr:"Pl. -¨e",ua:"додаток (до документа)"},
+      {de:"das Anschreiben",gr:"Pl. -",ua:"супровідний лист"},
+      {de:"der Buchhalter / die Buchhalterin",gr:"",ua:"бухгалтер / бухгалтерка"},
+      {de:"der Posten",gr:"Pl. -",ua:"посада, позиція"},
+      {de:"die Stellenanzeige",gr:"Pl. -n",ua:"оголошення про роботу"},
+      {de:"absolvieren + A",gr:"eine Ausbildung, ein Studium",ua:"закінчувати, завершувати (навчання)"},
+      {de:"ausschreiben + A",gr:"eine Stelle",ua:"оголошувати (вакансію)"},
+      {de:"bereithalten + A",gr:"Überraschungen, Herausforderungen",ua:"тримати напоготові; мати в запасі"},
+      {de:"bewältigen + A",gr:"eine Situation, ein Problem",ua:"долати, справлятися з (ситуацією)"},
+      {de:"durchbringen + A",gr:"seine Familie, Kinder",ua:"утримувати (сім'ю, дітей)"},
+      {de:"durchgehen + A",gr:"den Lernstoff, einen Vortrag",ua:"проходити, переглядати (матеріал)"},
+      {de:"durchhalten + A",gr:"ein Studium, eine Zeit",ua:"витримувати (навчання, час)"},
+      {de:"durchlaufen + A",gr:"eine Ausbildung, eine Karriere",ua:"проходити (навчання, кар'єру)"},
+      {de:"durchstehen + A",gr:"eine schwere Zeit",ua:"пережити (важкий час)"},
+      {de:"durchziehen + A",gr:"einen Plan, eine Arbeit",ua:"доводити до кінця (план, роботу)"},
+      {de:"hinbekommen + A",gr:"eine Aufgabe, ein Projekt",ua:"впоратися з (завданням) (розм.)"},
+      {de:"investieren + A",gr:"Zeit, Geld, Mühe",ua:"інвестувати (час, гроші, зусилля)"},
+      {de:"meistern + A",gr:"eine Situation, ein Problem",ua:"майстерно долати (ситуацію)"},
+      {de:"scheitern an + D",gr:"einem Fehler, einer Situation",ua:"зазнавати невдачі (через помилку)"},
+      {de:"stoßen auf + A",gr:"eine Anzeige, eine Idee",ua:"натрапляти на (оголошення, ідею)"},
+      {de:"übernehmen + A",gr:"Verantwortung, Aufgaben",ua:"брати на себе (відповідальність)"},
+      {de:"umfassen + A",gr:"Aufgaben, Verantwortung",ua:"охоплювати, включати (завдання)"},
+      {de:"versagen",gr:"",ua:"зазнавати невдачі; відмовляти (про техніку)"},
+      {de:"sich weiterbilden",gr:"",ua:"підвищувати кваліфікацію"},
+      {de:"zustande bringen + A",gr:"ein Projekt",ua:"здійснювати, виконувати (проект)"},
+      {de:"sich zulegen + A",gr:"",ua:"наважуватися, вважати себе здатним"},
+      {de:"anspruchsvoll",gr:"",ua:"вимогливий, складний"},
+      {de:"EDV-gestützt",gr:"",ua:"комп'ютерний, із використанням ПК"},
+      {de:"kaufmännisch",gr:"",ua:"комерційний, торговий"},
+      {de:"mittelständisch",gr:"",ua:"середньо-підприємницький"},
+      {de:"tätig",gr:"",ua:"діяльний; працюючий (у якійсь сфері)"},
+      {de:"(Berufs-)Erfahrung(en) sammeln",gr:"Feste Verbindung",ua:"набирати (професійного) досвіду"},
+      {de:"sich bewusst sein + G",gr:"seiner Verantwortung",ua:"усвідомлювати (свою відповідальність)"},
+      {de:"auf die Beine stellen + A",gr:"ein Projekt, ein Team",ua:"поставити на ноги (проект, команду)"},
+      {de:"zur allgemeinen Zufriedenheit",gr:"Feste Verbindung",ua:"до загального задоволення"},
+      {de:"Misserfolge erleiden",gr:"Redewendung",ua:"зазнавати невдач"},
+      {de:"Schiffbruch erleiden",gr:"Redewendung",ua:"зазнавати краху"},
+      {de:"etwas an die Wand fahren",gr:"Redewendung",ua:"довести до краху (підприємство)"},
+      {de:"auf die Nase fallen",gr:"Redewendung",ua:"зазнати невдачі, впасти носом (розм.)"},
+    ]
+  },
+  8: {
+    title: "Gesundheit und Pflege",
+    words: [
+      {de:"der Anfall",gr:"Pl. -¨e",ua:"напад (хвороби, паніки)"},
+      {de:"die Atmung",gr:"nur Sg.",ua:"дихання"},
+      {de:"der Ausschlag",gr:"Pl. -¨e",ua:"висип (на шкірі)"},
+      {de:"die Behinderung",gr:"Pl. -en",ua:"інвалідність, обмеження"},
+      {de:"die (Harn-)Blase",gr:"Pl. -n",ua:"(сечовий) міхур"},
+      {de:"der Darm",gr:"Pl. -¨e",ua:"кишечник"},
+      {de:"der Daumen",gr:"Pl. -",ua:"великий палець"},
+      {de:"der Durchfall",gr:"Pl. -¨e",ua:"діарея, пронос"},
+      {de:"die (Lungen-)Entzündung",gr:"Pl. -en",ua:"(легеневе) запалення, пневмонія"},
+      {de:"die Epilepsie",gr:"nur Sg.",ua:"епілепсія"},
+      {de:"der Giftstoff",gr:"Pl. -e",ua:"токсин, отруйна речовина"},
+      {de:"die (Pilz-)Infektion",gr:"Pl. -en",ua:"(грибкова) інфекція"},
+      {de:"die Leber",gr:"Pl. -n",ua:"печінка"},
+      {de:"die Lunge",gr:"Pl. -n",ua:"легеня"},
+      {de:"die Niere",gr:"Pl. -n",ua:"нирка"},
+      {de:"der Pilz",gr:"Pl. -e",ua:"гриб; грибок (мед.)"},
+      {de:"der Schwindel",gr:"nur Sg.",ua:"запаморочення"},
+      {de:"die Substanz",gr:"Pl. -en",ua:"речовина, субстанція"},
+      {de:"das Symptom",gr:"Pl. -e",ua:"симптом"},
+      {de:"der Urin",gr:"nur Sg.",ua:"сеча, урин"},
+      {de:"die Verdauung",gr:"nur Sg.",ua:"травлення"},
+      {de:"ausscheiden + A",gr:"Giftstoffe, Urin",ua:"виводити (токсини, сечу)"},
+      {de:"entgiften + A",gr:"den Körper",ua:"детоксикувати (тіло)"},
+      {de:"(sich) erbrechen + A",gr:"Nahrung, Blut",ua:"блювати (їжею, кров'ю)"},
+      {de:"gelangen in + A",gr:"ins Blut, in den Magen",ua:"потрапляти (в кров, у шлунок)"},
+      {de:"jucken",gr:"",ua:"свербіти, чухатися"},
+      {de:"zu sich nehmen + A",gr:"Nahrung",ua:"вживати (їжу)"},
+      {de:"schlucken + A",gr:"Nahrung, Flüssigkeit",ua:"ковтати (їжу, рідину)"},
+      {de:"akut",gr:"",ua:"гострий (про хворобу)"},
+      {de:"ansprechbar",gr:"",ua:"при свідомості, контактний"},
+      {de:"ansteckend",gr:"",ua:"заразний"},
+      {de:"bewusstlos",gr:"",ua:"непритомний"},
+      {de:"chronisch",gr:"",ua:"хронічний"},
+      {de:"entzündet",gr:"",ua:"запалений"},
+      {de:"fieberhaft",gr:"",ua:"гарячковий"},
+      {de:"lebensgefährlich",gr:"",ua:"небезпечний для життя"},
+      {de:"nervlich",gr:"",ua:"нервовий (нервова система)"},
+      {de:"neurologisch",gr:"",ua:"неврологічний"},
+      {de:"nüchtern",gr:"",ua:"натщесерце; тверезий"},
+      {de:"schmerzhaft",gr:"",ua:"болісний, болючий"},
+      {de:"spezifisch",gr:"",ua:"специфічний"},
+      {de:"übel (+ D)",gr:"Mir ist übel.",ua:"нудно (Мені нудить.)"},
+      {de:"übertragbar",gr:"",ua:"передавальний (про хворобу)"},
+      {de:"verwundet",gr:"",ua:"поранений"},
+      {de:"bohren(d), brennen(d), drücken(d), pochen(d), stechen(d)",gr:"Schmerzen beschreiben",ua:"свердлити, пекти, давити, пульсувати, колоти (про біль)"},
+      {de:"das Bakterium",gr:"Pl. Bakterien",ua:"бактерія"},
+      {de:"der Blutdruck",gr:"nur Sg.",ua:"артеріальний тиск"},
+      {de:"der Blutwert",gr:"Pl. -e",ua:"показник крові"},
+      {de:"der Blutzucker(spiegel)",gr:"Pl. -",ua:"рівень цукру в крові"},
+      {de:"der (Knochen-)Bruch",gr:"Pl. -¨e",ua:"(кістковий) перелом"},
+      {de:"der Chirurg / die Chirurgin",gr:"",ua:"хірург / хірургиня"},
+      {de:"das Desinfektionsmittel",gr:"Pl. -",ua:"дезінфекційний засіб"},
+      {de:"die Einstichstelle",gr:"Pl. -n",ua:"місце ін'єкції"},
+      {de:"der blaue Fleck",gr:"Pl. blaue Flecken",ua:"синяк"},
+      {de:"die Hebamme / der Geburtshelfer",gr:"",ua:"акушерка / акушер"},
+      {de:"die Kanüle",gr:"Pl. -n",ua:"канюля, голка (мед.)"},
+      {de:"der Kittel",gr:"Pl. -",ua:"халат (медичний)"},
+      {de:"das Magnetresonanztomogramm (MRT)",gr:"Pl. -e",ua:"МРТ (магнітно-резонансна томографія)"},
+      {de:"das Pflegepersonal",gr:"nur Sg.",ua:"медичний персонал, доглядальники"},
+      {de:"der Physiotherapeut / die Physiotherapeutin",gr:"",ua:"фізіотерапевт / фізіотерапевтка"},
+      {de:"die (Blut-/Stuhl-/Urin-)Probe",gr:"Pl. -n",ua:"аналіз (крові / калу / сечі)"},
+      {de:"der Psychologe / die Psychologin",gr:"",ua:"психолог / психологиня"},
+      {de:"der Puls",gr:"nur Sg.",ua:"пульс"},
+      {de:"die Röntgenaufnahme",gr:"Pl. -n",ua:"рентгенівський знімок"},
+      {de:"die Schiene",gr:"Pl. -n",ua:"шина (медична)"},
+      {de:"der Seelsorger / die Seelsorgerin",gr:"",ua:"духовний наставник / психолог (при лікарні)"},
+      {de:"die Sehne",gr:"Pl. -n",ua:"сухожилля"},
+      {de:"der Stationsleiter / die Stationsleiterin",gr:"",ua:"завідувач відділення"},
+      {de:"der Tupfer",gr:"Pl. -",ua:"тампон (ватяний)"},
+      {de:"das Ultraschallbild",gr:"Pl. -er",ua:"УЗД-знімок"},
+      {de:"die Ultraschalluntersuchung",gr:"Pl. -en",ua:"УЗД-дослідження"},
+      {de:"die Vene",gr:"Pl. -n",ua:"вена"},
+      {de:"die Visite",gr:"Pl. -n",ua:"обхід (лікаря)"},
+      {de:"abgeben + A",gr:"eine Probe",ua:"здавати (аналіз)"},
+      {de:"anlegen + A",gr:"eine Schiene, einen Verband",ua:"накладати (шину, пов'язку)"},
+      {de:"desinfizieren + A",gr:"eine Wunde, die Hände",ua:"дезінфікувати (рану, руки)"},
+      {de:"infizieren + A mit + D",gr:"eine Person mit einer Krankheit",ua:"інфікувати (людину хворобою)"},
+      {de:"versorgen + A",gr:"eine Wunde, einen Patienten",ua:"обробляти (рану); доглядати (пацієнта)"},
+      {de:"nackt",gr:"",ua:"голий, оголений"},
+      {de:"psychologisch",gr:"",ua:"психологічний"},
+    ]
+  },
+  9: {
+    title: "Handwerk und Technik",
+    words: [
+      {de:"der Abgaswert",gr:"Pl. -e",ua:"показник вихлопних газів"},
+      {de:"die (Software-)Anwendung",gr:"Pl. -en",ua:"(програмне) застосування, додаток"},
+      {de:"das Bauteil",gr:"Pl. -e",ua:"деталь, конструктивний елемент"},
+      {de:"der Betrieb",gr:"= das Betreiben, nur Sg.",ua:"підприємство; робота, експлуатація"},
+      {de:"der Bodenbelag",gr:"Pl. -¨e",ua:"підлогове покриття"},
+      {de:"der Elektriker / die Elektrikerin",gr:"",ua:"електрик / електричка"},
+      {de:"die Fertigung",gr:"nur Sg.",ua:"виробництво, виготовлення"},
+      {de:"das Gerüst",gr:"Pl. -e",ua:"риштування, каркас"},
+      {de:"das Gewinde",gr:"Pl. -",ua:"різьба (на гвинті)"},
+      {de:"die Nutzerfreundlichkeit",gr:"nur Sg.",ua:"зручність для користувача"},
+      {de:"der Schornsteinfeger / die Schornsteinfegerin",gr:"",ua:"трубочист / трубочистка"},
+      {de:"die Schraube",gr:"Pl. -n",ua:"гвинт, шуруп"},
+      {de:"die Sicherung",gr:"Pl. -en",ua:"запобіжник; страховка"},
+      {de:"die Tapete",gr:"Pl. -n",ua:"шпалери"},
+      {de:"der/das Thermostat",gr:"Pl. -e",ua:"термостат"},
+      {de:"das Ventil",gr:"Pl. -e",ua:"клапан, вентиль"},
+      {de:"der (Strom-, Gas-)Zähler",gr:"Pl. -",ua:"лічильник (електрики, газу)"},
+      {de:"der Zählerstand",gr:"Pl. -¨e",ua:"показання лічильника"},
+      {de:"befestigen + A",gr:"ein Bild an der Wand",ua:"кріпити (картину до стіни)"},
+      {de:"entwerfen + A",gr:"ein Produkt, eine Dekoration",ua:"розробляти, проектувати (продукт)"},
+      {de:"fertigen + A",gr:"Produkte, Bauteile",ua:"виготовляти (продукти, деталі)"},
+      {de:"gestalten + A",gr:"Räume, Möbel",ua:"оформляти (приміщення, меблі)"},
+      {de:"instandhalten + A",gr:"eine Maschine, eine Anlage",ua:"підтримувати у справному стані"},
+      {de:"montieren + A",gr:"ein Gerät, eine Anlage",ua:"монтувати (пристрій, установку)"},
+      {de:"optimieren + A",gr:"einen Prozess",ua:"оптимізувати (процес)"},
+      {de:"programmieren + A",gr:"eine Anwendung",ua:"програмувати (додаток)"},
+      {de:"sicherstellen + A",gr:"einen problemlosen Betrieb",ua:"забезпечувати (безперебійну роботу)"},
+      {de:"streichen + A",gr:"eine Wand, einen Raum",ua:"фарбувати (стіну, приміщення)"},
+      {de:"tapezieren + A",gr:"eine Wand, einen Raum",ua:"клеїти шпалери"},
+      {de:"tropfen",gr:"",ua:"капати, протікати"},
+      {de:"überwachen + A",gr:"die Produktion",ua:"контролювати (виробництво)"},
+      {de:"verlegen + A",gr:"einen Teppich",ua:"укладати (килим, кабель)"},
+      {de:"warten + A",gr:"eine Anlage, eine Maschine",ua:"обслуговувати (установку, машину)"},
+      {de:"aufbauen / einbauen / umbauen / weiterbauen / zusammenbauen",gr:"Verben mit -bauen",ua:"зводити / вбудовувати / перебудовувати / добудовувати / збирати"},
+      {de:"aufdrehen / festdrehen / überdrehen / zudrehen / zurückdrehen / durchdrehen",gr:"Verben mit -drehen",ua:"відкручувати / закручувати / перекручувати / закривати / відкручувати назад / зриватися"},
+      {de:"freilegen / trockenlegen / unterlegen / verlegen / loslegen",gr:"Verben mit -legen",ua:"відкривати / осушувати / підкладати / укладати / починати"},
+      {de:"bereitstellen / fertigstellen / sicherstellen / umstellen / verstellen / zusammenstellen",gr:"Verben mit -stellen",ua:"готувати / завершувати / забезпечувати / перелаштовувати / переставляти / складати"},
+      {de:"bestehend",gr:"",ua:"існуючий, наявний"},
+      {de:"störungsfrei",gr:"",ua:"без збоїв, безперебійний"},
+      {de:"einen (Strom-)Schlag bekommen",gr:"Ausdruck",ua:"вдарило струмом"},
+      {de:"die (technische) Ausstattung",gr:"Pl. -en",ua:"технічне оснащення"},
+      {de:"der Befehl",gr:"Pl. -e (Computersprache)",ua:"команда (в програмуванні)"},
+      {de:"das Design",gr:"Pl. -s",ua:"дизайн"},
+      {de:"das Display",gr:"Pl. -s",ua:"дисплей, екран"},
+      {de:"die Drohne",gr:"Pl. -n",ua:"дрон, безпілотник"},
+      {de:"die Elektrizität",gr:"nur Sg.",ua:"електрика, електрична енергія"},
+      {de:"der E-Roller / E-Scooter",gr:"Pl. -",ua:"електросамокат"},
+      {de:"die Fehlermeldung",gr:"Pl. -en",ua:"повідомлення про помилку"},
+      {de:"die Feststelltaste",gr:"Pl. -n",ua:"клавіша Caps Lock"},
+      {de:"der Flachbildfernseher",gr:"Pl. -",ua:"плоский телевізор"},
+      {de:"die Funktion",gr:"Pl. -en",ua:"функція"},
+      {de:"der Griff",gr:"Pl. -e",ua:"ручка, рукоятка"},
+      {de:"der Geschirrspüler / die Spülmaschine",gr:"",ua:"посудомийна машина"},
+      {de:"die (Akku-)Kapazität",gr:"Pl. -en",ua:"ємність (акумулятора)"},
+      {de:"die Ladezeit",gr:"Pl. -en",ua:"час зарядки"},
+      {de:"die Laufzeit",gr:"Pl. -en",ua:"термін дії; час роботи (батареї)"},
+      {de:"die Leistung",gr:"nur Sg.",ua:"потужність; продуктивність"},
+      {de:"die Mikrowelle",gr:"Pl. -n",ua:"мікрохвильова піч"},
+      {de:"das Navi / das Navigationsgerät",gr:"",ua:"навігатор, GPS-пристрій"},
+      {de:"der Papierkorb",gr:"Pl. -¨e",ua:"кошик (на ПК); кошик для паперу"},
+      {de:"das Pedal",gr:"Pl. -e",ua:"педаль"},
+      {de:"das Preis-Leistungs-Verhältnis",gr:"Pl. -se",ua:"співвідношення ціни та якості"},
+      {de:"der Rahmen",gr:"Pl. -",ua:"рамка, каркас, рама"},
+      {de:"der Vorgang",gr:"Pl. -¨e",ua:"процес, операція"},
+      {de:"der Wäschetrockner",gr:"Pl. -",ua:"сушильна машина для одягу"},
+      {de:"die Wiederherstellung",gr:"Pl. -en",ua:"відновлення, реставрація"},
+      {de:"abbrechen + A",gr:"einen Vorgang",ua:"перервати (процес)"},
+      {de:"abstürzen",gr:"",ua:"зависати, вилітати (про програму)"},
+      {de:"austauschen + A",gr:"einen Akku",ua:"замінювати (акумулятор)"},
+      {de:"auswerfen + A",gr:"einen Datenträger",ua:"виймати (носій даних)"},
+      {de:"fehlschlagen",gr:"",ua:"зазнавати невдачі, не вдаватися"},
+      {de:"halten",gr:"eine bestimmte Zeit",ua:"триматися, витримувати (певний час)"},
+      {de:"raten zu + D",gr:"einem Produkt",ua:"радити (продукт)"},
+      {de:"setzen auf + A",gr:"Design, den Preis",ua:"ставити на (дизайн, ціну)"},
+      {de:"(fest) verbauen + A",gr:"einen Akku",ua:"вбудовувати намертво (акумулятор)"},
+      {de:"verschieben + A",gr:"ein Dokument, eine Datei",ua:"переміщати (документ, файл)"},
+      {de:"zugreifen auf + A",gr:"einen Datenträger",ua:"отримувати доступ до (носія даних)"},
+      {de:"altmodisch",gr:"",ua:"старомодний, застарілий"},
+      {de:"(Design/Preis/Qualität) hin oder her",gr:"Ausdruck",ua:"хай там який (дизайн / ціна / якість) — все одно"},
+    ]
+  },
+  10: {
+    title: "Umwelt und Zukunft",
+    words: [
+      {de:"die Abholzung",gr:"Pl. -en",ua:"вирубка лісів"},
+      {de:"das Artensterben",gr:"nur Sg.",ua:"вимирання видів"},
+      {de:"die Artenvielfalt",gr:"nur Sg.",ua:"біорізноманіття"},
+      {de:"der Ausbau",gr:"nur Sg.",ua:"розширення, розвиток (мережі)"},
+      {de:"die Ausbeutung",gr:"nur Sg.",ua:"експлуатація (ресурсів)"},
+      {de:"der Ausstoß",gr:"nur Sg.",ua:"викид (CO₂, газів)"},
+      {de:"das Einwegplastik",gr:"nur Sg.",ua:"одноразовий пластик"},
+      {de:"das Elektrofahrzeug",gr:"Pl. -e",ua:"електромобіль"},
+      {de:"die Elektromobilität",gr:"nur Sg.",ua:"електромобільність"},
+      {de:"die Emission",gr:"Pl. -en",ua:"викид (шкідливих речовин)"},
+      {de:"die (Strom-, Energie-)Erzeugung",gr:"nur Sg.",ua:"виробництво (електроенергії)"},
+      {de:"der ökologische Fußabdruck",gr:"Pl. -¨e",ua:"екологічний слід"},
+      {de:"die Kohle",gr:"nur Sg.",ua:"вугілля"},
+      {de:"der Kohleausstieg",gr:"nur Sg.",ua:"відмова від вугілля"},
+      {de:"das Kohlen(stoff)dioxid = CO₂",gr:"",ua:"діоксид вуглецю, вуглекислий газ"},
+      {de:"der (Nahrungs-)Kreislauf",gr:"Pl. -¨e",ua:"круговорот (поживних речовин)"},
+      {de:"der Lebensraum",gr:"Pl. -¨e",ua:"середовище існування"},
+      {de:"der Lebensstandard",gr:"nur Sg.",ua:"рівень життя"},
+      {de:"die Massentierhaltung",gr:"nur Sg.",ua:"масове тваринництво"},
+      {de:"das Mikroplastik",gr:"nur Sg.",ua:"мікропластик"},
+      {de:"die Nachhaltigkeit",gr:"nur Sg.",ua:"сталість, стійкий розвиток"},
+      {de:"der Nährstoff",gr:"Pl. -e",ua:"поживна речовина"},
+      {de:"der ÖPNV = Öffentlicher Personennahverkehr",gr:"nur Sg. = Öffis Pl.",ua:"громадський транспорт"},
+      {de:"der/die/das (Kunststoff-)Partikel",gr:"Pl. -",ua:"(пластикова) частинка"},
+      {de:"die Radioaktivität",gr:"nur Sg.",ua:"радіоактивність"},
+      {de:"der Regenwald",gr:"Pl. -¨er",ua:"дощовий ліс"},
+      {de:"die Ressource",gr:"Pl. -n",ua:"ресурс"},
+      {de:"der Rohstoff",gr:"Pl. -e",ua:"сировина"},
+      {de:"der Rückgang",gr:"Pl. -¨e",ua:"скорочення, спад"},
+      {de:"der Rückstand",gr:"Pl. -¨e",ua:"залишок (хімічний); відставання"},
+      {de:"der (Gift-, Schad-)Stoff",gr:"Pl. -e",ua:"отруйна / шкідлива речовина"},
+      {de:"die Umstellung von + D auf + A",gr:"Pl. -en",ua:"перехід (з вугілля на електрику)"},
+      {de:"der Umstieg von + D auf + A",gr:"Pl. -e",ua:"перехід (до відновлюваної енергії)"},
+      {de:"der Verbrennungsmotor",gr:"Pl. -en",ua:"двигун внутрішнього згоряння"},
+      {de:"die Verkehrswende",gr:"Pl. -n",ua:"транспортна революція"},
+      {de:"das Wegwerfprodukt / der Wegwerfartikel",gr:"",ua:"одноразовий продукт / виріб"},
+      {de:"das (Transport-, Verkehrs-)Wesen",gr:"Pl. -",ua:"транспортна система / галузь"},
+      {de:"abbauen + A",gr:"Kohle, Gold",ua:"видобувати (вугілля, золото)"},
+      {de:"abschaffen + A",gr:"den Autoverkehr",ua:"скасовувати (автомобільний рух)"},
+      {de:"(mit der Nahrung) aufnehmen + A",gr:"Nährstoffe",ua:"засвоювати (поживні речовини)"},
+      {de:"ausstoßen + A",gr:"Schadstoffe, CO₂",ua:"викидати (шкідливі речовини)"},
+      {de:"durchbrechen + A",gr:"einen Kreislauf",ua:"розривати (цикл)"},
+      {de:"einschränken + A",gr:"den Konsum, die Ausgaben",ua:"обмежувати (споживання, витрати)"},
+      {de:"erhalten + A",gr:"die Natur",ua:"зберігати (природу)"},
+      {de:"erzeugen + A",gr:"Strom, Wärme",ua:"виробляти (електрику, тепло)"},
+      {de:"freisetzen + A",gr:"Gase, Schadstoffe",ua:"вивільняти (гази, шкідливі речовини)"},
+      {de:"gelangen in + A",gr:"den Nahrungskreislauf, ins Grundwasser",ua:"потрапляти в (харчовий ланцюг)"},
+      {de:"halten + A",gr:"den Lebensstandard",ua:"підтримувати (рівень життя)"},
+      {de:"überdenken + A",gr:"sein Verhalten, seinen Konsum",ua:"переосмислювати (поведінку)"},
+      {de:"verschwenden + A",gr:"Lebensmittel, Wasser",ua:"марнувати (продукти, воду)"},
+      {de:"wiederverwenden + A",gr:"Materialien",ua:"повторно використовувати (матеріали)"},
+      {de:"zerfallen zu + D",gr:"Kohlenstoff und Sauerstoff",ua:"розпадатися на (вуглець і кисень)"},
+      {de:"(biologisch) abbaubar",gr:"",ua:"(біологічно) розкладний"},
+      {de:"nachhaltig",gr:"",ua:"сталий, стійкий (про розвиток)"},
+      {de:"der Anteil",gr:"Pl. -e",ua:"частка, відсоток"},
+      {de:"die (Erd-)Atmosphäre",gr:"Pl. -n",ua:"(земна) атмосфера"},
+      {de:"die Auswirkung",gr:"Pl. -en",ua:"наслідок, вплив"},
+      {de:"der (Wasser-)Dampf",gr:"Pl. -¨e",ua:"(водяна) пара"},
+      {de:"die Dürre",gr:"Pl. -n",ua:"посуха"},
+      {de:"der (Treibhaus-)Effekt",gr:"Pl. -e",ua:"(парниковий) ефект"},
+      {de:"der Gletscher",gr:"Pl. -",ua:"льодовик"},
+      {de:"das Hochwasser",gr:"nur Sg.",ua:"повінь, паводок"},
+      {de:"die Hülle",gr:"Pl. -n",ua:"оболонка, покрив"},
+      {de:"der Klimawandel = die Erderwärmung",gr:"nur Sg.",ua:"зміна клімату = глобальне потепління"},
+      {de:"das Methan",gr:"nur Sg.",ua:"метан"},
+      {de:"der Sauerstoff = O₂",gr:"nur Sg.",ua:"кисень"},
+      {de:"die Schicht",gr:"Pl. -en",ua:"шар (атмосфери)"},
+      {de:"der (Meeres-/Wasser-)Spiegel",gr:"Pl. -",ua:"рівень (моря / води)"},
+      {de:"der (Sonnen-)Strahl",gr:"Pl. -en",ua:"(сонячний) промінь"},
+      {de:"das Treib-/Glashaus",gr:"Pl. -¨er",ua:"теплиця / оранжерея"},
+      {de:"die Überschwemmung",gr:"Pl. -en",ua:"затоплення, повінь"},
+      {de:"ansteigen",gr:"",ua:"підніматися, зростати"},
+      {de:"ausbleiben",gr:"",ua:"не відбуватися, не наставати"},
+      {de:"sich ausbreiten",gr:"",ua:"поширюватися"},
+      {de:"austreten aus + D",gr:"",ua:"витікати, виходити (з чогось)"},
+      {de:"reflektieren + A",gr:"Sonnenlicht",ua:"відбивати (сонячне світло)"},
+      {de:"schmelzen",gr:"meist ohne Obj.",ua:"танути, плавитися"},
+      {de:"überschwemmen + A",gr:"eine Region",ua:"затоплювати (регіон)"},
+      {de:"umwandeln + A",gr:"CO₂ in Sauerstoff",ua:"перетворювати (CO₂ на кисень)"},
+      {de:"gasförmig",gr:"",ua:"газоподібний"},
+      {de:"lebenswichtig",gr:"",ua:"життєво важливий"},
+      {de:"umgeben von + D",gr:"Wald, Licht",ua:"оточений (лісом, світлом)"},
+      {de:"aus einer Mücke einen Elefanten machen",gr:"Redewendung",ua:"робити з мухи слона"},
+      {de:"ein Angsthase sein",gr:"Redewendung",ua:"бути боягузом"},
+      {de:"Es kommt zu …",gr:"Ausdruck",ua:"Відбувається…, Настає…"},
+      {de:"Der Grund (dafür) liegt in …",gr:"Ausdruck",ua:"Причина цього полягає в…"},
+      {de:"zu Lasten von + D",gr:"Mensch und Natur",ua:"на шкоду (людині та природі)"},
+    ]
+  },
+  11: {
+    title: "Wissenschaft",
+    words: [
+      {de:"die Auffassung",gr:"Pl. -en",ua:"погляд, думка, концепція"},
+      {de:"die Befragung",gr:"Pl. -en",ua:"опитування, анкетування"},
+      {de:"die Behauptung",gr:"Pl. -en",ua:"твердження"},
+      {de:"das Experiment",gr:"Pl. -e",ua:"експеримент"},
+      {de:"der Grundsatz",gr:"Pl. -¨e",ua:"принцип, основне положення"},
+      {de:"das Prinzip",gr:"Pl. Prinzipien",ua:"принцип"},
+      {de:"der Proband / die Probandin",gr:"",ua:"випробовуваний / піддослідна"},
+      {de:"die Prognose",gr:"Pl. -n",ua:"прогноз"},
+      {de:"die Schwerkraft",gr:"nur Sg.",ua:"сила тяжіння, гравітація"},
+      {de:"die Tagung",gr:"Pl. -en",ua:"конференція, засідання"},
+      {de:"die These",gr:"Pl. -n",ua:"теза"},
+      {de:"die Vorhersage",gr:"Pl. -n",ua:"передбачення, прогноз"},
+      {de:"auseinandergehen",gr:"",ua:"розходитися (про думки)"},
+      {de:"ausgehen von + D",gr:"einer Vermutung",ua:"виходити з (припущення)"},
+      {de:"auswerten + A",gr:"Daten",ua:"аналізувати, обробляти (дані)"},
+      {de:"sich befassen mit + D",gr:"einem Thema",ua:"займатися (темою)"},
+      {de:"berücksichtigen + A",gr:"Daten, eine Meinung",ua:"враховувати (дані, думку)"},
+      {de:"definieren + A",gr:"ein Wort",ua:"визначати (слово, поняття)"},
+      {de:"durchführen + A",gr:"eine Umfrage, eine Studie",ua:"проводити (опитування, дослідження)"},
+      {de:"eingehen auf + A",gr:"ein Argument, eine Frage",ua:"реагувати на (аргумент, питання)"},
+      {de:"erheben + A",gr:"Daten, Informationen",ua:"збирати (дані, інформацію)"},
+      {de:"sich erschließen + D",gr:"mir, dem Leser",ua:"відкриватися, ставати зрозумілим"},
+      {de:"formulieren + A",gr:"eine These, eine Prognose",ua:"формулювати (тезу, прогноз)"},
+      {de:"nachvollziehen + A",gr:"einen Zusammenhang",ua:"відстежити, зрозуміти (зв'язок)"},
+      {de:"nachweisen + A",gr:"einen Sachverhalt",ua:"доводити, підтверджувати (факт)"},
+      {de:"übereinstimmen mit + D",gr:"Zahlen, Daten",ua:"збігатися, відповідати (даним)"},
+      {de:"veranschaulichen + A an + D",gr:"einen Sachverhalt an einem Beispiel",ua:"ілюструвати (факт на прикладі)"},
+      {de:"widerlegen + A",gr:"ein Argument, eine These",ua:"спростовувати (аргумент, тезу)"},
+      {de:"zitieren + A",gr:"einen Autor, einen Sprecher",ua:"цитувати (автора, доповідача)"},
+      {de:"auf den Punkt bringen + A",gr:"einen Sachverhalt",ua:"чітко сформулювати (суть)"},
+      {de:"sich aus dem Kontext erschließen",gr:"Ausdruck",ua:"випливати з контексту"},
+      {de:"einen Gedanken zu Ende führen",gr:"Ausdruck",ua:"довести думку до кінця"},
+      {de:"einen Vortrag halten über + A",gr:"dieses Thema",ua:"читати доповідь про (цю тему)"},
+      {de:"zum Ende kommen",gr:"Ausdruck",ua:"добігати кінця, завершуватися"},
+      {de:"zu anderen / folgenden / denselben Ergebnissen kommen",gr:"Ausdruck",ua:"приходити до інших / тих самих результатів"},
+      {de:"aus dem Konzept kommen",gr:"Ausdruck",ua:"збитися з думки, загубитися"},
+      {de:"Bezug nehmen auf + A",gr:"einen Sachverhalt",ua:"посилатися на (факт)"},
+      {de:"im Widerspruch stehen zu + D",gr:"einer Meinung",ua:"суперечити (думці)"},
+      {de:"eine Ansicht teilen",gr:"Ausdruck",ua:"поділяти точку зору"},
+      {de:"eine Aussage treffen zu + D",gr:"einem Thema",ua:"робити висловлювання щодо (теми)"},
+      {de:"den Faden verlieren",gr:"Redewendung",ua:"загубити нитку (думки)"},
+      {de:"einen Eindruck vermitteln",gr:"Ausdruck",ua:"справляти враження"},
+      {de:"die Anziehungskraft",gr:"Pl. -¨e",ua:"сила притягання"},
+      {de:"das Atom",gr:"Pl. -e",ua:"атом"},
+      {de:"der Atomkern",gr:"Pl. -e",ua:"ядро атома"},
+      {de:"die (chemische) Bindung",gr:"Pl. -en",ua:"(хімічний) зв'язок"},
+      {de:"der Dackel",gr:"Pl. -",ua:"такса (собака)"},
+      {de:"die Eigenschaft",gr:"Pl. -en",ua:"властивість, характеристика"},
+      {de:"das Eisen",gr:"nur Sg.",ua:"залізо"},
+      {de:"das Element",gr:"Pl. -e",ua:"елемент (хімічний)"},
+      {de:"das Lebewesen",gr:"Pl. -",ua:"жива істота"},
+      {de:"die Gesetzmäßigkeit",gr:"Pl. -en",ua:"закономірність"},
+      {de:"das Gewebe",gr:"Pl. -",ua:"тканина (біологічна)"},
+      {de:"die Lehre = die Wissenschaft",gr:"Pl. -n",ua:"вчення, наука"},
+      {de:"die Masse",gr:"Pl. -n",ua:"маса"},
+      {de:"die Materie",gr:"nur Sg.",ua:"матерія, речовина"},
+      {de:"das Molekül",gr:"Pl. -e",ua:"молекула"},
+      {de:"die Oberfläche",gr:"Pl. -n",ua:"поверхня"},
+      {de:"die Rasse",gr:"Pl. -n",ua:"раса; порода (тварин)"},
+      {de:"der Schäferhund",gr:"Pl. -e",ua:"вівчарка"},
+      {de:"die (elektrische) Spannung",gr:"Pl. -en",ua:"(електрична) напруга"},
+      {de:"der (chemische) Stoff",gr:"Pl. -e",ua:"(хімічна) речовина"},
+      {de:"die Substanz",gr:"Pl. -en",ua:"субстанція, речовина"},
+      {de:"das Teilgebiet",gr:"Pl. -e",ua:"підгалузь, розділ (науки)"},
+      {de:"die Umwandlung",gr:"Pl. -en",ua:"перетворення"},
+      {de:"die Vererbung",gr:"nur Sg.",ua:"спадковість"},
+      {de:"die Wechselwirkung",gr:"Pl. -en",ua:"взаємодія"},
+      {de:"die Zelle",gr:"Pl. -n",ua:"клітина"},
+      {de:"die Zimmertemperatur",gr:"Pl. -en",ua:"кімнатна температура"},
+      {de:"die Alchemie / Astronomie / Botanik / Genetik / Mechanik / Mikrobiologie / Zoologie",gr:"alle nur Sg.",ua:"алхімія / астрономія / ботаніка / генетика / механіка / мікробіологія / зоологія"},
+      {de:"(sich = A) (elektrisch) aufladen",gr:"",ua:"заряджатися (електрично)"},
+      {de:"aufstellen + A",gr:"eine Theorie, eine These",ua:"висувати (теорію, тезу)"},
+      {de:"bestehen in + D",gr:"darin, dass",ua:"полягати в (тому, що…)"},
+      {de:"(sich = A) entladen",gr:"",ua:"розряджатися"},
+      {de:"erforschen + A",gr:"einen Prozess, eine Ursache",ua:"досліджувати (процес, причину)"},
+      {de:"kondensieren",gr:"",ua:"конденсуватися"},
+      {de:"löffeln",gr:"",ua:"їсти ложкою; черпати"},
+      {de:"(sich = A) lösen in + D",gr:"Wasser",ua:"розчинятися (у воді)"},
+      {de:"reiben mit + D über + A",gr:"einem Tuch über den Bildschirm",ua:"терти (тканиною) по (екрану)"},
+      {de:"(radioaktiv) strahlen",gr:"",ua:"випромінювати (радіоактивно)"},
+      {de:"verdampfen",gr:"",ua:"випаровуватися"},
+      {de:"fest, flüssig, gasförmig, radioaktiv, wasserlöslich, wässrig",gr:"Adjektive",ua:"твердий, рідкий, газоподібний, радіоактивний, водорозчинний, водянистий"},
+    ]
+  },
+  12: {
+    title: "Die Gesellschaft",
+    words: [
+      {de:"der Antisemitismus",gr:"nur Sg.",ua:"антисемітизм"},
+      {de:"der Besitz",gr:"nur Sg.",ua:"майно, власність"},
+      {de:"die Brüderlichkeit",gr:"nur Sg.",ua:"братерство"},
+      {de:"die Diskriminierung",gr:"Pl. -en",ua:"дискримінація"},
+      {de:"das Eigentum",gr:"nur Sg.",ua:"власність"},
+      {de:"die (Behinderten-/Frauen-/Fremden-/Islam-)Feindlichkeit",gr:"nur Sg.",ua:"ворожнеча (до меншин, іноземців)"},
+      {de:"der Geist",gr:"Pl. -er",ua:"дух; розум"},
+      {de:"die Gleichheit",gr:"nur Sg.",ua:"рівність"},
+      {de:"das Handicap",gr:"Pl. -s",ua:"перешкода; гандикап"},
+      {de:"die Hautfarbe",gr:"Pl. -n",ua:"колір шкіри"},
+      {de:"die Homophobie",gr:"nur Sg.",ua:"гомофобія"},
+      {de:"der Jude / die Jüdin",gr:"",ua:"єврей / єврейка"},
+      {de:"die (gesellschaftliche) Klasse",gr:"Pl. -n",ua:"(суспільний) клас"},
+      {de:"das Menschenrecht",gr:"Pl. -e",ua:"право людини"},
+      {de:"der Muslim / die Muslimin",gr:"",ua:"мусульманин / мусульманка"},
+      {de:"die Nächstenliebe",gr:"nur Sg.",ua:"любов до ближнього"},
+      {de:"der Rassismus",gr:"nur Sg.",ua:"расизм"},
+      {de:"die (gesellschaftliche) Schicht",gr:"Pl. -en",ua:"(суспільний) шар, верства"},
+      {de:"die Solidarität",gr:"nur Sg.",ua:"солідарність"},
+      {de:"der (gesellschaftliche) Stand",gr:"Pl. -¨e",ua:"(суспільний) стан"},
+      {de:"das Vermögen",gr:"Pl. -",ua:"капітал, майно"},
+      {de:"die Vernunft",gr:"nur Sg.",ua:"розум, здоровий глузд"},
+      {de:"die Würde",gr:"nur Sg.",ua:"гідність"},
+      {de:"abbauen + A",gr:"Vorurteile",ua:"долати, знищувати (упередження)"},
+      {de:"aufbauen + A",gr:"Vorurteile",ua:"формувати (упередження)"},
+      {de:"ausgrenzen + A",gr:"einen Menschen aus der Gesellschaft",ua:"виключати (людину із суспільства)"},
+      {de:"ausschließen + A",gr:"eine Gruppe aus der Gesellschaft",ua:"виключати (групу із суспільства)"},
+      {de:"benachteiligen + A",gr:"Minderheiten, Personen",ua:"ставити у невигідне становище"},
+      {de:"demonstrieren für/gegen + A",gr:"Gerechtigkeit / Diskriminierung",ua:"демонструвати (за / проти)"},
+      {de:"einbeziehen + A",gr:"Menschen, Gruppen",ua:"залучати (людей, групи)"},
+      {de:"einhalten + A",gr:"eine Regel, ein Gesetz",ua:"дотримуватися (правила, закону)"},
+      {de:"eintreten für + A",gr:"Rechte, Minderheiten",ua:"відстоювати (права, меншини)"},
+      {de:"missachten + A",gr:"Rechte, Menschen, Gesetze",ua:"нехтувати (правами, законами)"},
+      {de:"teilhaben an + D",gr:"der Gesellschaft",ua:"брати участь (у суспільному житті)"},
+      {de:"tolerieren + A",gr:"eine Meinung",ua:"терпіти, толерувати (думку)"},
+      {de:"verkünden + A",gr:"eine Nachricht, ein Gesetz",ua:"проголошувати (новину, закон)"},
+      {de:"verstoßen gegen + A",gr:"eine Regel, ein Gesetz",ua:"порушувати (правило, закон)"},
+      {de:"verteidigen + A",gr:"Rechte, Menschen",ua:"захищати (права, людей)"},
+      {de:"barrierefrei",gr:"",ua:"без бар'єрів, доступний для всіх"},
+      {de:"begabt",gr:"",ua:"талановитий, обдарований"},
+      {de:"geistig",gr:"",ua:"розумовий, інтелектуальний"},
+      {de:"homosexuell",gr:"",ua:"гомосексуальний"},
+      {de:"materiell",gr:"",ua:"матеріальний"},
+      {de:"sonstig",gr:"",ua:"інший, решта"},
+      {de:"der Abstand",gr:"Pl. -¨e",ua:"відстань; дистанція"},
+      {de:"die Alterspyramide",gr:"Pl. -n",ua:"вікова піраміда"},
+      {de:"die Altersstruktur",gr:"Pl. -en",ua:"вікова структура"},
+      {de:"das Ansehen",gr:"nur Sg.",ua:"авторитет, репутація"},
+      {de:"die Armut",gr:"nur Sg.",ua:"бідність"},
+      {de:"der Begriff",gr:"Pl. -e",ua:"поняття, термін"},
+      {de:"die Bildung",gr:"nur Sg.",ua:"освіта"},
+      {de:"die Geburtenrate",gr:"Pl. -n",ua:"народжуваність"},
+      {de:"der Industriestaat",gr:"Pl. -en",ua:"індустріальна держава"},
+      {de:"die Lebenserwartung",gr:"nur Sg.",ua:"тривалість життя"},
+      {de:"die Nachbarschaft",gr:"Pl. -en",ua:"сусідство"},
+      {de:"die Ressource",gr:"Pl. -n",ua:"ресурс"},
+      {de:"der Rückgang",gr:"Pl. -¨e",ua:"скорочення, спад"},
+      {de:"der (gute/schlechte) Ruf",gr:"nur Sg.",ua:"(хороша / погана) репутація"},
+      {de:"die (Ober-/Mittel-/Unter-)Schicht",gr:"Pl. -en",ua:"(вищий / середній / нижчий) клас"},
+      {de:"die Soziologie",gr:"nur Sg.",ua:"соціологія"},
+      {de:"der Stadtrand",gr:"Pl. -¨er",ua:"окраїна міста"},
+      {de:"die Sterblichkeit",gr:"nur Sg.",ua:"смертність"},
+      {de:"die (gesellschaftliche) Teilhabe",gr:"nur Sg.",ua:"участь у суспільному житті"},
+      {de:"die (soziale) Ungleichheit",gr:"Pl. -en",ua:"соціальна нерівність"},
+      {de:"die Ungleichverteilung",gr:"Pl. -en",ua:"нерівномірний розподіл"},
+      {de:"der (Besser-/Gering-)Verdiener",gr:"Pl. -",ua:"людина з вищим / нижчим доходом"},
+      {de:"die Verteilung",gr:"Pl. -en",ua:"розподіл"},
+      {de:"das Wachstum",gr:"nur Sg.",ua:"зростання"},
+      {de:"der Wohlstand",gr:"nur Sg.",ua:"добробут, процвітання"},
+      {de:"abbilden + A",gr:"eine Entwicklung",ua:"відображати (тенденцію)"},
+      {de:"ablesen + A",gr:"Informationen, Daten",ua:"зчитувати (інформацію, дані)"},
+      {de:"abnehmen ↔ zunehmen",gr:"",ua:"зменшуватися ↔ збільшуватися"},
+      {de:"abweichen von + D",gr:"der Normalität",ua:"відхилятися від (норми)"},
+      {de:"altern",gr:"",ua:"старіти"},
+      {de:"aufweisen + A",gr:"Unterschiede, Merkmale",ua:"демонструвати, показувати (відмінності)"},
+      {de:"belegen + A mit + D",gr:"eine Behauptung mit Zahlen",ua:"підтверджувати (твердження цифрами)"},
+      {de:"betreffen + A",gr:"Personen",ua:"стосуватися (людей)"},
+      {de:"bezeichnen + A",gr:"einen Prozess",ua:"позначати, називати (процес)"},
+      {de:"sich darstellen",gr:"",ua:"виглядати, постати (у якомусь вигляді)"},
+      {de:"einschränken + A",gr:"Möglichkeiten, Chancen",ua:"обмежувати (можливості, шанси)"},
+      {de:"sich ergeben aus + D",gr:"einer Situation",ua:"випливати (з ситуації)"},
+      {de:"veranschaulichen + A",gr:"einen Sachverhalt",ua:"ілюструвати (факт)"},
+      {de:"sich verstärken",gr:"",ua:"посилюватися"},
+      {de:"zurückgehen",gr:"",ua:"зменшуватися, спадати"},
+      {de:"gegenteilig",gr:"",ua:"протилежний"},
+      {de:"verbunden mit + D",gr:"den Lebensumständen",ua:"пов'язаний з (умовами життя)"},
+      {de:"vorzeitig",gr:"",ua:"передчасний, достроковий"},
+    ]
+  },
+  13: {
+    title: "Behörden und Institutionen",
+    words: [
+      {de:"die Anpassung",gr:"Pl. -en",ua:"пристосування; адаптація"},
+      {de:"die Basis",gr:"Pl. Basen",ua:"база, основа"},
+      {de:"die Eingangsbestätigung",gr:"Pl. -en",ua:"підтвердження отримання (документа)"},
+      {de:"die Entschädigung",gr:"Pl. -en",ua:"відшкодування, компенсація"},
+      {de:"der Erhalt",gr:"nur Sg.",ua:"отримання; збереження"},
+      {de:"die (Gesetzes-, Berechnungs-)Grundlage",gr:"Pl. -n",ua:"законодавча / розрахункова основа"},
+      {de:"die Inanspruchnahme",gr:"Pl. -n",ua:"використання (послуги, права)"},
+      {de:"die Mitwirkungspflicht",gr:"nur Sg.",ua:"обов'язок співпраці (із органами)"},
+      {de:"der Nachweis",gr:"Pl. -e",ua:"доказ, підтвердження, довідка"},
+      {de:"die Polizeidirektion",gr:"Pl. -en",ua:"управління поліції"},
+      {de:"die Rechtsbehelfsbelehrung",gr:"Pl. -en",ua:"роз'яснення права на оскарження"},
+      {de:"die Rentenversicherung",gr:"Pl. -en",ua:"пенсійне страхування"},
+      {de:"die Rückzahlungsverpflichtung",gr:"Pl. -en",ua:"зобов'язання про повернення"},
+      {de:"der Schadensersatzanspruch",gr:"Pl. -¨e",ua:"вимога про відшкодування збитків"},
+      {de:"die Verjährungsfrist",gr:"Pl. -en",ua:"термін позовної давності"},
+      {de:"das Verwaltungsgericht",gr:"Pl. -e",ua:"адміністративний суд"},
+      {de:"der Zahlungseingang",gr:"Pl. -¨e",ua:"надходження платежу"},
+      {de:"bewilligen + A",gr:"einen Antrag",ua:"схвалювати, затверджувати (заяву)"},
+      {de:"einreichen + A",gr:"Unterlagen",ua:"подавати (документи)"},
+      {de:"erlöschen",gr:"",ua:"втрачати чинність (про право)"},
+      {de:"freistellen von + D",gr:"einer Verpflichtung",ua:"звільняти (від зобов'язання)"},
+      {de:"kalkulieren + A",gr:"einen Preis, einen Beitrag",ua:"калькулювати (ціну, внесок)"},
+      {de:"mitwirken an + D",gr:"der Passbeschaffung",ua:"брати участь (в оформленні паспорта)"},
+      {de:"nachkommen + D",gr:"einer Pflicht",ua:"виконувати (обов'язок)"},
+      {de:"stattgeben + D",gr:"einem Antrag, einem Widerspruch",ua:"задовольняти (заяву, заперечення)"},
+      {de:"fristgemäß = fristgerecht",gr:"",ua:"вчасно, у встановлені строки"},
+      {de:"personenbezogen",gr:"",ua:"пов'язаний з особою, персональний"},
+      {de:"umgehend",gr:"",ua:"негайно, без зволікання"},
+      {de:"auf Antrag",gr:"",ua:"за заявою, на прохання"},
+      {de:"i.A. (im Auftrag)",gr:"",ua:"за дорученням"},
+      {de:"einen Beruf ausüben",gr:"Feste Verbindung",ua:"займатися професією, виконувати роботу"},
+      {de:"eine Frist einhalten",gr:"Feste Verbindung",ua:"дотримуватися строку"},
+      {de:"Widerspruch einlegen gegen + A",gr:"Feste Verbindung",ua:"подавати заперечення проти (рішення)"},
+      {de:"eine Pflicht erfüllen",gr:"Feste Verbindung",ua:"виконувати обов'язок"},
+      {de:"(eine) Auskunft erteilen + D",gr:"Feste Verbindung",ua:"надавати інформацію (заявнику)"},
+      {de:"zustande kommen",gr:"Feste Verbindung",ua:"здійснюватися, укладатися (про угоду)"},
+      {de:"zugrunde liegen + D",gr:"einer Entscheidung",ua:"лежати в основі (рішення)"},
+      {de:"in Kenntnis setzen + A",gr:"einen Mieter",ua:"повідомляти (орендаря)"},
+      {de:"die Abschiebung",gr:"Pl. -en",ua:"депортація, видворення"},
+      {de:"der/die Angeklagte",gr:"Pl. -n",ua:"обвинувачений / обвинувачена"},
+      {de:"der Ankläger / die Anklägerin",gr:"",ua:"обвинувач / обвинувачка"},
+      {de:"der Antragsteller / die Antragstellerin",gr:"",ua:"заявник / заявниця"},
+      {de:"die Bekanntgabe",gr:"Pl. -n",ua:"оголошення, повідомлення (офіційне)"},
+      {de:"der Gerichtsdiener / die Gerichtsdienerin",gr:"",ua:"судовий пристав / судова прислужниця"},
+      {de:"der Gerichtssaal",gr:"Pl. Gerichtssäle",ua:"зал суду"},
+      {de:"die Gerichtsverhandlung",gr:"Pl. -en",ua:"судове засідання"},
+      {de:"die Geringfügigkeit",gr:"Pl. -en",ua:"незначність, дрібниця (юрид.)"},
+      {de:"der Staatsanwalt / die Staatsanwältin",gr:"",ua:"прокурор / прокурорка"},
+      {de:"die Straftat",gr:"Pl. -en",ua:"кримінальний злочин"},
+      {de:"die Straßenverkehrsordnung = StVO",gr:"Pl. -en",ua:"правила дорожнього руху"},
+      {de:"der Verstoß",gr:"Pl. -¨e",ua:"порушення (закону, правил)"},
+      {de:"der Verteidiger / die Verteidigerin",gr:"",ua:"адвокат-захисник / адвокат-захисниця"},
+      {de:"anfallen",gr:"",ua:"виникати, нараховуватися (про витрати)"},
+      {de:"anklagen + A",gr:"eine Person",ua:"звинувачувати (людину)"},
+      {de:"aussagen",gr:"",ua:"свідчити, давати показання"},
+      {de:"beschuldigen + A (+ G)",gr:"eine Person (einer Straftat)",ua:"звинувачувати (людину в злочині)"},
+      {de:"betragen",gr:"",ua:"становити (суму, розмір)"},
+      {de:"eingehen bei + D",gr:"einer Behörde",ua:"надходити (до органу)"},
+      {de:"vorsprechen bei + D",gr:"einem Gericht",ua:"з'явитися особисто (до суду)"},
+      {de:"eine Frist einhalten = wahren",gr:"Feste Verbindung",ua:"дотримуватися строку"},
+      {de:"Widerspruch einlegen = erheben",gr:"Feste Verbindung",ua:"подавати заперечення / оскарження"},
+      {de:"ein (Gerichts-/Straf-)Verfahren einleiten",gr:"Feste Verbindung",ua:"порушувати (судове) провадження"},
+      {de:"Klage einreichen",gr:"Feste Verbindung",ua:"подавати позов"},
+      {de:"ein (Gerichts-)Verfahren einstellen",gr:"Feste Verbindung",ua:"закривати (судове) провадження"},
+      {de:"Anklage erheben",gr:"Feste Verbindung",ua:"пред'являти обвинувачення"},
+      {de:"ein (Gerichts-)Verfahren eröffnen",gr:"Feste Verbindung",ua:"відкривати (судове) провадження"},
+      {de:"ein Urteil fällen = sprechen = verkünden",gr:"Feste Verbindung",ua:"виносити / проголошувати вирок"},
+      {de:"eine Anklage fallenlassen",gr:"Feste Verbindung",ua:"знімати обвинувачення"},
+      {de:"Kosten tragen = übernehmen",gr:"Feste Verbindung",ua:"нести / брати на себе витрати"},
+      {de:"die Anklage / die Verteidigung vertreten",gr:"Feste Verbindung",ua:"представляти обвинувачення / захист"},
+      {de:"eine Anklage zurückziehen",gr:"Feste Verbindung",ua:"відкликати обвинувачення"},
+      {de:"(un)begründet",gr:"",ua:"(не)обґрунтований"},
+      {de:"hiermit",gr:"",ua:"цим (офіційна формула)"},
+      {de:"offensichtlich",gr:"",ua:"очевидно, явно"},
+      {de:"seitens + G",gr:"seitens der Behörde",ua:"з боку (органу)"},
+      {de:"vor Ablauf + G",gr:"einer Frist",ua:"до закінчення (строку)"},
+      {de:"unter Ausschluss der Öffentlichkeit",gr:"",ua:"при закритих дверях"},
+      {de:"zur Niederschrift",gr:"",ua:"для запису / протоколу"},
+      {de:"von Unbekannt",gr:"",ua:"від невідомої особи"},
+    ]
+  },
+  3: {
+    title: "Im In- und Ausland",
+    words: [
+      {de:"der/die Angehörige",gr:"Pl. -n",ua:"родич, член сім'ї"},
+      {de:"die Arbeitskraft",gr:"Pl. -¨e",ua:"робоча сила, працівник"},
+      {de:"die Armut",gr:"nur Sg.",ua:"бідність"},
+      {de:"der Auswanderer / die Auswanderin",gr:"",ua:"емігрант / емігрантка"},
+      {de:"die Bezeichnung",gr:"Pl. -en",ua:"назва, позначення"},
+      {de:"der Bürgerkrieg",gr:"Pl. -e",ua:"громадянська війна"},
+      {de:"die Diskriminierung",gr:"Pl. -en",ua:"дискримінація"},
+      {de:"der/die Einheimische",gr:"Pl. -n",ua:"місцевий житель"},
+      {de:"der Einwanderer / die Einwanderin",gr:"",ua:"іммігрант / іммігрантка"},
+      {de:"das Einwanderungsland",gr:"Pl. -¨er",ua:"країна імміграції"},
+      {de:"der Flüchtling / die/der Geflüchtete",gr:"Pl. -e / -n",ua:"біженець / переселенець"},
+      {de:"das Herkunftsland",gr:"Pl. -¨er",ua:"країна походження"},
+      {de:"die Katastrophe",gr:"Pl. -n",ua:"катастрофа"},
+      {de:"die Lebenshaltungskosten",gr:"nur Pl.",ua:"прожитковий мінімум, витрати на життя"},
+      {de:"der Migrationshintergrund",gr:"Pl. -¨e",ua:"міграційне минуле, іноземне коріння"},
+      {de:"die Minderheit",gr:"Pl. -en",ua:"меншина"},
+      {de:"die Nationalität",gr:"Pl. -en",ua:"національність, громадянство"},
+      {de:"der Passant / die Passantin",gr:"",ua:"перехожий / перехожа"},
+      {de:"die Perspektive",gr:"Pl. -n",ua:"перспектива"},
+      {de:"die Staatsangehörigkeit",gr:"Pl. -en",ua:"громадянство"},
+      {de:"der Umstand",gr:"Pl. -¨e",ua:"обставина"},
+      {de:"die Vertreibung",gr:"nur Sg.",ua:"вигнання, виселення"},
+      {de:"der Vorfahr / die Vorfahrin",gr:"",ua:"предок / пращур"},
+      {de:"die Wurzel",gr:"Pl. -n",ua:"корінь (коріння, походження)"},
+      {de:"das Zielland",gr:"Pl. -¨er",ua:"країна призначення"},
+      {de:"abstammen von + D",gr:"den Deutschen",ua:"походити від (німців)"},
+      {de:"sich anpassen an + A",gr:"eine Situation",ua:"пристосовуватися до (ситуації)"},
+      {de:"ansprechen + A",gr:"eine Person",ua:"звертатися до (людини)"},
+      {de:"anwerben + A",gr:"Arbeitskräfte",ua:"вербувати (робочу силу)"},
+      {de:"aufbrechen",gr:"",ua:"вирушати, розпочинати шлях"},
+      {de:"aufwachsen",gr:"",ua:"рости, виростати"},
+      {de:"sich austauschen mit + D über + A",gr:"",ua:"обмінюватися (з кимось на тему)"},
+      {de:"beeindrucken + A",gr:"eine Person",ua:"вражати (людину)"},
+      {de:"sich einleben",gr:"",ua:"вживатися, освоюватися"},
+      {de:"erkunden + A",gr:"eine neue Umgebung",ua:"досліджувати (нове середовище)"},
+      {de:"gehören zu + D",gr:"einer Gruppe",ua:"належати до (групи)"},
+      {de:"herausfinden + A",gr:"Informationen",ua:"з'ясовувати, дізнаватися"},
+      {de:"sich identifizieren mit + D",gr:"einer Kultur",ua:"ідентифікувати себе з (культурою)"},
+      {de:"konfrontiert sein mit + D",gr:"Problemen",ua:"стикатися з (проблемами)"},
+      {de:"sich niederlassen",gr:"",ua:"осідати, оселятися"},
+      {de:"überstehen + A",gr:"eine schlimme Situation",ua:"пережити (складну ситуацію)"},
+      {de:"sich zurechtfinden in + D",gr:"einer fremden Umgebung",ua:"орієнтуватися в (чужому середовищі)"},
+      {de:"zurechtommen mit + D",gr:"einer Situation",ua:"справлятися з (ситуацією)"},
+      {de:"deutschstämmig",gr:"",ua:"німецького походження"},
+      {de:"ethnisch",gr:"",ua:"етнічний"},
+      {de:"der Brauch",gr:"Pl. -¨e",ua:"звичай, традиція"},
+      {de:"die (traditionelle) Küche",gr:"nur Sg.",ua:"традиційна кухня"},
+      {de:"die (Tisch-/Ess-)Manieren",gr:"nur Pl.",ua:"манери за столом"},
+      {de:"die (Tisch-)Sitte",gr:"Pl. -n",ua:"застільний звичай"},
+      {de:"das Sprichwort",gr:"Pl. -¨er",ua:"прислів'я"},
+      {de:"das Tabu",gr:"Pl. -s",ua:"табу"},
+      {de:"die Tracht",gr:"Pl. -en",ua:"народний одяг, традиційний костюм"},
+      {de:"die (Denk-/Lebens-)Weise",gr:"",ua:"спосіб мислення / спосіб життя"},
+      {de:"entsprechen + D",gr:"meinen Vorstellungen",ua:"відповідати (уявленням)"},
+      {de:"gelten als + N",gr:"guter Koch",ua:"вважатися (хорошим кухарем)"},
+      {de:"sich lohnen",gr:"unpersönl.",ua:"вартувати, бути доцільним"},
+      {de:"sich verbeugen vor + D",gr:"der Königin",ua:"кланятися (королеві)"},
+      {de:"sich (von selbst) verstehen",gr:"unpersönl.",ua:"розумітися само собою"},
+      {de:"(un)angemessen",gr:"",ua:"(не)відповідний, (не)доречний"},
+      {de:"gläubig",gr:"",ua:"побожний, вірний"},
+      {de:"mehrsprachig",gr:"",ua:"багатомовний"},
+      {de:"multikulturell",gr:"",ua:"мультикультурний"},
+      {de:"religiös",gr:"",ua:"релігійний"},
+      {de:"üblich",gr:"",ua:"звичайний, прийнятий"},
+      {de:"mit den Händen arbeiten / essen",gr:"Redewendung",ua:"працювати / їсти руками"},
+      {de:"die Hand geben + D",gr:"Redewendung",ua:"подавати руку"},
+      {de:"an die Hand nehmen + A",gr:"Redewendung",ua:"брати когось за руку"},
+      {de:"Hand in Hand",gr:"Redewendung",ua:"рука в руку"},
+      {de:"mit leeren Händen",gr:"Redewendung",ua:"з порожніми руками"},
+      {de:"Jemandem fällt die Decke auf den Kopf.",gr:"Redewendung",ua:"Хтось нудьгує / почувається замкненим вдома."},
+      {de:"Das Eis ist gebrochen.",gr:"Redewendung",ua:"Лід скресла. (Напруга спала.)"},
+      {de:"auf eigene Faust",gr:"Redewendung",ua:"на власний страх і ризик"},
+      {de:"seinen Horizont erweitern",gr:"Redewendung",ua:"розширювати кругозір"},
+      {de:"Andere Länder, andere Sitten.",gr:"Redewendung",ua:"Інші країни — інші звичаї."},
+      {de:"jemandem Löcher in den Bauch fragen",gr:"Redewendung",ua:"засипати когось питаннями"},
+      {de:"mit Sack und Pack",gr:"Redewendung",ua:"з усіма пожитками"},
+      {de:"sich auf den Weg machen",gr:"Redewendung",ua:"вирушати в дорогу"},
+      {de:"Der Weg ist das Ziel.",gr:"Redewendung",ua:"Шлях є метою."},
+    ]
+  }
+};
+
+// ══════════════════════════════════════════════════════════════
+// EXAMPLE CACHE (shared between dict, cards, trainer)
+// ══════════════════════════════════════════════════════════════
+const exampleCache = {}; // key: "lk|wordIdx" -> {de, ua, custom}
+
+function exKey(lk, idx) { return lk + '|' + idx; }
+
+async function fetchExample(lk, idx) {
+  const key = exKey(lk, idx);
+  if (exampleCache[key]) return exampleCache[key];
+  const data = getWordData(lk);
+  if (!data) return null;
+  const w = data.words[idx];
+  const level = (typeof lk === 'string' && lk.startsWith('b1_')) ? 'B1' : 'B2';
+  const prompt = `Du bist ein Deutschlehrer. Erstelle GENAU 1 kurzes Beispielsatz auf Niveau ${level} für das Wort/den Ausdruck: "${w.de}"${w.gr ? ' (' + w.gr + ')' : ''}.
+Antworte NUR im folgenden JSON-Format (kein Markdown, keine Backticks, kein Kommentar):
+{"de":"Beispielsatz auf Deutsch","ua":"Переклад українською"}`;
+  try {
+    const text = await callAI(prompt);
+    const clean = text.replace(/```json|```/g, '').trim();
+    const match = clean.match(/\{[^}]+\}/);
+    if (!match) return null;
+    const ex = JSON.parse(match[0]);
+    exampleCache[key] = ex;
+    return ex;
+  } catch { return null; }
+}
+
+// ── Dict word row click ──────────────────────────────────────
+function initDictClicks(lk) {
+  const page = document.getElementById('lk' + lk);
+  if (!page) return;
+
+  page.querySelectorAll('#dict-panel-' + lk + ' .word-row').forEach((row) => {
+    if (row.classList.contains('hidden')) return;
+    const deEl = row.querySelector('.word-de');
+    const uaEl = row.querySelector('.word-ua');
+    if (!deEl || !uaEl) return;
+
+    const wordDe = deEl.textContent.trim();
+    const wordUa = uaEl.textContent.trim();
+    const cacheKey = 'dict|' + lk + '|' + wordDe;
+
+    // Add speak buttons to word cells
+    if (!deEl.querySelector('.speak-btn')) {
+      const btnDe = document.createElement('button');
+      btnDe.className = 'speak-btn';
+      btnDe.textContent = '🔊';
+      btnDe.title = 'Вимовити по-німецьки';
+      btnDe.onclick = (e) => speakDe(wordDe, e);
+      deEl.appendChild(btnDe);
+    }
+    if (!uaEl.querySelector('.speak-btn')) {
+      const btnUa = document.createElement('button');
+      btnUa.className = 'speak-btn';
+      btnUa.textContent = '🔊';
+      btnUa.title = 'Вимовити по-українськи';
+      btnUa.onclick = (e) => speakUa(wordUa, e);
+      uaEl.appendChild(btnUa);
+    }
+
+    if (!row.querySelector('.ex-popup')) {
+      const popup = document.createElement('div');
+      popup.className = 'ex-popup';
+      popup.style.gridColumn = '1 / -1';
+      popup.innerHTML = '<div class="ex-loading"><div class="bsp-loading"></div> Generiere Beispiel…</div>';
+      row.appendChild(popup);
+    }
+
+    row.addEventListener('click', async (e) => {
+      if (e.target.classList.contains('speak-btn')) return;
+      if (e.target.classList.contains('ex-save-btn')) return;
+      const wasOpen = row.classList.contains('ex-open');
+      page.querySelectorAll('#dict-panel-' + lk + ' .word-row.ex-open')
+        .forEach(r => r.classList.remove('ex-open'));
+      if (wasOpen) return;
+      row.classList.add('ex-open');
+
+      const popup = row.querySelector('.ex-popup');
+      if (exampleCache[cacheKey]) {
+        const ex = exampleCache[cacheKey];
+        popup.innerHTML = '<div class="ex-de">' + ex.de + ' <button class="speak-btn" onclick="speakDe(\'' + ex.de.replace(/'/g,"\\'") + '\',event)">🔊</button></div><div class="ex-ua">' + ex.ua + '</div>';
+        return;
+      }
+
+      popup.innerHTML = '<div class="ex-loading"><div class="bsp-loading"></div> Generiere…</div>';
+
+      const level = (typeof lk === 'string' && lk.startsWith('b1_')) ? 'B1' : 'B2';
+      const prompt = 'Du bist ein Deutschlehrer. Erstelle 1 kurzen Beispielsatz auf Niveau ' + level + ' für das Wort: "' + wordDe + '" (Bedeutung: ' + wordUa + '). Antworte NUR mit JSON ohne Markdown: {"de":"Beispielsatz","ua":"Переклад українською"}';
+
+      try {
+        const text = await callAI(prompt);
+        const clean = text.replace(/```json|```/g, '').trim();
+        const m = clean.match(/\{[\s\S]*?\}/);
+        if (!m) throw new Error('no json');
+        const ex = JSON.parse(m[0]);
+        exampleCache[cacheKey] = ex;
+        popup.innerHTML = '<div class="ex-de">' + ex.de + ' <button class="speak-btn" onclick="speakDe(\'' + ex.de.replace(/'/g,"\\'") + '\',event)">🔊</button></div><div class="ex-ua">' + ex.ua + '</div>';
+      } catch {
+        popup.innerHTML = '<div class="ex-de" style="color:var(--muted)">Не вдалося згенерувати</div>';
+      }
+    });
+  });
+}
+
+function renderExPopup(popup, ex, lk, idx) {
+  const isCustom = ex.custom ? '✎ Mein Beispiel' : '';
+  const deSafe = (ex.de||'').replace(/'/g,"\'");
+  const uaSafe = (ex.ua||'').replace(/'/g,"\'");
+  popup.innerHTML = `
+    <div class="ex-de">${ex.de} <button class="speak-btn" onclick="speakDe('${deSafe}',event)" title="Вимовити">🔊</button></div>
+    <div class="ex-ua">${ex.ua} <button class="speak-btn" onclick="speakUa('${uaSafe}',event)" title="Вимовити">🔊</button></div>
+    ${isCustom ? `<div style="font-size:10px;color:var(--klett-mid);margin-top:3px">${isCustom}</div>` : ''}`;
+}
+
+// ── Cards: show example button ───────────────────────────────
+async function showCardExample(lk, idx, btnEl) {
+  btnEl.disabled = true;
+  btnEl.textContent = '…';
+  const ex = await fetchExample(lk, idx);
+  const container = btnEl.closest('.card-face') || btnEl.parentElement;
+  let exDiv = container.querySelector('.card-example');
+  if (!exDiv) {
+    exDiv = document.createElement('div');
+    exDiv.className = 'card-example';
+    btnEl.after(exDiv);
+  }
+  if (ex) {
+    exDiv.innerHTML = `${ex.de}<div class="ex-ua">${ex.ua}</div>`;
+    btnEl.style.display = 'none';
+  } else {
+    exDiv.innerHTML = `<span style="color:var(--muted)">Fehler</span>`;
+    btnEl.disabled = false;
+    btnEl.textContent = '📖 Beispiel';
+  }
+}
+
+async function sendChat(lk, suggText) {
+  const s = trainerState[lk];
+  if (!s) return;
+
+  const inputEl = document.getElementById('chat-input-' + lk);
+  const msgsEl = document.getElementById('chat-msgs-' + lk);
+  const suggEl = document.getElementById('chat-sugg-' + lk);
+  if (!msgsEl) return;
+
+  const userText = suggText || (inputEl ? inputEl.value.trim() : '');
+  if (!userText) return;
+  if (inputEl) inputEl.value = '';
+
+  // Hide suggestions after first use
+  if (suggEl) suggEl.style.display = 'none';
+
+  // Add user message
+  const userMsg = document.createElement('div');
+  userMsg.className = 'chat-msg user';
+  userMsg.textContent = userText;
+  msgsEl.appendChild(userMsg);
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+
+  // Add loading message
+  const loadingMsg = document.createElement('div');
+  loadingMsg.className = 'chat-msg ai loading';
+  loadingMsg.innerHTML = '<div class="bsp-loading"></div> Думаю…';
+  msgsEl.appendChild(loadingMsg);
+  msgsEl.scrollTop = msgsEl.scrollHeight;
+
+  // Add to chat history
+  s.chatHistory.push({ role: 'user', content: userText });
+
+  // Build prompt from history
+  const historyText = s.chatHistory
+    .map(m => m.role === 'system' ? m.content : (m.role === 'user' ? 'Учень: ' + m.content : 'Вчитель: ' + m.content))
+    .join('\n');
+  const prompt = historyText + '\nВчитель:';
+
+  try {
+    const text = await callAI(prompt);
+    const aiText = text.trim();
+    s.chatHistory.push({ role: 'assistant', content: aiText });
+
+    loadingMsg.className = 'chat-msg ai';
+    loadingMsg.innerHTML = aiText.replace(/\n/g, '<br>');
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  } catch(e) {
+    loadingMsg.className = 'chat-msg ai';
+    loadingMsg.textContent = 'Помилка: ' + e.message;
+  }
+}
+
+function saveMyExample(lk, idx, originalSentence, correctedSentence) {
+  const key = exKey(lk, idx);
+  const data = getWordData(lk);
+  const w = data?.words[idx];
+  if (!w) return;
+  // Use corrected if available, else original
+  const finalSentence = correctedSentence && correctedSentence !== originalSentence
+    ? correctedSentence : originalSentence;
+  exampleCache[key] = { de: finalSentence, ua: '✎ Мій приклад', custom: true };
+  // Show confirmation
+  const feedbackEl = document.getElementById('trn-feedback-' + lk);
+  if (feedbackEl) {
+    const btn = feedbackEl.querySelector('button[onclick*="saveMyExample"]');
+    if (btn) { btn.textContent = '✓ Збережено!'; btn.disabled = true; }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// BURGER MENU
+// ══════════════════════════════════════════════════════════════
+function toggleMenu() {
+  document.getElementById('side-menu').classList.toggle('open');
+  document.getElementById('menu-overlay').classList.toggle('open');
+}
+
+// ══════════════════════════════════════════════════════════════
+// LEVEL SWITCH
+// ══════════════════════════════════════════════════════════════
+let currentLevel = 'B1';
+
+function switchLevel(level) {
+  currentLevel = level;
+  document.getElementById('menu-b1').style.display = level === 'B1' ? 'block' : 'none';
+  document.getElementById('menu-b2').style.display = level === 'B2' ? 'block' : 'none';
+  document.getElementById('lvl-b1').classList.toggle('active', level === 'B1');
+  document.getElementById('lvl-b2').classList.toggle('active', level === 'B2');
+  document.getElementById('top-level-badge').textContent = level;
+  // show first lektion of selected level
+  if (level === 'B1') {
+    const firstBtn = document.querySelector('#menu-b1 .lk-btn');
+    switchLektion('b1_1', firstBtn);
+  } else {
+    const firstBtn = document.querySelector('#menu-b2 .lk-btn');
+    switchLektion(1, firstBtn);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// B1 WORD DATA
+// ══════════════════════════════════════════════════════════════
+const b1Data = {
+  'b1_7': {
+    title: "Reisen und Verkehr",
+    words: [
+      {de:"die (Autobahn-)Ausfahrt",gr:"Pl. -en",ua:"виїзд (з автостради)"},
+      {de:"das Benzin",gr:"nur Sg.",ua:"бензин"},
+      {de:"die Bremse",gr:"Pl. -n",ua:"гальмо"},
+      {de:"die Fahrbahn",gr:"Pl. -en",ua:"проїжджа частина"},
+      {de:"der Fußgänger",gr:"Pl. -",ua:"пішохід"},
+      {de:"das Gas",gr:"nur Sg.",ua:"газ (педаль газу)"},
+      {de:"der Gehsteig",gr:"Pl. -e",ua:"тротуар"},
+      {de:"die Geschwindigkeitsbeschränkung",gr:"Pl. -en",ua:"обмеження швидкості"},
+      {de:"die Hupe",gr:"Pl. -n",ua:"клаксон"},
+      {de:"das Nummernschild",gr:"Pl. -er",ua:"номерний знак"},
+      {de:"die Panne",gr:"Pl. -n",ua:"поломка (авто)"},
+      {de:"der Radfahrer",gr:"Pl. -",ua:"велосипедист"},
+      {de:"der Radweg",gr:"Pl. -e",ua:"велосипедна доріжка"},
+      {de:"der Stau",gr:"Pl. -s",ua:"затор, пробка"},
+      {de:"die Tankstelle",gr:"Pl. -n",ua:"заправна станція"},
+      {de:"die Umleitung",gr:"Pl. -en",ua:"об'їзд"},
+      {de:"das Verkehrsschild",gr:"Pl. -er",ua:"дорожній знак"},
+      {de:"der Zebrastreifen",gr:"Pl. -",ua:"пішохідний перехід (зебра)"},
+      {de:"abbiegen",gr:"",ua:"повертати (на дорозі)"},
+      {de:"anhalten + A",gr:"",ua:"зупиняти; зупинятися"},
+      {de:"bremsen",gr:"",ua:"гальмувати"},
+      {de:"hupen",gr:"",ua:"сигналити (клаксоном)"},
+      {de:"losfahren",gr:"",ua:"вирушати, від'їжджати"},
+      {de:"tanken",gr:"",ua:"заправлятися"},
+      {de:"überholen + A",gr:"",ua:"обганяти"},
+      {de:"sich verfahren",gr:"",ua:"заблукати (на машині)"},
+      {de:"sich verlaufen",gr:"",ua:"заблукати (пішки)"},
+      {de:"verwechseln + A",gr:"",ua:"переплутувати"},
+      {de:"das Abenteuer",gr:"Pl. -",ua:"пригода"},
+      {de:"die Abreise",gr:"Pl. -n",ua:"від'їзд"},
+      {de:"der Aufenthalt",gr:"Pl. -e",ua:"перебування"},
+      {de:"das Aufgabegepäck",gr:"nur Sg.",ua:"зареєстрований багаж"},
+      {de:"der Bergsteiger",gr:"Pl. -",ua:"альпініст"},
+      {de:"die Einreise",gr:"Pl. -n",ua:"в'їзд (у країну)"},
+      {de:"der Empfang",gr:"Pl. -¨e",ua:"прийом, рецепція"},
+      {de:"der Fahrgast",gr:"Pl. -¨e",ua:"пасажир (транспорту)"},
+      {de:"das Fernweh",gr:"nur Sg.",ua:"жага мандрувати"},
+      {de:"der Flugbegleiter",gr:"Pl. -",ua:"бортпровідник"},
+      {de:"der Fluggast",gr:"Pl. -¨e",ua:"авіапасажир"},
+      {de:"das Gebirge",gr:"Pl. -",ua:"гірський масив"},
+      {de:"die Grenze",gr:"Pl. -n",ua:"кордон"},
+      {de:"der Hafen",gr:"Pl. -¨",ua:"порт, гавань"},
+      {de:"das Handgepäck",gr:"nur Sg.",ua:"ручна поклажа"},
+      {de:"das Heimweh",gr:"nur Sg.",ua:"ностальгія, туга за домом"},
+      {de:"die Küste",gr:"Pl. -n",ua:"узбережжя"},
+      {de:"die Landung",gr:"Pl. -en",ua:"посадка (літака)"},
+      {de:"der Passagier",gr:"Pl. -e",ua:"пасажир"},
+      {de:"der Reiseveranstalter",gr:"Pl. -",ua:"туристичний організатор"},
+      {de:"der Rollkoffer",gr:"Pl. -",ua:"валіза на колесах"},
+      {de:"die Rückkehr",gr:"nur Sg.",ua:"повернення"},
+      {de:"das Sondergepäck",gr:"nur Sg.",ua:"негабаритний багаж"},
+      {de:"der Steward / die Stewardess",gr:"",ua:"стюард / стюардеса"},
+      {de:"das Tal",gr:"Pl. -¨er",ua:"долина"},
+      {de:"das Ufer",gr:"Pl. -",ua:"берег (річки, озера)"},
+      {de:"die Weltreise",gr:"Pl. -n",ua:"навколосвітня подорож"},
+      {de:"das Wohnmobil",gr:"Pl. -e",ua:"автодім, кемпер"},
+      {de:"der Wohnwagen",gr:"Pl. -",ua:"причіп-будиночок, трейлер"},
+      {de:"aufgeben + A",gr:"",ua:"здавати (багаж)"},
+      {de:"landen",gr:"",ua:"приземлятися"},
+      {de:"starten",gr:"",ua:"злітати; стартувати"},
+      {de:"überqueren + A",gr:"",ua:"перетинати (кордон, вулицю)"},
+      {de:"verlängern + A",gr:"",ua:"продовжувати (термін, відпустку)"},
+      {de:"das (Frühstücks-)Buffet",gr:"Pl. -s",ua:"шведський стіл"},
+      {de:"der Meer(es)blick",gr:"Pl. -e",ua:"вид на море"},
+      {de:"die (Haupt-/Neben-)Saison",gr:"nur Sg.",ua:"висока / низька сезонність"},
+      {de:"der Swimmingpool",gr:"Pl. -s",ua:"басейн"},
+      {de:"der Zimmerservice",gr:"Pl. -s",ua:"обслуговування в номері"},
+      {de:"beheizt / hoteleigen",gr:"",ua:"опалюваний / власний (при готелі)"},
+      {de:"rund um die Uhr",gr:"Ausdruck",ua:"цілодобово"},
+    ]
+  },
+  'b1_8': {
+    title: "Gesundheit",
+    words: [
+      {de:"der Appetit",gr:"nur Sg.",ua:"апетит"},
+      {de:"die Bewegung",gr:"Pl. -en",ua:"рух, фізична активність"},
+      {de:"die Diät",gr:"Pl. -en",ua:"дієта"},
+      {de:"die Entspannung",gr:"nur Sg.",ua:"розслаблення"},
+      {de:"die Erholung",gr:"nur Sg.",ua:"відпочинок, відновлення"},
+      {de:"die Ernährung",gr:"nur Sg.",ua:"харчування"},
+      {de:"die Essgewohnheit",gr:"Pl. -en",ua:"харчова звичка"},
+      {de:"das Essverhalten",gr:"nur Sg.",ua:"харчова поведінка"},
+      {de:"das Fertiggericht",gr:"Pl. -e",ua:"готова страва (напівфабрикат)"},
+      {de:"das Fett",gr:"Pl. -e",ua:"жир"},
+      {de:"das (Über-/Unter-)Gewicht",gr:"Pl. -e",ua:"зайва / недостатня вага"},
+      {de:"die Gewohnheit",gr:"Pl. -en",ua:"звичка"},
+      {de:"die Kalorie",gr:"Pl. -n",ua:"калорія"},
+      {de:"die Mahlzeit",gr:"Pl. -en",ua:"прийом їжі, трапеза"},
+      {de:"der Nährstoff",gr:"Pl. -e",ua:"поживна речовина"},
+      {de:"das Nahrungsmittel",gr:"Pl. -",ua:"харчовий продукт"},
+      {de:"die Regelmäßigkeit",gr:"Pl. -en",ua:"регулярність"},
+      {de:"der Schlaf",gr:"nur Sg.",ua:"сон"},
+      {de:"das Suchtmittel",gr:"Pl. -",ua:"наркотична речовина"},
+      {de:"die Süßigkeit",gr:"Pl. -en",ua:"солодощі"},
+      {de:"der Tagesrhythmus",gr:"Pl. -rhythmen",ua:"добовий ритм"},
+      {de:"das Tief ≠ das Hoch",gr:"",ua:"депресія ≠ підйом настрою"},
+      {de:"abnehmen + A",gr:"",ua:"худнути; знімати"},
+      {de:"sich bewegen",gr:"",ua:"рухатися"},
+      {de:"enthalten + A",gr:"",ua:"містити (вітаміни тощо)"},
+      {de:"sich entspannen",gr:"",ua:"розслаблятися"},
+      {de:"sich erholen",gr:"",ua:"відпочивати, відновлюватися"},
+      {de:"sich ernähren",gr:"",ua:"харчуватися"},
+      {de:"konsumieren + A",gr:"",ua:"споживати"},
+      {de:"zu sich nehmen + A",gr:"",ua:"вживати (їжу, ліки)"},
+      {de:"vermeiden + A",gr:"",ua:"уникати"},
+      {de:"verzichten auf + A",gr:"",ua:"відмовлятися від (чогось)"},
+      {de:"wiegen + A",gr:"",ua:"важити; зважувати"},
+      {de:"zubereiten + A",gr:"",ua:"готувати (страву)"},
+      {de:"zunehmen",gr:"",ua:"товстішати, набирати вагу"},
+      {de:"fettarm / fettfrei / fetthaltig / fettreich",gr:"",ua:"нежирний / знежирений / жирний / дуже жирний"},
+      {de:"regelmäßig",gr:"",ua:"регулярний"},
+      {de:"die Allergie",gr:"Pl. -n",ua:"алергія"},
+      {de:"der Angehörige",gr:"Pl. -n",ua:"родич"},
+      {de:"der Apotheker",gr:"Pl. -",ua:"фармацевт, аптекар"},
+      {de:"der Arzthelfer",gr:"Pl. -",ua:"медичний асистент"},
+      {de:"das Blut",gr:"nur Sg.",ua:"кров"},
+      {de:"der Blutdruck",gr:"nur Sg.",ua:"артеріальний тиск"},
+      {de:"der Ellenbogen",gr:"Pl. -¨",ua:"лікоть"},
+      {de:"die Faust",gr:"Pl. -¨e",ua:"кулак"},
+      {de:"der Finger",gr:"Pl. -",ua:"палець (руки)"},
+      {de:"das Gelenk",gr:"Pl. -e",ua:"суглоб"},
+      {de:"die Haut",gr:"Pl. -¨e",ua:"шкіра"},
+      {de:"das Knie",gr:"Pl. -",ua:"коліно"},
+      {de:"der Knochen",gr:"Pl. -",ua:"кістка"},
+      {de:"der Muskel",gr:"Pl. -n",ua:"м'яз"},
+      {de:"der Notarzt",gr:"Pl. -¨e",ua:"лікар швидкої допомоги"},
+      {de:"der Patient",gr:"Pl. -en",ua:"пацієнт"},
+      {de:"das Personal",gr:"nur Sg.",ua:"персонал"},
+      {de:"das Pflaster",gr:"Pl. -",ua:"пластир"},
+      {de:"die Salbe",gr:"Pl. -n",ua:"мазь"},
+      {de:"die Schulter",gr:"Pl. -n",ua:"плече"},
+      {de:"die Spritze",gr:"Pl. -n",ua:"укол, ін'єкція; шприц"},
+      {de:"der Tropfen",gr:"Pl. -",ua:"крапля; краплі (ліки)"},
+      {de:"der Verband",gr:"Pl. -¨e",ua:"пов'язка"},
+      {de:"die Wunde",gr:"Pl. -n",ua:"рана"},
+      {de:"der Zustand",gr:"Pl. -¨e",ua:"стан (здоров'я)"},
+      {de:"Blut abnehmen",gr:"",ua:"брати кров (на аналіз)"},
+      {de:"atmen",gr:"",ua:"дихати"},
+      {de:"aufnehmen + A",gr:"",ua:"приймати (в лікарню)"},
+      {de:"behandeln + A",gr:"",ua:"лікувати"},
+      {de:"bluten",gr:"",ua:"кровоточити"},
+      {de:"einnehmen + A",gr:"",ua:"приймати (ліки)"},
+      {de:"entlassen + A",gr:"",ua:"виписувати (з лікарні)"},
+      {de:"freimachen + A",gr:"",ua:"оголяти (для огляду)"},
+      {de:"messen + A",gr:"",ua:"вимірювати (тиск, температуру)"},
+      {de:"nähen + A",gr:"",ua:"зашивати (рану)"},
+      {de:"operieren + A",gr:"",ua:"оперувати"},
+      {de:"verbinden + A",gr:"",ua:"перев'язувати (рану)"},
+      {de:"verschreiben + D + A",gr:"",ua:"призначати (ліки пацієнту)"},
+      {de:"gebrochen",gr:"",ua:"зламаний (перелом)"},
+      {de:"locker",gr:"",ua:"розслаблений; нещільний"},
+    ]
+  },
+  'b1_9': {
+    title: "Umwelt",
+    words: [
+      {de:"der Affe",gr:"Pl. -n",ua:"мавпа"},
+      {de:"der Bär",gr:"Pl. -en",ua:"ведмідь"},
+      {de:"die Biene",gr:"Pl. -n",ua:"бджола"},
+      {de:"der Elefant",gr:"Pl. -en",ua:"слон"},
+      {de:"die Ente",gr:"Pl. -n",ua:"качка"},
+      {de:"die Fliege",gr:"Pl. -n",ua:"муха"},
+      {de:"die Giraffe",gr:"Pl. -n",ua:"жирафа"},
+      {de:"der Hase",gr:"Pl. -n",ua:"заєць"},
+      {de:"das Huhn",gr:"Pl. -¨er",ua:"курка"},
+      {de:"das Insekt",gr:"Pl. -en",ua:"комаха"},
+      {de:"das Krokodil",gr:"Pl. -e",ua:"крокодил"},
+      {de:"die Kuh",gr:"Pl. -¨e",ua:"корова"},
+      {de:"der Löwe",gr:"Pl. -n",ua:"лев"},
+      {de:"die Maus",gr:"Pl. -¨e",ua:"миша"},
+      {de:"die Mücke",gr:"Pl. -n",ua:"комар"},
+      {de:"der Pinguin",gr:"Pl. -e",ua:"пінгвін"},
+      {de:"das Schaf",gr:"Pl. -e",ua:"вівця"},
+      {de:"die Schildkröte",gr:"Pl. -n",ua:"черепаха"},
+      {de:"die Schlange",gr:"Pl. -n",ua:"змія"},
+      {de:"der Abfall",gr:"Pl. -¨e",ua:"відходи, сміття"},
+      {de:"das Abgas",gr:"Pl. -e",ua:"вихлопний газ"},
+      {de:"der Anbau",gr:"nur Sg.",ua:"вирощування (с/г культур)"},
+      {de:"der Boden",gr:"Pl. -¨",ua:"ґрунт, земля"},
+      {de:"die Energie",gr:"Pl. -n",ua:"енергія"},
+      {de:"die Entsorgung",gr:"nur Sg.",ua:"утилізація, вивіз відходів"},
+      {de:"die Erde",gr:"Pl. -n",ua:"земля; Земля (планета)"},
+      {de:"das Gift",gr:"Pl. -e",ua:"отрута"},
+      {de:"die Industrie",gr:"nur Sg.",ua:"промисловість"},
+      {de:"das Insektensterben",gr:"nur Sg.",ua:"масова загибель комах"},
+      {de:"die Katastrophe",gr:"Pl. -n",ua:"катастрофа"},
+      {de:"der Konsum",gr:"nur Sg.",ua:"споживання"},
+      {de:"die Landwirtschaft",gr:"nur Sg.",ua:"сільське господарство"},
+      {de:"die Luft",gr:"Pl. -¨e",ua:"повітря"},
+      {de:"das Plastik",gr:"nur Sg.",ua:"пластик"},
+      {de:"die Produktion",gr:"Pl. -en",ua:"виробництво"},
+      {de:"die Reaktion",gr:"Pl. -en",ua:"реакція"},
+      {de:"die Reduzierung",gr:"Pl. -en",ua:"скорочення, зменшення"},
+      {de:"der Strom",gr:"nur Sg.",ua:"електроструем; течія"},
+      {de:"die Umwelt",gr:"nur Sg.",ua:"навколишнє середовище"},
+      {de:"der Verbrauch",gr:"nur Sg.",ua:"споживання, витрата"},
+      {de:"die Verschmutzung",gr:"Pl. -en",ua:"забруднення"},
+      {de:"die Ware",gr:"Pl. -n",ua:"товар"},
+      {de:"anbauen + A",gr:"",ua:"вирощувати (культури)"},
+      {de:"entsorgen + A",gr:"",ua:"утилізувати відходи"},
+      {de:"produzieren + A",gr:"",ua:"виробляти"},
+      {de:"reagieren auf + A",gr:"",ua:"реагувати на (щось)"},
+      {de:"reduzieren + A",gr:"",ua:"скорочувати, зменшувати"},
+      {de:"verbrauchen + A",gr:"",ua:"споживати, витрачати"},
+      {de:"vergiften + A",gr:"",ua:"отруювати"},
+      {de:"verschmutzen + A",gr:"",ua:"забруднювати"},
+      {de:"industriell / landwirtschaftlich / ökologisch / umweltfreundlich",gr:"",ua:"промисловий / с/г / екологічний / екологічно дружній"},
+      {de:"die Alternative",gr:"Pl. -n",ua:"альтернатива"},
+      {de:"das Feld",gr:"Pl. -er",ua:"поле"},
+      {de:"der Ökostrom",gr:"nur Sg.",ua:"зелена електроенергія"},
+      {de:"umgehen mit + D",gr:"",ua:"поводитися з (чимось)"},
+      {de:"alternativ / aufmerksam / ideal / öffentlich / sparsam / vegetarisch / verantwortlich / wertvoll",gr:"",ua:"альтернативний / уважний / ідеальний / публічний / ощадливий / вегетаріанський / відповідальний / цінний"},
+      {de:"der Experte",gr:"Pl. -n",ua:"експерт, фахівець"},
+      {de:"die Gegend",gr:"Pl. -en",ua:"місцевість, регіон"},
+      {de:"der Hagel",gr:"nur Sg.",ua:"град"},
+      {de:"die Hitze ≠ die Kälte",gr:"beide nur Sg.",ua:"спека ≠ холод"},
+      {de:"der Nebel",gr:"nur Sg.",ua:"туман"},
+      {de:"der Niederschlag",gr:"Pl. -¨e",ua:"опади"},
+      {de:"der Sturm",gr:"Pl. -¨e",ua:"буря, шторм"},
+      {de:"blitzen / donnern / sinken / steigen",gr:"",ua:"блискавити / гриміти / падати / підніматися"},
+      {de:"verursachen + A",gr:"",ua:"спричиняти"},
+      {de:"warnen vor + D",gr:"",ua:"попереджати про (щось)"},
+      {de:"zerstören + A",gr:"",ua:"руйнувати, знищувати"},
+      {de:"durchschnittlich / extrem / feucht / niedrig",gr:"",ua:"середній / екстремальний / вологий / низький"},
+    ]
+  },
+  'b1_10': {
+    title: "Beruf und Karriere",
+    words: [
+      {de:"der Altenpfleger / die Altenpflegerin",gr:"",ua:"доглядач за літніми / доглядачка"},
+      {de:"der Anwalt / die Anwältin",gr:"",ua:"адвокат / адвокатка"},
+      {de:"der Busfahrer / die Busfahrerin",gr:"",ua:"водій автобуса / водійка"},
+      {de:"der Feuerwehrmann / die Feuerwehrfrau",gr:"",ua:"пожежник / пожежниця"},
+      {de:"die Forschung",gr:"nur Sg.",ua:"дослідження"},
+      {de:"die Gastronomie",gr:"nur Sg.",ua:"ресторанний бізнес, гастрономія"},
+      {de:"das Gericht",gr:"Pl. -e",ua:"суд; страва"},
+      {de:"der Handel",gr:"nur Sg.",ua:"торгівля"},
+      {de:"das Handwerk",gr:"nur Sg.",ua:"ремесло"},
+      {de:"der Maler / die Malerin",gr:"",ua:"маляр / малярка"},
+      {de:"der Manager / die Managerin",gr:"",ua:"менеджер / менеджерка"},
+      {de:"der Metzger / die Metzgerin",gr:"",ua:"м'ясник / м'ясничка"},
+      {de:"die Pflege",gr:"nur Sg.",ua:"догляд (медичний)"},
+      {de:"der Sozialarbeiter / die Sozialarbeiterin",gr:"",ua:"соціальний працівник / -ниця"},
+      {de:"der Übersetzer / die Übersetzerin",gr:"",ua:"перекладач / перекладачка"},
+      {de:"der Wissenschaftler / die Wissenschaftlerin",gr:"",ua:"науковець / науковиця"},
+      {de:"betreuen / löschen / retten / vertreten + A",gr:"",ua:"доглядати / гасити / рятувати / представляти"},
+      {de:"zuständig / eine leitende Position",gr:"",ua:"відповідальний / керівна посада"},
+      {de:"die Absage",gr:"Pl. -n",ua:"відмова"},
+      {de:"die Annonce",gr:"Pl. -n",ua:"оголошення (у газеті)"},
+      {de:"das Anschreiben",gr:"Pl. -",ua:"супровідний лист"},
+      {de:"der Arbeitgeber",gr:"Pl. -",ua:"роботодавець"},
+      {de:"der Arbeitnehmer",gr:"Pl. -",ua:"найманий працівник"},
+      {de:"die Arbeits-/Berufserfahrung",gr:"meist Sg.",ua:"досвід роботи"},
+      {de:"das Auftreten",gr:"nur Sg.",ua:"поведінка, манера триматися"},
+      {de:"die Berufspraxis",gr:"nur Sg.",ua:"практичний досвід"},
+      {de:"die Beschäftigung",gr:"Pl. -en",ua:"зайнятість, робота"},
+      {de:"die Bildung",gr:"nur Sg.",ua:"освіта"},
+      {de:"die (Team-)Fähigkeit",gr:"Pl. -en",ua:"здатність (до роботи в команді)"},
+      {de:"die Festanstellung",gr:"Pl. -en",ua:"постійне місце роботи"},
+      {de:"der Lebenslauf",gr:"Pl. -¨e",ua:"резюме"},
+      {de:"die Qualifikation",gr:"Pl. -en",ua:"кваліфікація"},
+      {de:"die Schwäche",gr:"Pl. -n",ua:"слабка сторона"},
+      {de:"die Selbstständigkeit",gr:"nur Sg.",ua:"самостійність"},
+      {de:"die Stärke",gr:"Pl. -n",ua:"сильна сторона"},
+      {de:"die Tätigkeit",gr:"Pl. -en",ua:"діяльність, вид роботи"},
+      {de:"die Teilzeit ≠ die Vollzeit",gr:"beide nur Sg.",ua:"часткова ≠ повна зайнятість"},
+      {de:"die Voraussetzung",gr:"Pl. -en",ua:"вимога, умова"},
+      {de:"das Vorstellungsgespräch",gr:"Pl. -e",ua:"співбесіда"},
+      {de:"die Zusage",gr:"Pl. -n",ua:"ствердна відповідь, згода"},
+      {de:"die Zuverlässigkeit",gr:"nur Sg.",ua:"надійність"},
+      {de:"sich melden bei + D",gr:"",ua:"звертатися, повідомляти (до когось)"},
+      {de:"flexibel / mehrjährig / tabellarisch / überdurchschnittlich / vollständig / zuverlässig",gr:"",ua:"гнучкий / багаторічний / табличний / вище середнього / повний / надійний"},
+      {de:"gut laufen",gr:"Redewendung",ua:"добре йти, успішно розвиватися"},
+      {de:"die Anerkennung",gr:"Pl. -en",ua:"визнання (кваліфікації)"},
+      {de:"die Arbeitserlaubnis",gr:"Pl. -se",ua:"дозвіл на роботу"},
+      {de:"der Arbeitsmarkt",gr:"Pl. -¨e",ua:"ринок праці"},
+      {de:"die (Berufs-)Beratung",gr:"nur Sg.",ua:"(профільна) консультація"},
+      {de:"das Dokument",gr:"Pl. -e",ua:"документ"},
+      {de:"die Teilnahme",gr:"nur Sg.",ua:"участь"},
+      {de:"die Unterstützung",gr:"Pl. -en",ua:"підтримка"},
+      {de:"der Zugang",gr:"Pl. -¨e",ua:"доступ"},
+      {de:"die Zustimmung",gr:"nur Sg.",ua:"згода"},
+      {de:"anerkennen / beantragen / erhalten / nachholen / nachweisen / zustimmen",gr:"",ua:"визнавати / подавати заяву / отримувати / надолужувати / підтверджувати / погоджуватися"},
+      {de:"ausländisch / erforderlich",gr:"",ua:"іноземний / необхідний"},
+    ]
+  },
+  'b1_11': {
+    title: "Im Unternehmen",
+    words: [
+      {de:"die (Personal-)Abteilung",gr:"Pl. -en",ua:"відділ (кадрів)"},
+      {de:"die Abteilungsleitung",gr:"Pl. -en",ua:"керівництво відділу"},
+      {de:"die Angabe",gr:"Pl. -n",ua:"відомості, дані"},
+      {de:"die Anstellung",gr:"Pl. -en",ua:"посада, найм на роботу"},
+      {de:"das Arbeitsverhältnis",gr:"Pl. -se",ua:"трудові відносини"},
+      {de:"der Arbeitsvertrag",gr:"Pl. -¨e",ua:"трудовий договір"},
+      {de:"der Aufgabenbereich",gr:"Pl. -e",ua:"сфера завдань, обов'язки"},
+      {de:"der Auftrag",gr:"Pl. -¨e",ua:"замовлення, доручення"},
+      {de:"der/die Beauftragte",gr:"Pl. -n",ua:"уповноважений / уповноважена"},
+      {de:"die (Arbeits-)Bedingung",gr:"Pl. -en",ua:"умова (праці)"},
+      {de:"der Betrieb",gr:"Pl. -e",ua:"підприємство"},
+      {de:"das Dokument",gr:"Pl. -e",ua:"документ"},
+      {de:"die Entlassung",gr:"Pl. -en",ua:"звільнення з роботи"},
+      {de:"die (Lohn-/Gehalts-)Erhöhung",gr:"Pl. -en",ua:"підвищення (зарплати / окладу)"},
+      {de:"die Etage",gr:"Pl. -n",ua:"поверх"},
+      {de:"die (Kündigungs-)Frist",gr:"Pl. -en",ua:"термін (попередження про звільнення)"},
+      {de:"das Lager",gr:"Pl. -",ua:"склад"},
+      {de:"der Leiter / die Leiterin",gr:"",ua:"керівник / керівниця"},
+      {de:"der Lohn",gr:"Pl. -¨e",ua:"заробітна плата (погодинна)"},
+      {de:"der Notausgang",gr:"Pl. -¨e",ua:"аварійний вихід"},
+      {de:"die Produktion",gr:"Pl. -en",ua:"виробництво"},
+      {de:"die (Arbeits-)Sicherheit",gr:"nur Sg.",ua:"безпека праці"},
+      {de:"die Unterlagen",gr:"hier nur Pl.",ua:"документи, матеріали"},
+      {de:"der Unternehmer / die Unternehmerin",gr:"",ua:"підприємець / підприємиця"},
+      {de:"die Urlaubsplanung",gr:"Pl. -en",ua:"планування відпустки"},
+      {de:"die Verwaltung",gr:"Pl. -en",ua:"адміністрація, управління"},
+      {de:"die Ware",gr:"Pl. -n",ua:"товар"},
+      {de:"ausstellen + A",gr:"",ua:"виписувати (документ, рахунок)"},
+      {de:"bearbeiten + A",gr:"",ua:"опрацьовувати, обробляти"},
+      {de:"(sich) beschäftigen mit + D",gr:"",ua:"займатися (чимось)"},
+      {de:"einstellen + A",gr:"",ua:"наймати (на роботу)"},
+      {de:"enden",gr:"",ua:"закінчуватися"},
+      {de:"entlassen + A",gr:"",ua:"звільняти (з роботи)"},
+      {de:"erfüllen + A",gr:"",ua:"виконувати (завдання, вимоги)"},
+      {de:"ergänzen + A",gr:"",ua:"доповнювати"},
+      {de:"hinweisen auf + A",gr:"",ua:"вказувати на (щось)"},
+      {de:"versäumen + A",gr:"",ua:"пропускати, прогаяти"},
+      {de:"ganztags / halbtags / rechtlich / selbstständig / zurzeit",gr:"",ua:"повний день / півставки / юридично / самостійно / наразі"},
+      {de:"der Anspruch",gr:"Pl. -¨e",ua:"претензія, право на щось"},
+      {de:"die Fortbildung",gr:"Pl. -en",ua:"підвищення кваліфікації"},
+      {de:"der Mindestlohn",gr:"Pl. -¨e",ua:"мінімальна заробітна плата"},
+      {de:"der Nationalfeiertag",gr:"Pl. -e",ua:"національне свято"},
+      {de:"Pfingsten",gr:"nur Pl.",ua:"Трійця (свято)"},
+      {de:"die Überstunde",gr:"Pl. -n",ua:"понаднормова година"},
+      {de:"der Urlaubstag",gr:"Pl. -e",ua:"день відпустки"},
+      {de:"analysieren / beachten / installieren / sichern / unterrichten / veröffentlichen / zubereiten",gr:"",ua:"аналізувати / враховувати / встановлювати / захищати / навчати / публікувати / готувати"},
+      {de:"gesetzlich",gr:"",ua:"законний"},
+      {de:"die Arbeitszeit",gr:"Pl. -en",ua:"робочий час"},
+      {de:"der Betriebsrat",gr:"Pl. -¨e",ua:"виробнича рада (профспілка)"},
+      {de:"die Gewerkschaft",gr:"Pl. -en",ua:"профспілка"},
+      {de:"das Recht",gr:"Pl. -e",ua:"право"},
+      {de:"der Streik",gr:"Pl. -s",ua:"страйк"},
+      {de:"die Wahl",gr:"Pl. -en",ua:"вибір; вибори"},
+      {de:"die Zustimmung",gr:"Pl. -en",ua:"згода"},
+      {de:"fordern / streiken / verlangen / zustimmen",gr:"",ua:"вимагати / страйкувати / вимагати / погоджуватися"},
+      {de:"erfolgreich",gr:"",ua:"успішний"},
+    ]
+  },
+  'b1_12': {
+    title: "Behörden und Institutionen",
+    words: [
+      {de:"die Behörde",gr:"Pl. -n",ua:"орган влади, установа"},
+      {de:"der Bundeskanzler / die Bundeskanzlerin",gr:"",ua:"федеральний канцлер / канцлерка"},
+      {de:"das Bundesland",gr:"Pl. -¨er",ua:"федеральна земля"},
+      {de:"der Bundespräsident / die Bundespräsidentin",gr:"",ua:"федеральний президент / президентка"},
+      {de:"die Bundesrepublik Deutschland",gr:"nur Sg.",ua:"Федеративна Республіка Німеччина"},
+      {de:"der Bundestag",gr:"Pl. -e",ua:"Бундестаг (парламент)"},
+      {de:"der Bürger / die Bürgerin",gr:"",ua:"громадянин / громадянка"},
+      {de:"der Bürgermeister / die Bürgermeisterin",gr:"",ua:"мер / мерка"},
+      {de:"die Europäische Union (EU)",gr:"nur Sg.",ua:"Європейський союз"},
+      {de:"die Gemeinde",gr:"Pl. -n",ua:"громада, муніципалітет"},
+      {de:"die Institution",gr:"Pl. -en",ua:"установа, інституція"},
+      {de:"der Kreis",gr:"Pl. -e",ua:"округ, район"},
+      {de:"der Nationalrat (Schweiz)",gr:"nur Sg.",ua:"Національна рада (Швейцарія)"},
+      {de:"das Parlament",gr:"Pl. -e",ua:"парламент"},
+      {de:"die Partei",gr:"Pl. -en",ua:"партія"},
+      {de:"der Politiker / die Politikerin",gr:"",ua:"політик / політикиня"},
+      {de:"die Regierung",gr:"Pl. -en",ua:"уряд"},
+      {de:"die Republik Österreich",gr:"nur Sg.",ua:"Австрійська Республіка"},
+      {de:"die Schweizerische Eidgenossenschaft",gr:"nur Sg.",ua:"Швейцарська Конфедерація"},
+      {de:"der Staat",gr:"Pl. -en",ua:"держава"},
+      {de:"die Verwaltung",gr:"Pl. -en",ua:"адміністрація"},
+      {de:"die Wahl",gr:"Pl. -en",ua:"вибори"},
+      {de:"abstimmen / wählen + A",gr:"",ua:"голосувати / обирати"},
+      {de:"demokratisch / konservativ / liberal / politisch / staatlich",gr:"",ua:"демократичний / консервативний / ліберальний / політичний / державний"},
+      {de:"der Antrag",gr:"Pl. -¨e",ua:"заява, клопотання"},
+      {de:"das Arbeitslosengeld",gr:"nur Sg.",ua:"допомога по безробіттю"},
+      {de:"die Ausgabe",gr:"Pl. -n",ua:"витрата; видання"},
+      {de:"die Bankleitzahl",gr:"Pl. -en",ua:"банківський код (BLZ)"},
+      {de:"der Beamte / die Beamtin",gr:"",ua:"державний службовець / -виця"},
+      {de:"der Beleg",gr:"Pl. -e",ua:"квитанція, чек"},
+      {de:"der Bescheid",gr:"Pl. -e",ua:"рішення (офіційне повідомлення)"},
+      {de:"die Bestätigung",gr:"Pl. -en",ua:"підтвердження"},
+      {de:"der Betrag",gr:"Pl. -¨e",ua:"сума"},
+      {de:"das Einkommen",gr:"Pl. -",ua:"дохід, заробіток"},
+      {de:"das Einwohnermeldeamt",gr:"Pl. -¨er",ua:"реєстраційне управління"},
+      {de:"die Kontonummer",gr:"Pl. -n",ua:"номер рахунку"},
+      {de:"das Standesamt",gr:"Pl. -¨er",ua:"відділ реєстрації актів (РАЦС)"},
+      {de:"das Wohngeld",gr:"nur Sg.",ua:"житлова субсидія"},
+      {de:"der Wohnsitz",gr:"Pl. -e",ua:"місце проживання"},
+      {de:"angeben / ausstellen / gelten / eine Frage/einen Antrag stellen",gr:"",ua:"вказувати / видавати / бути чинним / ставити питання / подавати заяву"},
+      {de:"die EC-Karte",gr:"Pl. -n",ua:"банківська картка"},
+      {de:"der Geldautomat",gr:"Pl. -en",ua:"банкомат"},
+      {de:"die Quittung",gr:"Pl. -en",ua:"квитанція"},
+      {de:"der (Geld-)Schein",gr:"Pl. -e",ua:"банкнота"},
+      {de:"die Summe",gr:"Pl. -n",ua:"сума"},
+      {de:"abheben / aufnehmen / einzahlen / eröffnen / umtauschen / zählen + A",gr:"",ua:"знімати / брати / вносити / відкривати / обмінювати / рахувати"},
+      {de:"die Aufforderung",gr:"Pl. -en",ua:"вимога, заклик"},
+      {de:"der Beitrag",gr:"Pl. -¨e",ua:"внесок (страховий)"},
+      {de:"der Einbruch",gr:"Pl. -¨e",ua:"пограбування зі зломом"},
+      {de:"die Mahnung",gr:"Pl. -en",ua:"нагадування (про борг)"},
+      {de:"der Schaden",gr:"Pl. -¨",ua:"збиток, шкода"},
+      {de:"die Versichertenkarte",gr:"Pl. -n",ua:"страхова картка (медична)"},
+      {de:"die Versicherung",gr:"Pl. -en",ua:"страхування, страховка"},
+      {de:"abschließen / sich erkundigen nach / melden / versichern + A",gr:"",ua:"укладати (страховку) / дізнаватися про / повідомляти / страхувати"},
+      {de:"fällig",gr:"",ua:"належний до сплати, прострочений"},
+    ]
+  },
+  'b1_1': {
+    title: "Menschen",
+    words: [
+      {de:"aufwachsen",gr:"",ua:"рости, виростати"},
+      {de:"beschließen + A",gr:"",ua:"вирішувати (щось зробити)"},
+      {de:"sich entschließen zu + D",gr:"",ua:"наважуватися на (щось)"},
+      {de:"sich leisten + A",gr:"",ua:"дозволяти собі (щось)"},
+      {de:"nennen + A",gr:"",ua:"називати"},
+      {de:"stammen aus + D",gr:"",ua:"походити з (міста, країни)"},
+      {de:"überlegen + A",gr:"",ua:"обдумувати, міркувати"},
+      {de:"verändern + A",gr:"sich/etwas",ua:"змінювати (себе / щось)"},
+      {de:"zurückgehen",gr:"",ua:"повертатися"},
+      {de:"erwachsen",gr:"",ua:"дорослий"},
+      {de:"ursprünglich",gr:"",ua:"початково, спочатку"},
+      {de:"die Stimmung",gr:"Pl. -en",ua:"настрій, атмосфера"},
+      {de:"(un)aufmerksam",gr:"",ua:"(не)уважний"},
+      {de:"(un)ehrlich",gr:"",ua:"(не)чесний"},
+      {de:"(un)geduldig",gr:"",ua:"(не)терплячий"},
+      {de:"hübsch ≠ hässlich",gr:"",ua:"гарний ≠ потворний"},
+      {de:"(un)kreativ",gr:"",ua:"(не)творчий"},
+      {de:"liebevoll ≠ lieblos",gr:"",ua:"ніжний ≠ байдужий"},
+      {de:"mutig ≠ ängstlich",gr:"",ua:"сміливий ≠ боязкий"},
+      {de:"(un)ordentlich",gr:"",ua:"(не)охайний"},
+      {de:"(un)praktisch",gr:"",ua:"(не)практичний"},
+      {de:"respektvoll ≠ respektlos",gr:"",ua:"поважний ≠ зневажливий"},
+      {de:"schüchtern",gr:"",ua:"сором'язливий, несміливий"},
+      {de:"(in)tolerant",gr:"",ua:"(не)толерантний"},
+      {de:"(un)treu",gr:"",ua:"(не)вірний"},
+      {de:"verständnisvoll ≠ verständnislos",gr:"",ua:"розуміючий ≠ нерозуміючий"},
+      {de:"verantwortungsvoll ≠ verantwortungslos",gr:"",ua:"відповідальний ≠ безвідповідальний"},
+      {de:"(un)zuverlässig",gr:"",ua:"(не)надійний"},
+      {de:"die Beziehung",gr:"Pl. -en",ua:"стосунки, відносини"},
+      {de:"der Ehemann / die Ehefrau",gr:"",ua:"чоловік / дружина (в шлюбі)"},
+      {de:"der Lebensgefährte / die Lebensgefährtin",gr:"",ua:"партнер по життю / партнерка"},
+      {de:"die Nichte / der Neffe",gr:"",ua:"племінниця / племінник"},
+      {de:"der Schwager / die Schwägerin",gr:"",ua:"зять, шурин / невістка, зовиця"},
+      {de:"die Schwiegermutter / der Schwiegervater",gr:"",ua:"свекруха, теща / свекор, тесть"},
+      {de:"die WG / die Wohngemeinschaft",gr:"",ua:"спільне проживання"},
+      {de:"sich scheiden lassen von + D",gr:"",ua:"розлучатися (з кимось)"},
+      {de:"sich trennen von + D",gr:"",ua:"розставатися (з кимось)"},
+      {de:"die Freude / die Fröhlichkeit",gr:"",ua:"радість / веселість"},
+      {de:"die Langeweile; sich langweilen",gr:"",ua:"нудьга; нудьгувати"},
+      {de:"die Neugier; neugierig auf + A",gr:"",ua:"цікавість; цікавий"},
+      {de:"der Stolz; stolz auf + A",gr:"",ua:"гордість; гордий"},
+      {de:"die Trauer / die Traurigkeit",gr:"",ua:"смуток, сум"},
+      {de:"das Vertrauen; vertrauen + D",gr:"",ua:"довіра; довіряти"},
+      {de:"die Wut; wütend auf/über + A",gr:"",ua:"злість, лють; злий"},
+      {de:"anstrengend",gr:"",ua:"виснажливий, стомлюючий"},
+      {de:"aufgeregt",gr:"",ua:"схвильований, збуджений"},
+      {de:"gespannt",gr:"",ua:"напружений; із нетерпінням"},
+      {de:"peinlich",gr:"",ua:"незручний, соромний"},
+    ]
+  },
+  'b1_2': {
+    title: "Stationen im Leben",
+    words: [
+      {de:"das Alter",gr:"Sg.",ua:"вік"},
+      {de:"die Besonderheit",gr:"Pl. -en",ua:"особливість"},
+      {de:"das Erwachsenenalter",gr:"Sg.",ua:"дорослий вік"},
+      {de:"die Fähigkeit",gr:"Pl. -en",ua:"здібність, вміння"},
+      {de:"die Freiheit",gr:"Pl. -en",ua:"свобода"},
+      {de:"die Geburt",gr:"Pl. -en",ua:"народження"},
+      {de:"die Gleichberechtigung",gr:"nur Sg.",ua:"рівноправ'я"},
+      {de:"die Jugend",gr:"nur Sg.",ua:"молодість, юність"},
+      {de:"die Kinderbetreuung",gr:"nur Sg.",ua:"догляд за дітьми"},
+      {de:"die Kindererziehung",gr:"nur Sg.",ua:"виховання дітей"},
+      {de:"die Kindheit",gr:"Pl. -en",ua:"дитинство"},
+      {de:"die Schwangerschaft",gr:"Pl. -en",ua:"вагітність"},
+      {de:"die Schwierigkeit",gr:"Pl. -en",ua:"труднощі, складність"},
+      {de:"die Selbstständigkeit",gr:"nur Sg.",ua:"самостійність"},
+      {de:"die Sicherheit",gr:"Pl. -en",ua:"безпека; впевненість"},
+      {de:"die Unterstützung",gr:"nur Sg.",ua:"підтримка"},
+      {de:"die Verrücktheit",gr:"Pl. -en",ua:"несамовитість, безумство"},
+      {de:"die Wirklichkeit",gr:"Pl. -en",ua:"дійсність, реальність"},
+      {de:"ein Baby bekommen",gr:"",ua:"народити дитину"},
+      {de:"betreuen + A",gr:"",ua:"доглядати (дітей, хворих)"},
+      {de:"erziehen + A",gr:"",ua:"виховувати"},
+      {de:"finanzieren + A",gr:"",ua:"фінансувати"},
+      {de:"unterstützen + A",gr:"",ua:"підтримувати"},
+      {de:"verbringen + A",gr:"",ua:"проводити (час)"},
+      {de:"alleinerziehend",gr:"",ua:"той, хто виховує дитину на самоті"},
+      {de:"alltäglich",gr:"",ua:"повсякденний, звичний"},
+      {de:"gleichaltrig",gr:"",ua:"однолітній, одного віку"},
+      {de:"gleichberechtigt",gr:"",ua:"рівноправний"},
+      {de:"etwas im Sinn haben",gr:"Redewendung",ua:"мати щось на думці / в плані"},
+      {de:"der Möbelwagen",gr:"Pl. -",ua:"вантажівка для меблів"},
+      {de:"der Umzug",gr:"Pl. -¨e",ua:"переїзд"},
+      {de:"der Umzugskarton",gr:"Pl. -s",ua:"картонна коробка для переїзду"},
+      {de:"der Strom",gr:"Sg.",ua:"електрика, струм"},
+      {de:"(sich = D) anschaffen + A",gr:"",ua:"придбати (для себе)"},
+      {de:"anschließen + A",gr:"",ua:"підключати"},
+      {de:"an-/ausstellen + A",gr:"",ua:"вмикати / вимикати"},
+      {de:"einrichten + A",gr:"",ua:"облаштовувати (квартиру)"},
+      {de:"rechtzeitig",gr:"",ua:"вчасно, своєчасно"},
+      {de:"der Abschluss",gr:"Pl. -¨e",ua:"закінчення, випуск (школи)"},
+      {de:"der Antrag",gr:"Pl. -¨e",ua:"заява, заявка"},
+      {de:"der Aufenthalt",gr:"Pl. -e",ua:"перебування, проживання"},
+      {de:"die Arbeitserlaubnis",gr:"Pl. -se",ua:"дозвіл на роботу"},
+      {de:"die Behörde",gr:"Pl. -n",ua:"орган влади, установа"},
+      {de:"die Botschaft",gr:"Pl. -en",ua:"посольство; повідомлення"},
+      {de:"das Dokument",gr:"Pl. -e",ua:"документ"},
+      {de:"die Duldung",gr:"nur Sg.",ua:"тимчасовий дозвіл на перебування"},
+      {de:"die Eingewöhnung",gr:"nur Sg.",ua:"звикання, адаптація"},
+      {de:"die Herausforderung",gr:"Pl. -en",ua:"виклик, завдання"},
+      {de:"das Konsulat",gr:"Pl. -e",ua:"консульство"},
+      {de:"das Missverständnis",gr:"Pl. -se",ua:"непорозуміння"},
+      {de:"das Visum",gr:"Pl. Visa",ua:"віза"},
+      {de:"die Voraussetzung",gr:"Pl. -en",ua:"передумова, вимога"},
+      {de:"anerkennen + A",gr:"",ua:"визнавати (диплом, право)"},
+      {de:"ausreichen",gr:"",ua:"бути достатнім"},
+      {de:"beantragen + A",gr:"",ua:"подавати заяву на (щось)"},
+      {de:"besitzen + A",gr:"",ua:"мати, володіти"},
+      {de:"sich gewöhnen an + A",gr:"",ua:"звикати до (чогось)"},
+      {de:"legal",gr:"",ua:"легальний, законний"},
+      {de:"speziell",gr:"",ua:"спеціальний, особливий"},
+    ]
+  },
+  'b1_3': {
+    title: "Wohnen",
+    words: [
+      {de:"der Altbau",gr:"Pl. -ten",ua:"стара будівля (довоєнна)"},
+      {de:"das Dach",gr:"Pl. -¨er",ua:"дах"},
+      {de:"das Dachgeschoss",gr:"Pl. -e",ua:"горищний поверх, мансарда"},
+      {de:"die Decke",gr:"Pl. -n",ua:"стеля"},
+      {de:"die Einbauküche",gr:"Pl. -n",ua:"вбудована кухня"},
+      {de:"der Fußboden",gr:"Pl. -¨",ua:"підлога"},
+      {de:"das Haustier",gr:"Pl. -e",ua:"домашня тварина"},
+      {de:"die Kaltmiete",gr:"Pl. -n",ua:"холодна оренда (без комунальних)"},
+      {de:"die Kaution",gr:"Pl. -en",ua:"заставна сума, депозит"},
+      {de:"die Küchenzeile",gr:"Pl. -n",ua:"кухонний ряд (мінікухня)"},
+      {de:"die Nebenkosten",gr:"nur Pl.",ua:"комунальні витрати"},
+      {de:"der Neubau",gr:"Pl. -ten",ua:"нова будівля, новобудова"},
+      {de:"das Obergeschoss",gr:"Pl. -e",ua:"верхній поверх"},
+      {de:"das Viertel",gr:"Pl. -",ua:"квартал, район"},
+      {de:"die Warmmiete",gr:"Pl. -n",ua:"тепла оренда (з комунальними)"},
+      {de:"die Wohnfläche",gr:"Pl. -n",ua:"житлова площа"},
+      {de:"die Wohnküche",gr:"Pl. -n",ua:"кухня-вітальня"},
+      {de:"der Zustand",gr:"Pl. -¨e",ua:"стан (квартири)"},
+      {de:"die Zweizimmerwohnung",gr:"Pl. -en",ua:"двокімнатна квартира"},
+      {de:"die Zwischenmiete",gr:"nur Sg.",ua:"тимчасова оренда (субаренда)"},
+      {de:"außerhalb",gr:"",ua:"за межами (міста)"},
+      {de:"eingerichtet",gr:"",ua:"мебльований, облаштований"},
+      {de:"gemütlich",gr:"",ua:"затишний"},
+      {de:"ideal",gr:"",ua:"ідеальний"},
+      {de:"komplett",gr:"",ua:"повний, цілковитий"},
+      {de:"möbliert",gr:"",ua:"мебльований"},
+      {de:"wunderschön",gr:"",ua:"прекрасний, чудовий"},
+      {de:"in zentraler Lage",gr:"",ua:"у центральному розташуванні"},
+      {de:"die Hausverwaltung",gr:"Pl. -en",ua:"управління будинком"},
+      {de:"der Hof",gr:"Pl. -¨e",ua:"подвір'я, двір"},
+      {de:"der Kinderwagen",gr:"Pl. -",ua:"дитячий візок"},
+      {de:"die Mieterversammlung",gr:"Pl. -en",ua:"збори мешканців"},
+      {de:"der Papiermüll",gr:"nur Sg.",ua:"паперове сміття"},
+      {de:"die Pflicht",gr:"Pl. -en",ua:"обов'язок"},
+      {de:"der Sack",gr:"Pl. -¨e",ua:"мішок"},
+      {de:"die Teilnahme",gr:"nur Sg.",ua:"участь"},
+      {de:"die Tonne",gr:"Pl. -n",ua:"бак для сміття; тонна"},
+      {de:"das Treppenhaus",gr:"Pl. -¨er",ua:"сходова клітка"},
+      {de:"die Vorschrift",gr:"Pl. -en",ua:"правило, приписання"},
+      {de:"die Werbung",gr:"nur Sg.",ua:"реклама"},
+      {de:"abstellen + A",gr:"",ua:"ставити (десь); відключати"},
+      {de:"anschließen + A",gr:"",ua:"підключати"},
+      {de:"aufschließen + A",gr:"",ua:"відмикати (замок)"},
+      {de:"reinigen + A",gr:"",ua:"очищати, прибирати"},
+      {de:"schieben + A",gr:"",ua:"штовхати, пересувати"},
+      {de:"trennen + A",gr:"",ua:"розділяти, сортувати (сміття)"},
+      {de:"erwünscht",gr:"",ua:"бажаний"},
+      {de:"gründlich",gr:"",ua:"ретельний, докладний"},
+      {de:"ordentlich",gr:"",ua:"охайний, акуратний"},
+      {de:"der Briefkasten",gr:"Pl. -¨",ua:"поштова скринька"},
+      {de:"die Glühbirne",gr:"Pl. -n",ua:"лампочка"},
+      {de:"der Hausmeister",gr:"Pl. -",ua:"двірник, комендант будинку"},
+      {de:"die Leiter",gr:"Pl. -n",ua:"драбина; керівник"},
+      {de:"der Vormieter",gr:"Pl. -",ua:"попередній орендар"},
+      {de:"der Wasserfleck",gr:"Pl. -en",ua:"пляма від води"},
+      {de:"annehmen + A",gr:"",ua:"приймати (посилку, пропозицію)"},
+      {de:"füttern + A",gr:"",ua:"годувати (тварин)"},
+      {de:"gießen + A",gr:"",ua:"поливати (рослини)"},
+      {de:"heizen + A",gr:"",ua:"опалювати; топити"},
+      {de:"klingeln",gr:"",ua:"дзвонити в дзвінок"},
+      {de:"leeren + A",gr:"",ua:"спустошувати, виносити (сміття)"},
+      {de:"lüften + A",gr:"",ua:"провітрювати"},
+      {de:"zufällig",gr:"",ua:"випадково"},
+      {de:"nach dem Rechten sehen",gr:"Redewendung",ua:"доглядати, перевіряти (чи все гаразд)"},
+      {de:"der Bauernhof",gr:"Pl. -¨e",ua:"ферма, сільський двір"},
+      {de:"das Einfamilienhaus",gr:"Pl. -¨er",ua:"будинок для однієї сім'ї"},
+      {de:"das Hochhaus",gr:"Pl. -¨er",ua:"висотний будинок"},
+      {de:"das Mehrfamilienhaus",gr:"Pl. -¨er",ua:"багатоквартирний будинок"},
+      {de:"das Reihenhaus",gr:"Pl. -¨er",ua:"будинок в ряду (таунхаус)"},
+      {de:"der Stadtrand",gr:"Pl. -¨er",ua:"окраїна міста"},
+      {de:"die Stadtwohnung",gr:"Pl. -en",ua:"міська квартира"},
+      {de:"der Vorort",gr:"Pl. -e",ua:"передмістя"},
+      {de:"besitzen + A",gr:"",ua:"мати, володіти"},
+      {de:"erben + A",gr:"",ua:"успадковувати"},
+      {de:"vererben + A",gr:"",ua:"залишати у спадщину"},
+    ]
+  },
+  'b1_4': {
+    title: "Einkaufen",
+    words: [
+      {de:"die Abteilung",gr:"Pl. -en",ua:"відділ"},
+      {de:"die Armbanduhr",gr:"Pl. -en",ua:"наручний годинник"},
+      {de:"die Bettwäsche",gr:"nur Sg.",ua:"постільна білизна"},
+      {de:"der Buntstift",gr:"Pl. -e",ua:"кольоровий олівець"},
+      {de:"das Design",gr:"Pl. -s",ua:"дизайн"},
+      {de:"die Funktion",gr:"Pl. -en",ua:"функція"},
+      {de:"der Geruch",gr:"Pl. -¨e",ua:"запах"},
+      {de:"der Geschmack",gr:"Pl. -¨er",ua:"смак; смак (естетичний)"},
+      {de:"das Gewicht",gr:"Pl. -e",ua:"вага"},
+      {de:"das Gift",gr:"Pl. -e",ua:"отрута"},
+      {de:"die Haushaltswaren",gr:"nur Pl.",ua:"товари для дому"},
+      {de:"der Hersteller",gr:"Pl. -",ua:"виробник"},
+      {de:"der Inhaltsstoff",gr:"Pl. -e",ua:"інгредієнт, складова"},
+      {de:"das Material",gr:"Pl. -ien",ua:"матеріал"},
+      {de:"die Metzgerei",gr:"Pl. -en",ua:"м'ясна крамниця"},
+      {de:"die Naht",gr:"Pl. -¨e",ua:"шов"},
+      {de:"der Kundenservice",gr:"Pl. -s",ua:"клієнтська підтримка"},
+      {de:"der Schlüsseldienst",gr:"Pl. -e",ua:"служба ключів (слюсар)"},
+      {de:"der Schmuck",gr:"nur Sg.",ua:"прикраси"},
+      {de:"der Schreibblock",gr:"Pl. -¨e",ua:"блокнот"},
+      {de:"die Schreibwaren",gr:"nur Pl.",ua:"канцтовари"},
+      {de:"das Sonderangebot",gr:"Pl. -e",ua:"спеціальна пропозиція, акція"},
+      {de:"der Staubsauger",gr:"Pl. -",ua:"пилосос"},
+      {de:"die Umgebung",gr:"Pl. -en",ua:"оточення, навколишнє середовище"},
+      {de:"die Unterhaltungselektronik",gr:"nur Sg.",ua:"побутова електроніка"},
+      {de:"die Verarbeitung",gr:"Pl. -en",ua:"обробка, якість обробки"},
+      {de:"das Verpackungsmaterial",gr:"Pl. -ien",ua:"пакувальний матеріал"},
+      {de:"die Zutat",gr:"Pl. -en",ua:"інгредієнт (в рецепті)"},
+      {de:"berechnen + A",gr:"",ua:"розраховувати, нараховувати"},
+      {de:"garantieren + A",gr:"",ua:"гарантувати"},
+      {de:"heruntersetzen + A",gr:"",ua:"знижувати (ціну)"},
+      {de:"konsumieren + A",gr:"",ua:"споживати"},
+      {de:"nachmachen lassen + A",gr:"",ua:"замовляти копію (ключ тощо)"},
+      {de:"reduzieren + A",gr:"",ua:"зменшувати, знижувати"},
+      {de:"überzeugen + A",gr:"",ua:"переконувати"},
+      {de:"umtauschen + A",gr:"",ua:"обмінювати (товар)"},
+      {de:"abwaschen + A",gr:"",ua:"мити (посуд)"},
+      {de:"auswechseln + A",gr:"",ua:"замінювати (деталь, батарейку)"},
+      {de:"einstellen + A",gr:"",ua:"налаштовувати"},
+      {de:"verwenden + A",gr:"",ua:"використовувати"},
+      {de:"bildschön",gr:"",ua:"казково красивий"},
+      {de:"brandneu",gr:"",ua:"абсолютно новий"},
+      {de:"erschwinglich",gr:"",ua:"доступний (за ціною)"},
+      {de:"hochpreisig",gr:"",ua:"дорогий, висококласний"},
+      {de:"hochwertig",gr:"",ua:"високоякісний"},
+      {de:"kostenintensiv",gr:"",ua:"витратний, дорогий"},
+      {de:"kostspielig",gr:"",ua:"дорогий, коштовний"},
+      {de:"superschnell",gr:"",ua:"надшвидкий"},
+      {de:"topmodern",gr:"",ua:"найсучасніший"},
+      {de:"unbezahlbar",gr:"",ua:"безцінний; нескінченно дорогий"},
+      {de:"bio(logisch)",gr:"",ua:"органічний, біологічний"},
+      {de:"fair gehandelt",gr:"",ua:"з справедливою торгівлею"},
+      {de:"ökologisch",gr:"",ua:"екологічний"},
+      {de:"regional",gr:"",ua:"регіональний, місцевого виробництва"},
+      {de:"saisonal",gr:"",ua:"сезонний"},
+      {de:"verpackungsfrei",gr:"",ua:"без упаковки"},
+    ]
+  },
+  'b1_5': {
+    title: "Lernen",
+    words: [
+      {de:"die Dauer",gr:"nur Sg.",ua:"тривалість"},
+      {de:"das Gedächtnis",gr:"Pl. -se",ua:"пам'ять"},
+      {de:"die Gedächtnisleistung",gr:"Pl. -en",ua:"продуктивність пам'яті"},
+      {de:"das Gehirn",gr:"Pl. -e",ua:"мозок"},
+      {de:"die Konzentration",gr:"nur Sg.",ua:"концентрація, зосередженість"},
+      {de:"die Lernumgebung",gr:"Pl. -en",ua:"навчальне середовище"},
+      {de:"die Motivation",gr:"Pl. -en",ua:"мотивація"},
+      {de:"die Vokabel",gr:"Pl. -n",ua:"слово (для заучування)"},
+      {de:"der Wortschatz",gr:"Pl. -¨e",ua:"словниковий запас"},
+      {de:"der Zusammenhang",gr:"Pl. -¨e",ua:"зв'язок, контекст"},
+      {de:"aufschreiben + D + A",gr:"",ua:"записувати (собі / комусь щось)"},
+      {de:"auswendig lernen + A",gr:"",ua:"вчити напам'ять"},
+      {de:"behalten + A",gr:"",ua:"запам'ятовувати; зберігати"},
+      {de:"einfallen + D",gr:"",ua:"спадати на думку"},
+      {de:"sich konzentrieren auf + A",gr:"",ua:"зосереджуватися на (чомусь)"},
+      {de:"motivieren + A",gr:"sich/jmdn.",ua:"мотивувати (себе / когось)"},
+      {de:"verbessern + A",gr:"sich/etw.",ua:"покращувати (себе / щось)"},
+      {de:"verdeutlichen + A",gr:"",ua:"роз'яснювати, уточнювати"},
+      {de:"vereinfachen + A",gr:"",ua:"спрощувати"},
+      {de:"verfeinern + A",gr:"",ua:"вдосконалювати, шліфувати"},
+      {de:"vergrößern + A",gr:"sich/etw.",ua:"збільшувати (себе / щось)"},
+      {de:"verkleinern + A",gr:"sich/etw.",ua:"зменшувати (себе / щось)"},
+      {de:"verkürzen + A",gr:"",ua:"скорочувати"},
+      {de:"verlängern + A",gr:"",ua:"подовжувати"},
+      {de:"verschlechtern + A",gr:"sich/etw.",ua:"погіршувати (себе / щось)"},
+      {de:"verschönern + A",gr:"",ua:"прикрашати, покращувати вигляд"},
+      {de:"auf Dauer",gr:"Ausdruck",ua:"в довгостроковій перспективі, надовго"},
+      {de:"der Anfänger",gr:"Pl. -",ua:"початківець"},
+      {de:"die Bedingung",gr:"Pl. -en",ua:"умова"},
+      {de:"die Berufsschule",gr:"Pl. -n",ua:"професійна школа"},
+      {de:"das Einzeltraining",gr:"Pl. -s",ua:"індивідуальне навчання / тренування"},
+      {de:"der/die Fortgeschrittene",gr:"Pl. -n",ua:"просунутий / просунута (учень)"},
+      {de:"der Fortschritt",gr:"Pl. -e",ua:"прогрес, успіх"},
+      {de:"die Gesamtschule",gr:"Pl. -n",ua:"загальноосвітня школа"},
+      {de:"die Grundschule",gr:"Pl. -n",ua:"початкова школа"},
+      {de:"das Gymnasium",gr:"Pl. Gymnasien",ua:"гімназія"},
+      {de:"die Hauptschule",gr:"Pl. -n",ua:"основна школа (нижчий рівень)"},
+      {de:"die Mittelschule",gr:"Pl. -n",ua:"середня школа"},
+      {de:"die Realschule",gr:"Pl. -n",ua:"реальна школа (середній рівень)"},
+      {de:"der Rückschritt",gr:"Pl. -e",ua:"крок назад, регрес"},
+      {de:"der Schulabschluss",gr:"Pl. -¨e",ua:"шкільний атестат, диплом"},
+      {de:"das Seminar",gr:"Pl. -e",ua:"семінар"},
+      {de:"die Sonderschule",gr:"Pl. -n",ua:"спеціальна школа"},
+      {de:"die Stimme",gr:"Pl. -n",ua:"голос"},
+      {de:"das Stimmtraining",gr:"Pl. -s",ua:"тренування голосу"},
+      {de:"die Volkshochschule (VHS)",gr:"Pl. -n",ua:"народний університет"},
+      {de:"die Weiterbildung",gr:"Pl. -en",ua:"підвищення кваліфікації"},
+      {de:"beherrschen + A",gr:"",ua:"володіти (мовою, навичкою)"},
+      {de:"durchfallen durch + A",gr:"",ua:"провалювати (іспит)"},
+      {de:"entwickeln + A",gr:"sich/etw.",ua:"розвивати (себе / щось)"},
+      {de:"genehmigen + A",gr:"",ua:"схвалювати, дозволяти"},
+      {de:"gestatten + A + D",gr:"",ua:"дозволяти (щось комусь)"},
+      {de:"nachholen + A",gr:"",ua:"надолужувати (пропущене)"},
+      {de:"verlernen + A",gr:"",ua:"забувати (вивчене)"},
+      {de:"verpflichten + A",gr:"",ua:"зобов'язувати"},
+      {de:"ausreichend",gr:"",ua:"достатній (оцінка 4)"},
+      {de:"befriedigend",gr:"",ua:"задовільний (оцінка 3)"},
+      {de:"erforderlich",gr:"",ua:"необхідний, обов'язковий"},
+      {de:"fähig",gr:"",ua:"здатний, здібний"},
+      {de:"intensiv",gr:"",ua:"інтенсивний"},
+      {de:"mangelhaft",gr:"",ua:"незадовільний (оцінка 5)"},
+      {de:"ungenügend",gr:"",ua:"недостатній (оцінка 6)"},
+      {de:"in der Lage sein",gr:"Ausdruck",ua:"бути в змозі, мати можливість"},
+      {de:"der Ausdruck",gr:"Pl. -¨e",ua:"вираз, зворот"},
+      {de:"die Fremdsprache",gr:"Pl. -n",ua:"іноземна мова"},
+      {de:"das Gebiet",gr:"Pl. -e",ua:"галузь, сфера"},
+      {de:"die Mühe",gr:"Pl. -n",ua:"зусилля, праця"},
+      {de:"ausdrücken + A",gr:"sich/etw.",ua:"висловлювати (себе / щось)"},
+      {de:"beteiligen + A an + D",gr:"sich/jmdn.",ua:"залучати (себе / когось) до (чогось)"},
+      {de:"verwenden + A",gr:"",ua:"використовувати"},
+      {de:"alltäglich",gr:"",ua:"повсякденний"},
+      {de:"fließend",gr:"",ua:"вільно (говорити)"},
+      {de:"mündlich",gr:"",ua:"усний"},
+      {de:"muttersprachlich",gr:"",ua:"рідномовний, як рідна мова"},
+      {de:"spontan",gr:"",ua:"спонтанний, невимушений"},
+    ]
+  },
+  'b1_6': {
+    title: "Freizeit und Kultur",
+    words: [
+      {de:"die Bücherei",gr:"Pl. -en",ua:"бібліотека"},
+      {de:"das Camping",gr:"nur Sg.",ua:"кемпінг"},
+      {de:"die Flöte",gr:"Pl. -n",ua:"флейта"},
+      {de:"die Leichtathletik",gr:"nur Sg.",ua:"легка атлетика"},
+      {de:"die Literatur",gr:"Pl. -en",ua:"література"},
+      {de:"die Malerei",gr:"nur Sg.",ua:"живопис"},
+      {de:"die Media-/Videothek",gr:"Pl. -en",ua:"медіатека / відеотека"},
+      {de:"der Modellbau",gr:"nur Sg.",ua:"моделювання (хобі)"},
+      {de:"das Motorrad",gr:"Pl. -¨er",ua:"мотоцикл"},
+      {de:"die Schauspielerei",gr:"nur Sg.",ua:"акторська майстерність"},
+      {de:"das (Brett-/Schach-/Golf-)Spiel",gr:"Pl. -e",ua:"настільна / шахова / гольф- гра"},
+      {de:"der (Ball-/Kampf-/Motor-/Wasser-)Sport",gr:"nur Sg.",ua:"командний / бойовий / моторний / водний спорт"},
+      {de:"abschalten",gr:"",ua:"відключатися, відпочивати"},
+      {de:"boxen",gr:"",ua:"боксувати"},
+      {de:"faulenzen",gr:"",ua:"лінуватися, нічого не робити"},
+      {de:"herumhängen / rumhängen",gr:"",ua:"байдикувати, тинятися (розм.)"},
+      {de:"klettern",gr:"",ua:"лазити, карабкатися"},
+      {de:"nähen + A",gr:"",ua:"шити"},
+      {de:"springen",gr:"",ua:"стрибати"},
+      {de:"tauchen",gr:"",ua:"пірнати"},
+      {de:"entspannend",gr:"",ua:"розслаблюючий"},
+      {de:"sich auf die faule Haut legen",gr:"Redewendung",ua:"лежати нічого не роблячи"},
+      {de:"die Füße hochlegen",gr:"Redewendung",ua:"відпочивати, підняти ноги (розм.)"},
+      {de:"die Aufführung",gr:"Pl. -en",ua:"вистава, виступ"},
+      {de:"der Fan",gr:"Pl. -s",ua:"фанат, шанувальник"},
+      {de:"das Finale",gr:"nur Sg.",ua:"фінал"},
+      {de:"die Galerie",gr:"Pl. -n",ua:"галерея"},
+      {de:"die Kälte",gr:"nur Sg.",ua:"холод"},
+      {de:"die Mailbox",gr:"Pl. -en",ua:"поштова скринька; автовідповідач"},
+      {de:"die Oper",gr:"Pl. -n",ua:"опера"},
+      {de:"das Publikum",gr:"nur Sg.",ua:"публіка, глядачі"},
+      {de:"die (Warte-)Schlange",gr:"Pl. -n",ua:"черга"},
+      {de:"das Smartphone",gr:"Pl. -s",ua:"смартфон"},
+      {de:"das Stadion",gr:"Pl. Stadien",ua:"стадіон"},
+      {de:"der Treffpunkt",gr:"Pl. -e",ua:"місце зустрічі"},
+      {de:"die Vorstellung",gr:"Pl. -en",ua:"вистава; уявлення"},
+      {de:"das Werk",gr:"Pl. -e",ua:"твір, робота"},
+      {de:"der Zuschauer",gr:"Pl. -",ua:"глядач"},
+      {de:"chatten",gr:"",ua:"спілкуватися в чаті"},
+      {de:"draufsprechen + D",gr:"",ua:"залишати повідомлення на (автовідповідачі)"},
+      {de:"mailen + D",gr:"",ua:"надсилати листа (електронною поштою)"},
+      {de:"rangehen",gr:"",ua:"брати слухавку (розм.)"},
+      {de:"simsen + D",gr:"",ua:"надсилати SMS"},
+      {de:"sich verspäten",gr:"",ua:"запізнюватися"},
+      {de:"vorbestellen + A",gr:"",ua:"замовляти заздалегідь"},
+      {de:"zurückrufen + A",gr:"",ua:"передзвонювати"},
+      {de:"ausverkauft",gr:"",ua:"розпроданий"},
+      {de:"historisch",gr:"",ua:"історичний"},
+      {de:"rechtzeitig",gr:"",ua:"вчасно"},
+      {de:"technisch",gr:"",ua:"технічний"},
+      {de:"der Blogger",gr:"Pl. -",ua:"блогер"},
+      {de:"das (Abenteuer-/Bilder-/Hör-/Kinder-)Buch",gr:"Pl. -¨er",ua:"пригодницька / ілюстрована / аудіо- / дитяча книга"},
+      {de:"der Chatroom",gr:"Pl. -s",ua:"чат-кімната"},
+      {de:"die Dokumentation",gr:"Pl. -en",ua:"документальний фільм"},
+      {de:"der (Abenteuer-/Animations-/Action-/Kinder-/Kriminal-/Liebes-/Spiel-)Film",gr:"Pl. -e",ua:"пригодницький / анімаційний / бойовик / дитячий / детективний / романтичний / художній фільм"},
+      {de:"das Gedicht",gr:"Pl. -e",ua:"вірш"},
+      {de:"die Komödie",gr:"Pl. -n",ua:"комедія"},
+      {de:"das Märchen",gr:"Pl. -",ua:"казка"},
+      {de:"der Moderator",gr:"Pl. -en",ua:"ведучий, модератор"},
+      {de:"die Plattform",gr:"Pl. -en",ua:"платформа"},
+      {de:"der Regisseur",gr:"Pl. -e",ua:"режисер"},
+      {de:"der (Abenteuer-/Brief-/Kinder-/Kriminal-/Liebes-)Roman",gr:"Pl. -e",ua:"пригодницький / епістолярний / дитячий / детективний / любовний роман"},
+      {de:"der Sender",gr:"Pl. -",ua:"телеканал, радіостанція"},
+      {de:"die Serie",gr:"Pl. -n",ua:"серіал, серія"},
+      {de:"die Show",gr:"Pl. -s",ua:"шоу"},
+      {de:"die Software",gr:"nur Sg.",ua:"програмне забезпечення"},
+    ]
+  }
+};
+
+// ══════════════════════════════════════════════════════════════
+// WORD COUNTS (B1 + B2)
+// ══════════════════════════════════════════════════════════════
+// B1 word counts
+Object.keys(b1Data).forEach(key => {
+  const el = document.getElementById('wc' + key);
+  if (el) el.textContent = b1Data[key].words.length + ' Wörter';
+});
+
+// B2 word counts
+[1,2,3,4,5,6,7,8,9,10,11,12,13].forEach(n => {
+  const el = document.getElementById('wc'+n);
+  if (el) el.textContent = lkData[n].words.length + ' Wörter';
+});
+
+// ══════════════════════════════════════════════════════════════
+// LEKTION NAV
+// ══════════════════════════════════════════════════════════════
+let activeLk = 'b1_1';
+function switchLektion(n, btn) {
+  document.querySelectorAll('.lk-page').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.lk-btn').forEach(b => b.classList.remove('active'));
+  const pageId = typeof n === 'string' ? 'lk' + n : 'lk' + n;
+  const page = document.getElementById(pageId);
+  if (page) page.style.display = 'block';
+  if (btn) btn.classList.add('active');
+  activeLk = n;
+  const topName = document.getElementById('top-lk-name');
+  if (topName) {
+    const isB1 = typeof n === 'string' && n.startsWith('b1_');
+    const num = isB1 ? n.split('_')[1] : n;
+    topName.textContent = (isB1 ? 'B1 · ' : 'B2 · ') + 'Lektion ' + num;
+  }
+  document.getElementById('side-menu').classList.remove('open');
+  document.getElementById('menu-overlay').classList.remove('open');
+  initCards(n);
+  setTimeout(() => initDictClicks(n), 100);
+}
+
+// ══════════════════════════════════════════════════════════════
+// TABS (dict / cards)
+// ══════════════════════════════════════════════════════════════
+function switchTab(lk, name, el) {
+  const page = document.getElementById('lk'+lk);
+  page.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  page.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(name+'-panel-'+lk).classList.add('active');
+  el.classList.add('active');
+  if (name === 'cards') initCards(lk);
+  if (name === 'trainer') initTrainer(lk);
+  if (name === 'dict') setTimeout(() => initDictClicks(lk), 100);
+  if (name === 'sprechen') initSprechen(lk);
+}
+
+// ══════════════════════════════════════════════════════════════
+// BEISPIELE ENGINE
+// ══════════════════════════════════════════════════════════════
+const beispieleCache = {}; // lk -> array of {de, ua} examples
+
+// ══════════════════════════════════════════════════════════════
+// SPEECH (Web Speech API)
+// ══════════════════════════════════════════════════════════════
+function speakDe(text, e) {
+  if (e) e.stopPropagation();
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text.replace(/[+()=]/g, '').trim());
+  u.lang = 'de-DE';
+  u.rate = 0.85;
+  // Try to find a German voice
+  const voices = speechSynthesis.getVoices();
+  const deVoice = voices.find(v => v.lang.startsWith('de'));
+  if (deVoice) u.voice = deVoice;
+  speechSynthesis.speak(u);
+}
+
+function speakUa(text, e) {
+  if (e) e.stopPropagation();
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text.trim());
+  u.lang = 'uk-UA';
+  u.rate = 0.85;
+  const voices = speechSynthesis.getVoices();
+  const uaVoice = voices.find(v => v.lang.startsWith('uk'));
+  if (uaVoice) u.voice = uaVoice;
+  speechSynthesis.speak(u);
+}
+
+// Preload voices
+if ('speechSynthesis' in window) {
+  speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+}
+
+async function callAI(prompt) {
+  const resp = await fetch('/api/claude', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt })
+  });
+  if (!resp.ok) throw new Error('Server error ' + resp.status);
+  const data = await resp.json();
+  if (data.error) throw new Error(data.error);  return data.text || '';
+}
+
+async function generateExample(word, gr, ua, level) {
+  const lvl = level === 'B1' ? 'B1' : 'B2';
+  const prompt = `Erstelle einen Beispielsatz auf ${lvl}-Niveau für das Wort: "${word}".
+Antworte NUR mit JSON: {"de":"Satz","ua":"Переклад"}`;
+
+  try {
+    const text = await callAI(prompt);
+    const clean = text.replace(/```json|```/g, '').trim();
+    const match = clean.match(/\{"de"\s*:\s*"([^"]+)"\s*,\s*"ua"\s*:\s*"([^"]+)"\}/);
+    if (!match) return { de: '—', ua: '—' };
+    return { de: match[1], ua: match[2] };
+    return JSON.parse(match[0]);
+  } catch {
+    return { de: '—', ua: '—' };
+  }
+}
+
+async function initBeispiele(lk) {
+  const container = document.getElementById('bsp' + lk);
+  if (!container) return;
+  const data = getWordData(lk);
+  if (!data) return;
+  const level = (typeof lk === 'string' && lk.startsWith('b1_')) ? 'B1' : 'B2';
+  const lkLabel = (typeof lk === 'string' && lk.startsWith('b1_'))
+    ? 'B1 · Lektion ' + lk.split('_')[1]
+    : 'B2 · Lektion ' + lk;
+
+  // If already generated, just show
+  if (beispieleCache[lk]) {
+    renderBeispiele(container, lk, data, beispieleCache[lk], lkLabel, true);
+    return;
+  }
+
+  // Render skeleton rows immediately, then fill one by one
+  const examples = data.words.map(() => null);
+  beispieleCache[lk] = examples;
+  renderBeispiele(container, lk, data, examples, lkLabel, false);
+
+  // Generate sequentially (no rate limit hammering)
+  for (let i = 0; i < data.words.length; i++) {
+    const w = data.words[i];
+    const ex = await generateExample(w.de, w.gr, w.ua, level);
+    examples[i] = ex;
+    // Update just this row
+    const row = container.querySelector(`.bsp-example[data-idx="${i}"]`);
+    if (row) {
+      row.innerHTML = `<div class="ex-de">${ex.de}</div><div class="ex-ua">${ex.ua}</div>`;
+    }
+    // Update progress
+    const prog = container.querySelector('.bsp-progress');
+    if (prog) prog.textContent = `${i+1} / ${data.words.length}`;
+    const spinner = container.querySelector(`.bsp-spin[data-idx="${i}"]`);
+    if (spinner) spinner.remove();
+  }
+  const prog = container.querySelector('.bsp-progress');
+  if (prog) prog.textContent = `✓ ${data.words.length} слів`;
+}
+
+function renderBeispiele(container, lk, data, examples, lkLabel, done) {
+  const level = (typeof lk === 'string' && lk.startsWith('b1_')) ? 'B1' : 'B2';
+  let html = `<div class="bsp-header">
+    <div><div class="lk-num2">${lkLabel}</div><h2>${data.title}</h2></div>
+    <div class="bsp-progress">${done ? '✓ ' + data.words.length + ' слів' : '0 / ' + data.words.length}</div>
+  </div>`;
+
+  data.words.forEach((w, i) => {
+    const ex = examples[i];
+    const deHtml = w.de.replace(/^(das|die|der|der\/die)\s/, '<span class="art">$1 </span>');
+    html += `<div class="bsp-word-row">
+      <div class="bsp-top">
+        <div class="bsp-de">${deHtml}${w.gr ? ' <span style="color:var(--muted);font-size:10px">· ' + w.gr + '</span>' : ''}</div>
+        <div class="bsp-ua">${w.ua}</div>
+        ${!ex ? `<div class="bsp-loading bsp-spin" data-idx="${i}"></div>` : ''}
+      </div>
+      <div class="bsp-example" data-idx="${i}">
+        ${ex ? `<div class="ex-de">${ex.de}</div><div class="ex-ua">${ex.ua}</div>` : '<div style="color:var(--muted);font-size:11px">Generiere…</div>'}
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════════
+// TRAINER ENGINE
+// ══════════════════════════════════════════════════════════════
+const trainerState = {}; // lk -> {wordIdx, history, chatHistory}
+
+function initTrainer(lk) {
+  if (!trainerState[lk]) trainerState[lk] = { wordIdx: 0, history: [], chatHistory: [] };
+  renderTrainer(lk);
+}
+
+function renderTrainer(lk) {
+  const container = document.getElementById('trn' + lk);
+  if (!container) return;
+  const data = getWordData(lk);
+  if (!data) return;
+  const s = trainerState[lk];
+  const level = (typeof lk === 'string' && lk.startsWith('b1_')) ? 'B1' : 'B2';
+  const lkLabel = (typeof lk === 'string' && lk.startsWith('b1_'))
+    ? 'B1 · Lektion ' + lk.split('_')[1]
+    : 'B2 · Lektion ' + lk;
+
+  const w = data.words[s.wordIdx];
+  const deHtml = w.de.replace(/^(das|die|der|der\/die)\s/, '<span class="art">$1 </span>');
+
+  // Word selector
+  const wordList = data.words.map((ww, i) => {
+    const short = ww.de.length > 28 ? ww.de.slice(0, 26) + '…' : ww.de;
+    return `<div class="trn-word-item ${i === s.wordIdx ? 'selected' : ''}" onclick="selectTrainerWord('${lk}', ${i})" title="${ww.de}">${short}</div>`;
+  }).join('');
+
+  // History
+  const histHtml = s.history.length > 0
+    ? `<div class="trn-history"><h3>Verlauf</h3>` +
+      s.history.slice().reverse().map(h => `
+        <div class="hist-item">
+          <div class="hist-word">${h.word} <span class="hist-badge ${h.rating}">${h.rating === 'good' ? '✓ Gut' : h.rating === 'ok' ? '~ OK' : '✗ Fehler'}</span></div>
+          <div class="hist-sent">${h.sentence}</div>
+        </div>`).join('') + `</div>`
+    : '';
+
+  container.innerHTML = `
+    <div class="trn-header">
+      <div><div class="lk-num2">${lkLabel} · Trainer</div><h2>${data.title}</h2></div>
+      <span class="bsp-progress">${s.history.length} перевірено</span>
+    </div>
+
+    <div class="trn-word-select">${wordList}</div>
+
+    <div class="trn-current">
+      <div class="trn-de">${deHtml}</div>
+      <div class="trn-ua">${w.ua}</div>
+      ${w.gr ? `<div class="trn-gr">${w.gr}</div>` : ''}
+    </div>
+
+    <div class="trn-input-wrap">
+      <textarea id="trn-input-${lk}" placeholder="Schreib einen Satz mit diesem Wort auf Deutsch (${level}-Niveau)…" onkeydown="if(event.ctrlKey&&event.key==='Enter')checkSentence('${lk}')"></textarea>
+    </div>
+
+    <div class="trn-actions">
+      <button class="btn primary" onclick="checkSentence('${lk}')">Prüfen ✓</button>
+      <button class="btn" onclick="selectTrainerWord('${lk}', ${(s.wordIdx + 1) % data.words.length})">Nächstes Wort →</button>
+      <button class="btn" onclick="selectTrainerWord('${lk}', Math.floor(Math.random()*${data.words.length}))">Zufällig 🎲</button>
+    </div>
+
+    <div class="trn-checking" id="trn-checking-${lk}">
+      <div class="bsp-loading"></div> KI prüft deinen Satz…
+    </div>
+
+    <div class="trn-feedback" id="trn-feedback-${lk}"></div>
+
+    <div class="trn-chat" id="trn-chat-${lk}">
+      <div class="chat-messages" id="chat-msgs-${lk}"></div>
+      <div class="chat-suggestions" id="chat-sugg-${lk}">
+        <span class="chat-suggestion" onclick="sendChat('${lk}', this.textContent)">Чому так?</span>
+        <span class="chat-suggestion" onclick="sendChat('${lk}', this.textContent)">Покажи правильно</span>
+        <span class="chat-suggestion" onclick="sendChat('${lk}', this.textContent)">Ще приклад</span>
+        <span class="chat-suggestion" onclick="sendChat('${lk}', this.textContent)">Як сказати інакше?</span>
+      </div>
+      <div class="chat-input-row">
+        <input type="text" id="chat-input-${lk}" placeholder="Запитай щось про цей вираз…" onkeydown="if(event.key==='Enter')sendChat('${lk}')">
+        <button class="chat-send-btn" onclick="sendChat('${lk}')">➤</button>
+      </div>
+    </div>
+
+    ${histHtml}
+  `;
+}
+
+function selectTrainerWord(lk, idx) {
+  const data = getWordData(lk);
+  trainerState[lk].wordIdx = ((idx % data.words.length) + data.words.length) % data.words.length;
+  renderTrainer(lk);
+}
+
+async function checkSentence(lk) {
+  const data = getWordData(lk);
+  const s = trainerState[lk];
+  const w = data.words[s.wordIdx];
+  const level = (typeof lk === 'string' && lk.startsWith('b1_')) ? 'B1' : 'B2';
+
+  const input = document.getElementById(`trn-input-${lk}`);
+  const sentence = input ? input.value.trim() : '';
+  if (!sentence) { input && input.focus(); return; }
+
+  const checkEl = document.getElementById(`trn-checking-${lk}`);
+  const feedbackEl = document.getElementById(`trn-feedback-${lk}`);
+  if (checkEl) checkEl.classList.add('visible');
+  if (feedbackEl) { feedbackEl.classList.remove('visible'); feedbackEl.innerHTML = ''; }
+
+  const prompt = `Deutschlehrer ${level}. Wort: "${w.de}" (${w.ua}). Satz des Lernenden: "${sentence}"
+
+Antworte NUR mit JSON (keine anderen Texte):
+{"rating":"good/ok/bad","comment":"Feedback auf Ukrainisch","corrected":"korrigierter Satz oder leer","corrected_ua":"Übersetzung oder leer"}`;
+
+  try {
+    const text = await callAI(prompt);
+    const clean = text.replace(/```json|```/g, '').trim();
+    // Find JSON with required fields
+    const match = clean.match(/\{[\s\S]*?"rating"[\s\S]*?"comment"[\s\S]*?\}/);
+    if (!match) throw new Error('No JSON in response: ' + clean.slice(0,100));
+    const result = JSON.parse(match[0]);
+
+    if (checkEl) checkEl.classList.remove('visible');
+
+    const ratingLabel = result.rating === 'good' ? '✓ Чудово!' : result.rating === 'ok' ? '~ Майже правильно' : '✗ Є помилки';
+    const correctedHtml = result.corrected
+      ? `<div class="fb-corrected"><div class="fb-corrected-label">Виправлений варіант</div>${result.corrected}<div class="fb-ua">${result.corrected_ua || ''}</div></div>`
+      : '';
+
+    // Save as my example button (shown for good and ok)
+    const wordIdx = s.wordIdx;
+    const saveBtn = (result.rating === 'good' || result.rating === 'ok')
+      ? `<button class="btn" style="margin-top:12px;font-size:9px" onclick="saveMyExample('${lk}',${wordIdx},'${sentence.replace(/'/g,"\\'")}','${(result.corrected || sentence).replace(/'/g,"\\'")}')">💾 Зберегти як мій приклад</button>`
+      : '';
+
+    if (feedbackEl) {
+      feedbackEl.innerHTML = `
+        <div class="fb-score ${result.rating}">${ratingLabel}</div>
+        <div class="fb-text">${result.comment}</div>
+        ${correctedHtml}
+        ${saveBtn}`;
+      feedbackEl.classList.add('visible');
+    }
+
+    // Save to history
+    s.history.push({
+      word: w.de,
+      sentence,
+      rating: result.rating
+    });
+
+    // Update history display without full re-render
+    const histEl = document.querySelector(`#trn${lk} .trn-history`);
+    if (!histEl) {
+      const container = document.getElementById('trn' + lk);
+      const histDiv = document.createElement('div');
+      histDiv.className = 'trn-history';
+      histDiv.innerHTML = '<h3>Verlauf</h3>';
+      container.appendChild(histDiv);
+    }
+    const histContainer = document.querySelector(`#trn${lk} .trn-history`);
+    if (histContainer) {
+      const item = document.createElement('div');
+      item.className = 'hist-item';
+      item.innerHTML = `<div class="hist-word">${w.de} <span class="hist-badge ${result.rating}">${result.rating === 'good' ? '✓ Gut' : result.rating === 'ok' ? '~ OK' : '✗ Fehler'}</span></div><div class="hist-sent">${sentence}</div>`;
+      histContainer.insertBefore(item, histContainer.children[1]);
+    }
+
+    // Update counter
+    const prog = document.querySelector(`#trn${lk} .bsp-progress`);
+    if (prog) prog.textContent = s.history.length + ' перевірено';
+
+    // Show chat
+    const chatEl = document.getElementById('trn-chat-' + lk);
+    if (chatEl) {
+      chatEl.classList.add('visible');
+      // Init chat history with context for this check
+      s.chatHistory = [{
+        role: 'system',
+        content: `Ти вчитель німецької мови. Учень вивчає слово "${w.de}" (${w.ua}).
+Він написав речення: "${sentence}".
+Оцінка: ${result.rating}. Коментар: ${result.comment}.
+${result.corrected ? 'Правильний варіант: ' + result.corrected : ''}
+Відповідай українською мовою. Будь дружнім і заохочуй.`
+      }];
+      // Clear old messages
+      const msgsEl = document.getElementById('chat-msgs-' + lk);
+      if (msgsEl) msgsEl.innerHTML = '';
+    }
+
+  } catch(e) {
+    if (checkEl) checkEl.classList.remove('visible');
+    if (feedbackEl) {
+      feedbackEl.innerHTML = `<div class="fb-score bad">Помилка</div><div class="fb-text">${e.message}</div>`;
+      feedbackEl.classList.add('visible');
+    }
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// SEARCH
+// ══════════════════════════════════════════════════════════════
+function filterWords(lk, q) {
+  q = q.toLowerCase().trim();
+  document.querySelectorAll('#lk'+lk+' .word-row').forEach(row => {
+    row.classList.toggle('hidden', q.length > 0 && !row.textContent.toLowerCase().includes(q));
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// CARDS ENGINE
+// ══════════════════════════════════════════════════════════════
+const state = {};
+
+function getWordData(lk) {
+  if (typeof lk === 'string' && lk.startsWith('b1_')) return b1Data[lk];
+  return lkData[lk];
+}
+
+function initCards(lk) {
+  const data = getWordData(lk);
+  if (!data) return;
+  if (!state[lk]) {
+    state[lk] = { deck: [...data.words], idx: 0, flipped: false, mode: 'de2ua', unknown: [] };
+  }
+  renderCards(lk);
+}
+
+function markCard(lk, result) {
+  const s = state[lk];
+  if (!s) return;
+  const w = s.deck[s.idx];
+  if (result === 'unknown') {
+    // Add to unknown if not already there
+    if (!s.unknown.find(u => u.de === w.de)) s.unknown.push(w);
+  } else {
+    // Remove from unknown if was there
+    s.unknown = s.unknown.filter(u => u.de !== w.de);
+  }
+  // Next card
+  s.idx++;
+  s.flipped = false;
+  renderCards(lk);
+}
+
+function toggleCardExample(lk, idx, btn) {
+  const exDiv = document.getElementById('card-ex-' + lk);
+  if (!exDiv) return;
+  if (exDiv.style.display !== 'none' && exDiv.innerHTML) {
+    exDiv.style.display = 'none';
+    btn.textContent = '📖 Показати приклад';
+    return;
+  }
+  btn.textContent = '📖 Сховати приклад';
+  exDiv.style.display = 'block';
+  if (exDiv.innerHTML) return; // already loaded
+  exDiv.innerHTML = '<div style="color:var(--muted);font-size:11px;margin-top:6px">Завантаження…</div>';
+  fetchExample(lk, idx).then(ex => {
+    if (ex) exDiv.innerHTML = `<div class="card-example">${ex.de}<div class="ex-ua">${ex.ua}</div></div>`;
+    else exDiv.innerHTML = '<div style="color:var(--muted);font-size:11px;margin-top:6px">Помилка</div>';
+  });
+}
+
+function jumpToWord(lk, unknownIdx) {
+  const s = state[lk];
+  if (!s || !s.unknown[unknownIdx]) return;
+  const targetWord = s.unknown[unknownIdx];
+  const deckIdx = s.deck.findIndex(w => w.de === targetWord.de);
+  if (deckIdx >= 0) { s.idx = deckIdx; s.flipped = false; renderCards(lk); }
+}
+
+function repeatUnknown(lk) {
+  const s = state[lk];
+  if (!s || s.unknown.length === 0) return;
+  s.deck = [...s.unknown];
+  s.idx = 0;
+  s.flipped = false;
+  renderCards(lk);
+}
+
+function renderCards(lk) {
+  const s = state[lk];
+  const container = document.getElementById('co'+lk);
+  const data = getWordData(lk);
+  if (!s || !container || !data) return;
+
+  const lkLabel = typeof lk === 'string' && lk.startsWith('b1_') ? 'B1 · Lektion ' + lk.split('_')[1] : 'Lektion ' + lk;
+
+  if (s.idx >= s.deck.length) {
+    const unknownHtml = s.unknown.length > 0 ? `
+      <div style="margin-top:20px;padding:16px;background:rgba(139,26,46,.1);border:1px solid rgba(139,26,46,.3);border-radius:8px;">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;color:#c0185a;margin-bottom:10px;">✗ НЕ ЗНАВ (${s.unknown.length})</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+          ${s.unknown.map(u => `<span style="background:rgba(139,26,46,.15);border:1px solid rgba(139,26,46,.3);border-radius:4px;padding:3px 8px;font-family:'IBM Plex Mono',monospace;font-size:11px;">${u.de.length>28?u.de.slice(0,26)+'…':u.de}</span>`).join('')}
+        </div>
+        <button class="btn-unknown" style="width:100%;justify-content:center;" onclick="repeatUnknown('${lk}')">🔁 Повторити не знав</button>
+      </div>` : `<div style="margin-top:16px;color:#1a6b45;font-size:13px;">✓ Всі слова знав!</div>`;
+
+    container.innerHTML = `
+      <div class="cards-top">
+        <div><div class="lk-num2">${lkLabel}</div><h2>${data.title}</h2></div>
+      </div>
+      <div class="done-box">
+        <div class="big">Готово! 🎉</div>
+        <p>Пройдено ${s.deck.length} карток.</p>
+        ${unknownHtml}
+        <div class="btns" style="margin-top:16px;">
+          <button class="btn primary" onclick="resetCards('${lk}')">Спочатку</button>
+          <button class="btn" onclick="shuffleCards('${lk}')">Перемішати</button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const w = s.deck[s.idx];
+  const prog = ((s.idx / s.deck.length) * 100).toFixed(1);
+
+  const frontWord = s.mode === 'de2ua'
+    ? w.de.replace(/^(das|die|der|der\/die)\s/, '<span class="art">$1 </span>')
+    : `<span style="font-family:'IBM Plex Sans',sans-serif;font-size:20px;">${w.ua}</span>`;
+  const frontGr   = s.mode === 'de2ua' ? (w.gr || '') : '';
+  const frontLbl  = s.mode === 'de2ua' ? 'Deutsch' : 'Українська';
+  const backWord  = s.mode === 'de2ua' ? w.ua : (w.de + (w.gr ? ' · ' + w.gr : ''));
+  const backLbl   = s.mode === 'de2ua' ? 'Українська' : 'Deutsch';
+
+  const flippedCls = s.flipped ? 'flipped' : '';
+
+  container.innerHTML = `
+    <div class="cards-top">
+      <div><div class="lk-num2">${lkLabel}</div><h2>${data.title}</h2></div>
+      <div class="cards-controls">
+        <button class="btn" onclick="shuffleCards('${lk}')">Mischen</button>
+        <button class="btn" onclick="resetCards('${lk}')">Neustart</button>
+        <select class="btn" onchange="setMode('${lk}',this.value)">
+          <option value="de2ua" ${s.mode==='de2ua'?'selected':''}>DE → UA</option>
+          <option value="ua2de" ${s.mode==='ua2de'?'selected':''}>UA → DE</option>
+        </select>
+      </div>
+    </div>
+    <div class="prog-wrap"><div class="prog-bar" style="width:${prog}%"></div></div>
+    <div class="card-counter">${s.idx+1} / ${s.deck.length}${s.unknown.length > 0 ? ' &nbsp;·&nbsp; <span style="color:#e8266e;font-size:11px;">✗ '+s.unknown.length+'</span>' : ''}</div>
+    <div class="flip-hint">Натисни на картку щоб перевернути</div>
+    <div class="card-scene" onclick="flipCard('${lk}')">
+      <div class="card-inner ${flippedCls}" id="ci${lk}">
+        <div class="card-face front">
+          <div class="c-label">${frontLbl}</div>
+          <div class="c-word">${frontWord}</div>
+          <div class="c-grammar">${frontGr}</div>
+        </div>
+        <div class="card-face back">
+          <div class="c-label">${backLbl}</div>
+          <div class="c-trans">${backWord}</div>
+          <button class="card-ex-btn" id="ex-btn-${lk}" onclick="event.stopPropagation();toggleCardExample('${lk}',${s.idx},this)">📖 Показати приклад</button>
+          <div id="card-ex-${lk}" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-nav" style="gap:10px;margin-top:16px;">
+      <button class="btn-unknown" onclick="markCard('${lk}','unknown')">✗ Не знав</button>
+      <button class="btn-knew" onclick="markCard('${lk}','knew')">✓ Знав</button>
+    </div>
+    `;
+}
+
+function flipCard(lk) {
+  if (!state[lk]) return;
+  state[lk].flipped = !state[lk].flipped;
+  const ci = document.getElementById('ci'+lk);
+  if (ci) ci.classList.toggle('flipped', state[lk].flipped);
+}
+
+function nextCard(lk) { if(state[lk]){state[lk].idx++; state[lk].flipped = false; renderCards(lk);} }
+function prevCard(lk) { if (state[lk] && state[lk].idx > 0) { state[lk].idx--; state[lk].flipped = false; renderCards(lk); } }
+
+function shuffleCards(lk) {
+  if (!state[lk]) { initCards(lk); return; }
+  const s = state[lk];
+  const data = getWordData(lk);
+  s.deck = [...data.words];
+  for (let i = s.deck.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [s.deck[i], s.deck[j]] = [s.deck[j], s.deck[i]];
+  }
+  s.idx = 0; s.flipped = false;
+  if (!s.unknown) s.unknown = [];
+  renderCards(lk);
+}
+
+function resetCards(lk) {
+  const data = getWordData(lk);
+  if (!data) return;
+  state[lk] = { deck: [...data.words], idx: 0, flipped: false, mode: state[lk]?.mode || 'de2ua', unknown: [] };
+  renderCards(lk);
+}
+
+function setMode(lk, m) {
+  if (!state[lk]) return;
+  state[lk].mode = m; state[lk].idx = 0; state[lk].flipped = false;
+  shuffleCards(lk);
+}
+
+// keyboard
+document.addEventListener('keydown', e => {
+  const lk = activeLk;
+  const cardsActive = document.getElementById('cards-panel-'+lk)?.classList.contains('active');
+  if (!cardsActive) return;
+  if (e.key === ' ' || e.key === 'ArrowUp') { e.preventDefault(); flipCard(lk); }
+  if (e.key === 'ArrowRight') nextCard(lk);
+  if (e.key === 'ArrowLeft') prevCard(lk);
+});
+
+
+// ══════════════════════════════════════════════════════════════
+// LANDING PAGE
+// ══════════════════════════════════════════════════════════════
+function closeLanding() {
+  const lp = document.getElementById('landing-page');
+  if (!lp) return;
+  lp.style.transition = 'opacity .5s ease';
+  lp.style.opacity = '0';
+  setTimeout(() => { lp.style.display = 'none'; }, 500);
+}
+
+// ══════════════════════════════════════════════════════════════
+// TYPEWRITER ANIMATION
+// ══════════════════════════════════════════════════════════════
+function typewriter(el, text, speed = 38, cb) {
+  el.textContent = '';
+  let i = 0;
+  const timer = setInterval(() => {
+    el.textContent += text[i++];
+    if (i >= text.length) { clearInterval(timer); if (cb) cb(); }
+  }, speed);
+}
+
+// Run typewriter on landing subtitle
+window.addEventListener('load', () => {
+  const el = document.getElementById('typewriter-el');
+  if (el) {
+    const text = 'Зі мною ти можеш максимально ефективно прокачати свій словниковий запас на основі книги Deutsch Intensiv.';
+    setTimeout(() => typewriter(el, text, 28), 800);
+  }
+});
+
+// ══════════════════════════════════════════════════════════════
+// STATS & PROGRESS
+// ══════════════════════════════════════════════════════════════
+const statsData = JSON.parse(localStorage.getItem('di_stats') || '{"knew":0,"unknown":0,"checked":0}');
+
+function saveStats() {
+  localStorage.setItem('di_stats', JSON.stringify(statsData));
+}
+
+// Hook into markCard
+const _origMarkCard = markCard;
+markCard = function(lk, result) {
+  if (result === 'knew') { statsData.knew++; }
+  else { statsData.unknown++; }
+  saveStats();
+  _origMarkCard(lk, result);
+};
+
+// Hook into checkSentence
+const _origCheck = checkSentence;
+checkSentence = async function(lk) {
+  statsData.checked++;
+  saveStats();
+  return _origCheck(lk);
+};
+
+function getProgressHtml() {
+  const total = statsData.knew + statsData.unknown;
+  const pct = total > 0 ? Math.round(statsData.knew / total * 100) : 0;
+  return `
+    <div style="padding:16px 0;border-top:1px solid var(--border);margin-top:4px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:10px;text-transform:uppercase;">Моя статистика</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;text-align:center;">
+        <div style="background:var(--surface2);border-radius:6px;padding:10px 6px;">
+          <div style="font-size:20px;font-weight:700;color:#1a6b45;">${statsData.knew}</div>
+          <div style="font-size:9px;color:var(--muted);margin-top:2px;">Знав</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:6px;padding:10px 6px;">
+          <div style="font-size:20px;font-weight:700;color:#c0185a;">${statsData.unknown}</div>
+          <div style="font-size:9px;color:var(--muted);margin-top:2px;">Не знав</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:6px;padding:10px 6px;">
+          <div style="font-size:20px;font-weight:700;color:var(--klett-mid);">${statsData.checked}</div>
+          <div style="font-size:9px;color:var(--muted);margin-top:2px;">Перевірок</div>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border-radius:4px;height:6px;overflow:hidden;">
+        <div style="background:linear-gradient(90deg,#1a6b45,#2ecc71);height:100%;width:${pct}%;transition:width .5s;border-radius:4px;"></div>
+      </div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px;text-align:right;">${pct}% правильно</div>
+      ${total > 0 ? `<button class="btn" style="margin-top:8px;font-size:9px;padding:4px 10px;" onclick="if(confirm('Скинути статистику?')){localStorage.removeItem('di_stats');location.reload();}">Скинути</button>` : ''}
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════════════
+// SPRECHEN TAB - Голосовий тренажер
+// ══════════════════════════════════════════════════════════════
+const spState = {}; // lk -> {words, idx, correct, wrong, recognition}
+
+function initSprechen(lk) {
+  const container = document.getElementById('sp-' + lk);
+  if (!container) return;
+  if (!spState[lk]) {
+    const data = getWordData(lk);
+    if (!data) return;
+    spState[lk] = {
+      words: shuffle([...data.words]),
+      idx: 0,
+      correct: 0,
+      wrong: 0,
+      recognition: null,
+      listening: false
+    };
+  }
+  renderSprechen(lk);
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function renderSprechen(lk) {
+  const container = document.getElementById('sp-' + lk);
+  if (!container) return;
+  const s = spState[lk];
+  const w = s.words[s.idx % s.words.length];
+
+  const cleanWord = w.de
+    .replace(/^(der|die|das|der\/die)\s+/i, '')
+    .replace(/,.*$/, '')
+    .replace(/\s*\(.*?\)/g, '')
+    .replace(/\s*\+.*$/, '')
+    .replace(/\s*=.*$/, '')
+    .trim();
+
+  const isB1 = typeof lk === 'string' && lk.startsWith('b1_');
+  const lkNum = isB1 ? lk.split('_')[1] : lk;
+  const lkLabel = (isB1 ? 'B1 · ' : 'B2 · ') + 'Lektion ' + lkNum;
+
+  container.innerHTML = `
+    <div style="padding:24px 16px;background:var(--bg);min-height:80vh;">
+
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;">${lkLabel} · Sprechen</div>
+          <div style="font-size:16px;font-weight:600;margin-top:2px;">Голосовий тренажер</div>
+        </div>
+        <button onclick="spReshuffle('${lk}')" style="background:var(--surface);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;">🔀 Перемішати</button>
+      </div>
+
+      <!-- Stats -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;">
+        <div style="flex:1;background:var(--green-bg);border:1px solid #a8d8bf;border-radius:8px;padding:10px;text-align:center;">
+          <div style="font-size:20px;font-weight:700;color:var(--green);" id="sp-correct-${lk}">${s.correct}</div>
+          <div style="font-size:9px;color:var(--muted);letter-spacing:1px;">ПРАВИЛЬНО</div>
+        </div>
+        <div style="flex:1;background:#fde8f0;border:1px solid #f0a0c0;border-radius:8px;padding:10px;text-align:center;">
+          <div style="font-size:20px;font-weight:700;color:var(--klett-pink);" id="sp-wrong-${lk}">${s.wrong}</div>
+          <div style="font-size:9px;color:var(--muted);letter-spacing:1px;">ПОМИЛОК</div>
+        </div>
+        <div style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;">
+          <div style="font-size:20px;font-weight:700;" id="sp-prog-${lk}">${s.idx + 1}/${s.words.length}</div>
+          <div style="font-size:9px;color:var(--muted);letter-spacing:1px;">ПРОГРЕС</div>
+        </div>
+      </div>
+
+      <!-- Word card -->
+      <div style="background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:28px 20px;text-align:center;margin-bottom:20px;">
+        <div style="font-size:12px;color:var(--green);margin-bottom:12px;font-weight:500;">${w.ua}</div>
+        <div id="sp-word-${lk}" style="font-family:'Playfair Display',serif;font-size:26px;color:var(--text);filter:blur(10px);transition:filter .3s;cursor:pointer;user-select:none;" onclick="spReveal('${lk}')">${w.de}</div>
+        <div id="sp-hint-${lk}" style="font-size:11px;color:var(--muted);margin-top:8px;">👆 Натисни щоб підказати</div>
+        <div style="margin-top:16px;display:flex;gap:8px;justify-content:center;">
+          <button onclick="speakDe('${cleanWord.replace(/'/g, "\'")}', event)" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:20px;font-size:13px;cursor:pointer;">🔊 Послухати</button>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div id="sp-result-${lk}" style="display:none;border-radius:10px;padding:14px;text-align:center;margin-bottom:16px;">
+        <div id="sp-result-icon-${lk}" style="font-size:32px;margin-bottom:4px;"></div>
+        <div id="sp-result-text-${lk}" style="font-size:14px;font-weight:600;"></div>
+        <div id="sp-result-heard-${lk}" style="font-size:12px;color:var(--muted);margin-top:4px;"></div>
+      </div>
+
+      <!-- Mic button -->
+      <div style="text-align:center;margin-bottom:20px;">
+        <button id="sp-mic-${lk}" onclick="spListen('${lk}','${cleanWord.replace(/'/g, "\'")}')" style="
+          width:72px;height:72px;border-radius:50%;
+          background:linear-gradient(135deg,var(--klett-pink),var(--klett-pink2));
+          border:none;color:#fff;font-size:28px;cursor:pointer;
+          box-shadow:0 4px 16px rgba(192,24,90,.4);
+          transition:all .3s;display:inline-flex;align-items:center;justify-content:center;
+        ">🎤</button>
+        <div id="sp-status-${lk}" style="font-size:12px;color:var(--muted);margin-top:10px;">Натисни 🎤 і вимов слово по-німецьки</div>
+      </div>
+
+      <!-- Navigation -->
+      <div style="display:flex;gap:10px;">
+        <button onclick="spPrev('${lk}')" style="flex:1;background:var(--surface);border:1.5px solid var(--border);color:var(--text);padding:13px;border-radius:8px;font-size:14px;cursor:pointer;font-family:'IBM Plex Mono',monospace;">← Назад</button>
+        <button onclick="spNext('${lk}')" style="flex:1;background:var(--klett-blue);border:none;color:#fff;padding:13px;border-radius:8px;font-size:14px;cursor:pointer;font-family:'IBM Plex Mono',monospace;">Далі →</button>
+      </div>
+
+    </div>
+  `;
+}
+
+function spReveal(lk) {
+  const el = document.getElementById('sp-word-' + lk);
+  const hint = document.getElementById('sp-hint-' + lk);
+  if (el) { el.style.filter = 'none'; }
+  if (hint) { hint.textContent = ''; }
+}
+
+function spNext(lk) {
+  const s = spState[lk];
+  if (!s) return;
+  if (s.recognition) { try { s.recognition.abort(); } catch(e){} }
+  s.idx = (s.idx + 1) % s.words.length;
+  renderSprechen(lk);
+}
+
+function spPrev(lk) {
+  const s = spState[lk];
+  if (!s) return;
+  if (s.recognition) { try { s.recognition.abort(); } catch(e){} }
+  s.idx = (s.idx - 1 + s.words.length) % s.words.length;
+  renderSprechen(lk);
+}
+
+function spReshuffle(lk) {
+  const data = getWordData(lk);
+  if (!data) return;
+  spState[lk] = {
+    words: shuffle([...data.words]),
+    idx: 0,
+    correct: 0,
+    wrong: 0,
+    recognition: null,
+    listening: false
+  };
+  renderSprechen(lk);
+}
+
+function spListen(lk, target) {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    document.getElementById('sp-status-' + lk).textContent = '❌ Тільки Chrome підтримує розпізнавання';
+    return;
+  }
+
+  const s = spState[lk];
+  if (s.listening) return;
+
+  // Stop previous
+  if (s.recognition) { try { s.recognition.abort(); } catch(e){} }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'de-DE';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 5;
+  recognition.continuous = false;
+  s.recognition = recognition;
+  s.listening = true;
+
+  const micBtn = document.getElementById('sp-mic-' + lk);
+  const statusEl = document.getElementById('sp-status-' + lk);
+
+  // Animate
+  if (micBtn) {
+    micBtn.style.background = 'linear-gradient(135deg,#e8266e,#ff6bb0)';
+    micBtn.innerHTML = '⏺️';
+    micBtn.style.boxShadow = '0 0 0 8px rgba(232,38,110,0.2), 0 4px 16px rgba(192,24,90,.4)';
+  }
+  if (statusEl) statusEl.textContent = '🎙️ Слухаю… говори зараз!';
+
+  // Reset mic on end
+  const resetMic = () => {
+    s.listening = false;
+    if (micBtn) {
+      micBtn.style.background = 'linear-gradient(135deg,var(--klett-pink),var(--klett-pink2))';
+      micBtn.innerHTML = '🎤';
+      micBtn.style.boxShadow = '0 4px 16px rgba(192,24,90,.4)';
+    }
+  };
+
+  recognition.onresult = (event) => {
+    resetMic();
+    const alternatives = [];
+    for (let i = 0; i < event.results[0].length; i++) {
+      alternatives.push(event.results[0][i].transcript.toLowerCase().trim());
+    }
+    const heard = alternatives[0];
+    const t = target.toLowerCase().replace(/[^a-zäöüß\s]/gi, '').trim();
+
+    const isCorrect = alternatives.some(alt => {
+      const a = alt.replace(/[^a-zäöüß\s]/gi, '').trim();
+      return a === t ||
+             a.includes(t) ||
+             t.includes(a) ||
+             spLevenshtein(a, t) <= Math.max(1, Math.floor(t.length * 0.3));
+    });
+
+    spShowResult(lk, isCorrect, heard, target);
+  };
+
+  recognition.onerror = (event) => {
+    resetMic();
+    const msgs = {
+      'not-allowed': '❌ Дозволь мікрофон у браузері!',
+      'no-speech': '🔇 Не почув. Говори голосніше.',
+      'network': '🌐 Потрібен інтернет для розпізнавання.',
+      'aborted': ''
+    };
+    if (statusEl && msgs[event.error] !== undefined) {
+      statusEl.textContent = msgs[event.error] || ('Помилка: ' + event.error);
+    }
+  };
+
+  recognition.onend = () => {
+    resetMic();
+  };
+
+  try {
+    recognition.start();
+  } catch(e) {
+    resetMic();
+    if (statusEl) statusEl.textContent = 'Помилка запуску: ' + e.message;
+  }
+}
+
+function spShowResult(lk, isCorrect, heard, target) {
+  const s = spState[lk];
+  const resultEl = document.getElementById('sp-result-' + lk);
+  const iconEl = document.getElementById('sp-result-icon-' + lk);
+  const textEl = document.getElementById('sp-result-text-' + lk);
+  const heardEl = document.getElementById('sp-result-heard-' + lk);
+  const statusEl = document.getElementById('sp-status-' + lk);
+
+  // Reveal word
+  spReveal(lk);
+
+  if (!resultEl) return;
+  resultEl.style.display = 'block';
+
+  if (isCorrect) {
+    s.correct++;
+    resultEl.style.background = 'var(--green-bg)';
+    resultEl.style.border = '1px solid #a8d8bf';
+    iconEl.textContent = '✅';
+    textEl.textContent = 'Чудово! Правильно!';
+    textEl.style.color = 'var(--green)';
+    heardEl.textContent = 'Почув: "' + heard + '"';
+    if (statusEl) statusEl.textContent = '🎉 Відмінно!';
+    document.getElementById('sp-correct-' + lk).textContent = s.correct;
+    // Auto next
+    setTimeout(() => spNext(lk), 1600);
+  } else {
+    s.wrong++;
+    resultEl.style.background = '#fde8f0';
+    resultEl.style.border = '1px solid #f0a0c0';
+    iconEl.textContent = '❌';
+    textEl.textContent = 'Правильно: "' + target + '"';
+    textEl.style.color = 'var(--klett-pink)';
+    heardEl.textContent = 'Почув: "' + heard + '"';
+    if (statusEl) statusEl.textContent = '🔄 Спробуй ще раз';
+    document.getElementById('sp-wrong-' + lk).textContent = s.wrong;
+    // Speak correct
+    setTimeout(() => speakDe(target), 400);
+  }
+}
+
+function spLevenshtein(a, b) {
+  if (!a || !b) return Math.max((a||'').length, (b||'').length);
+  const dp = Array.from({length: a.length+1}, (_, i) =>
+    Array.from({length: b.length+1}, (_, j) => i === 0 ? j : j === 0 ? i : 0)
+  );
+  for (let i = 1; i <= a.length; i++)
+    for (let j = 1; j <= b.length; j++)
+      dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+  return dp[a.length][b.length];
+}
+
+
+// init — show B1 lektion 1 first
+switchLevel('B1');
+setTimeout(() => initDictClicks('b1_1'), 300);
+</script>
 
 </body>
 </html>
