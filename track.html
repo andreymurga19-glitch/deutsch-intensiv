@@ -637,13 +637,6 @@ function openCalDay(dateStr){
   document.getElementById('hwDayTitle').textContent='📅 '+dl;
   document.getElementById('hwDayDateLabel').textContent=dateStr;
   document.getElementById('hwDayBody').innerHTML=words.map(w=>`<div class="word-row" style="margin-bottom:6px"><div class="word-de">${esc(w.de)}</div><div class="word-arr">→</div><div class="word-ua">${esc(w.uk)}</div></div>`).join('');
-  // Add generate examples button at top if today and words without examples
-  const wordsNoEx = words1.filter(w=>!w.examples||!w.examples.length);
-  const genBtn = isToday && wordsNoEx.length > 0
-    ? `<button class="btn btn-full" style="margin-bottom:14px;background:linear-gradient(135deg,#1a3a6b,#7b61ff)" onclick="closeHWDay();startExampleSession('${dateStr}')">🤖 Згенерувати приклади (${wordsNoEx.length} слів)</button>`
-    : '';
-
-  document.getElementById('hwDayBody').innerHTML = genBtn + document.getElementById('hwDayBody').innerHTML;
   document.getElementById('hwDayOv').style.display='flex';
 }
 
@@ -672,133 +665,208 @@ const AGENT_SYSTEM = `Ти — персональний AI-асистент дл
 - Для складних слів завжди давай приклад використання`;
 
 // ══════════════════════════════════════════════════════════════
-// EXAMPLE SESSION - generate examples via AI agent
+// EXAMPLE SESSION - AI agent flow in Слова tab
 // ══════════════════════════════════════════════════════════════
-let exSession = null; // {words, idx, currentWord}
+let exSession = null;
 
 function startExampleSession(dateStr) {
   const words = D.words.filter(w => w.date === dateStr && (!w.examples || !w.examples.length));
-  if (!words.length) { toast('Всі слова вже мають приклади!', 'var(--grn)'); return; }
-
-  exSession = { words, idx: 0 };
-
+  if (!words.length) { toast('Всі слова вже мають приклади! ✓', 'var(--grn)'); return; }
+  exSession = { words, idx: 0, dateStr };
   // Switch to agent tab
   const agentTab = document.querySelector('.tab:nth-child(2)');
   goTab('agent', agentTab);
-
-  // Clear messages and start session
   document.getElementById('agentMessages').innerHTML = '';
   agentHistory = [];
+  const label = dateStr === tod() ? 'сьогодні' : new Date(dateStr+'T12:00:00').toLocaleDateString('uk-UA',{day:'numeric',month:'long'});
+  addAgentMsg('ai', `🤖 Генеруємо приклади для слів за ${label}!
 
-  const total = words.length;
-  addAgentMsg('ai', `🤖 Починаємо генерацію прикладів!
+Всього ${words.length} слів без прикладу. По кожному слову:
+1️⃣ Я пропоную варіант
+2️⃣ Ти можеш прийняти або написати свій
+3️⃣ Якщо пишеш свій — я перевіряю і коригую
+4️⃣ Потім зберігаємо або генеруємо ще`);
+  setTimeout(() => generateNextExample(), 700);
+}
 
-Сьогодні ${total} ${total===1?'слово':total<5?'слова':'слів'} без прикладу. Буду пропонувати по одному — ти можеш прийняти, попросити інший або пропустити.`);
+function startSingleExample(wordId) {
+  const w = D.words.find(x => x.id === wordId);
+  if (!w) return;
+  exSession = { words: [w], idx: 0, dateStr: w.date };
+  const agentTab = document.querySelector('.tab:nth-child(2)');
+  goTab('agent', agentTab);
+  document.getElementById('agentMessages').innerHTML = '';
+  agentHistory = [];
+  addAgentMsg('ai', `🤖 Генеруємо приклад для слова:
 
-  setTimeout(() => generateNextExample(), 600);
+"${w.de}" — ${w.uk}
+
+Зараз придумаю варіант...`);
+  setTimeout(() => generateNextExample(), 700);
 }
 
 async function generateNextExample() {
   if (!exSession) return;
   const { words, idx } = exSession;
   if (idx >= words.length) {
-    addAgentMsg('ai', `✅ Готово! Всі ${words.length} ${words.length===1?'слово':words.length<5?'слова':'слів'} оброблено.
-
-Можемо перейти до ДЗ або продовжити спілкування!`);
+    addAgentMsg('ai', `✅ Готово! Всі слова оброблено.`);
     exSession = null;
+    renderWords();
     return;
   }
-
   const w = words[idx];
   exSession.currentWord = w;
-
+  exSession.currentExample = null;
   const loadEl = addAgentMsg('ai', '', true);
-
   try {
-    const prompt = `Придумай 1 живий приклад речення рівня B1-B2 для слова: "${w.de}" (${w.uk}).
-Відповідь ТІЛЬКИ JSON: {"example_de":"речення по-німецьки","example_ua":"переклад українською"}`;
+    const prompt = `Придумай 1 живий приклад речення рівня B1-B2 для: "${w.de}" (${w.uk}).
+ТІЛЬКИ JSON: {"example_de":"речення","example_ua":"переклад"}`;
     const reply = await callAI(prompt);
-    const m = reply.match(/\{[^}]+\}/);
+    const m = reply.match(/\{[\s\S]*?\}/);
     loadEl.remove();
-
     if (m) {
       const ex = JSON.parse(m[0]);
       exSession.currentExample = ex;
-
-      const msgDiv = document.createElement('div');
-      msgDiv.className = 'agent-msg ai';
-      msgDiv.innerHTML = `
-        <div class="agent-avatar">🤖</div>
-        <div class="agent-bubble">
-          <div style="font-size:.72rem;color:var(--mt2);margin-bottom:6px">${idx+1}/${words.length} · <span style="color:var(--gold);font-family:var(--fm)">${esc(w.de)}</span> — ${esc(w.uk)}</div>
-          <div class="agent-word-card">
-            <div class="agent-word-ex">${esc(ex.example_de)}<div class="agent-word-ex-ua">${esc(ex.example_ua)}</div></div>
-            <div class="agent-word-btns" style="margin-top:8px">
-              <button class="btn btn-sm" onclick="acceptExample()">✅ Додати</button>
-              <button class="btn btn-sm btn-ghost" onclick="newExampleForCurrent()">🔄 Інший</button>
-              <button class="btn btn-sm btn-ghost" onclick="skipExample()">⏭ Пропустити</button>
-            </div>
-          </div>
-        </div>`;
-      document.getElementById('agentMessages').appendChild(msgDiv);
-      document.getElementById('agentMessages').scrollTop = 99999;
+      showExampleCard(w, ex, idx, words.length);
     } else {
-      loadEl.remove();
-      addAgentMsg('ai', 'Не вдалося згенерувати. Пропускаю...');
-      setTimeout(() => { exSession.idx++; generateNextExample(); }, 1000);
+      addAgentMsg('ai', 'Не вдалося згенерувати. Напиши свій варіант або пропусти.');
+      showWriteOwn(w, idx, words.length);
     }
-  } catch(e) {
-    loadEl.remove();
-    addAgentMsg('ai', 'Помилка. Спробуй ще раз або пропусти.');
-  }
+  } catch(e) { loadEl.remove(); addAgentMsg('ai', 'Помилка з\'єднання.'); }
 }
 
-function acceptExample() {
-  if (!exSession || !exSession.currentExample) return;
-  const w = exSession.currentWord;
-  const ex = exSession.currentExample;
-  const word = D.words.find(x => x.id === w.id);
-  if (word) {
-    word.examples = [{ de: ex.example_de, ua: ex.example_ua }];
+function showExampleCard(w, ex, idx, total) {
+  const msgs = document.getElementById('agentMessages');
+  const div = document.createElement('div');
+  div.className = 'agent-msg ai';
+  div.id = 'ex-card-current';
+  div.innerHTML = `
+    <div class="agent-avatar">🤖</div>
+    <div class="agent-bubble" style="width:100%">
+      <div style="font-size:.7rem;color:var(--mt2);margin-bottom:6px">${idx+1}/${total} · <b style="color:var(--gold)">${esc(w.de)}</b> — ${esc(w.uk)}</div>
+      <div class="agent-word-card" id="ex-preview">
+        <div class="agent-word-ex">${esc(ex.example_de)}<div class="agent-word-ex-ua">${esc(ex.example_ua)}</div></div>
+      </div>
+      <div style="margin-top:10px">
+        <div style="font-size:.72rem;color:var(--mt2);margin-bottom:5px">Або напиши свій варіант:</div>
+        <div style="display:flex;gap:7px">
+          <input id="ownEx" class="agent-input" style="flex:1;border-radius:8px" placeholder="Моє речення по-німецьки...">
+          <button class="btn btn-sm" onclick="checkOwnExample()">Перевірити</button>
+        </div>
+      </div>
+      <div class="agent-word-btns" style="margin-top:10px">
+        <button class="btn btn-sm" onclick="acceptCurrentExample()">✅ Прийняти</button>
+        <button class="btn btn-sm btn-ghost" onclick="newExampleForCurrent()">🔄 Інший</button>
+        <button class="btn btn-sm btn-ghost" onclick="skipExample()">⏭ Пропустити</button>
+      </div>
+    </div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = 99999;
+}
+
+function showWriteOwn(w, idx, total) {
+  const msgs = document.getElementById('agentMessages');
+  const div = document.createElement('div');
+  div.className = 'agent-msg ai';
+  div.innerHTML = `
+    <div class="agent-avatar">🤖</div>
+    <div class="agent-bubble">
+      <div style="font-size:.7rem;color:var(--mt2);margin-bottom:8px">${idx+1}/${total} · <b style="color:var(--gold)">${esc(w.de)}</b></div>
+      <div style="font-size:.82rem;margin-bottom:8px">Напиши своє речення:</div>
+      <div style="display:flex;gap:7px">
+        <input id="ownEx" class="agent-input" style="flex:1;border-radius:8px" placeholder="Речення по-німецьки...">
+        <button class="btn btn-sm" onclick="checkOwnExample()">✓ Перевірити</button>
+      </div>
+      <div class="agent-word-btns" style="margin-top:8px">
+        <button class="btn btn-sm btn-ghost" onclick="skipExample()">⏭ Пропустити</button>
+      </div>
+    </div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = 99999;
+}
+
+async function checkOwnExample() {
+  const input = document.getElementById('ownEx');
+  if (!input) return;
+  const own = input.value.trim();
+  if (!own) { toast('Напиши речення!', 'var(--pink)'); return; }
+  const w = exSession?.currentWord;
+  if (!w) return;
+  addAgentMsg('user', own);
+  const loadEl = addAgentMsg('ai', '', true);
+  try {
+    const prompt = `Перевір речення учня для слова "${w.de}" (${w.uk}).
+Речення учня: "${own}"
+1. Чи правильно використано слово?
+2. Є граматичні помилки?
+3. Дай виправлений варіант якщо потрібно.
+Відповідь JSON: {"correct":true/false,"comment":"коментар українською","corrected":"виправлене речення або те саме якщо правильно","corrected_ua":"переклад"}`;
+    const reply = await callAI(prompt);
+    const m = reply.match(/\{[\s\S]*?\}/);
+    loadEl.remove();
+    if (m) {
+      const res = JSON.parse(m[0]);
+      exSession.currentExample = { example_de: res.corrected || own, example_ua: res.corrected_ua || '' };
+      const msgs = document.getElementById('agentMessages');
+      const div = document.createElement('div');
+      div.className = 'agent-msg ai';
+      div.innerHTML = `
+        <div class="agent-avatar">🤖</div>
+        <div class="agent-bubble">
+          <div style="font-size:.82rem;margin-bottom:8px;color:${res.correct?'var(--grn)':'var(--org)'}">${res.correct?'✅ Правильно!':'⚠️ Є помилки'}</div>
+          <div style="font-size:.8rem;margin-bottom:8px">${esc(res.comment)}</div>
+          <div class="agent-word-card">
+            <div class="agent-word-ex">${esc(res.corrected)}<div class="agent-word-ex-ua">${esc(res.corrected_ua||'')}</div></div>
+          </div>
+          <div class="agent-word-btns" style="margin-top:10px">
+            <button class="btn btn-sm" onclick="acceptCurrentExample()">✅ Зберегти</button>
+            <button class="btn btn-sm btn-ghost" onclick="newExampleForCurrent()">🤖 AI варіант</button>
+            <button class="btn btn-sm btn-ghost" onclick="skipExample()">⏭ Пропустити</button>
+          </div>
+        </div>`;
+      msgs.appendChild(div);
+      msgs.scrollTop = 99999;
+    }
+  } catch(e) { loadEl.remove(); addAgentMsg('ai', 'Помилка перевірки.'); }
+}
+
+function acceptCurrentExample() {
+  if (!exSession?.currentExample) return;
+  const w = D.words.find(x => x.id === exSession.currentWord.id);
+  if (w) {
+    const ex = exSession.currentExample;
+    w.examples = [{ de: ex.example_de, ua: ex.example_ua || ex.corrected_ua || '' }];
     saveD();
     toast('✅ Приклад збережено!', 'var(--grn)');
   }
-  addAgentMsg('user', '✅ Додати');
-  addAgentMsg('ai', `Збережено! Переходимо до наступного слова...`);
+  addAgentMsg('user', '✅ Зберегти');
   exSession.idx++;
-  setTimeout(() => generateNextExample(), 800);
+  if (exSession.idx < exSession.words.length) {
+    addAgentMsg('ai', `Збережено! Переходимо до наступного...`);
+    setTimeout(() => generateNextExample(), 700);
+  } else {
+    addAgentMsg('ai', `✅ Всі приклади збережено! Чудова робота 💪`);
+    exSession = null;
+    renderWords();
+  }
 }
 
 async function newExampleForCurrent() {
   if (!exSession) return;
   const w = exSession.currentWord;
-  addAgentMsg('user', '🔄 Інший приклад');
+  addAgentMsg('user', '🔄 Інший варіант');
   const loadEl = addAgentMsg('ai', '', true);
   try {
-    const prompt = `Придумай ІНШИЙ приклад речення для слова: "${w.de}" (${w.uk}). Попередній був: "${exSession.currentExample?.example_de || ''}". Зроби інше речення.
-Відповідь ТІЛЬКИ JSON: {"example_de":"речення","example_ua":"переклад"}`;
+    const prev = exSession.currentExample?.example_de || '';
+    const prompt = `Придумай ІНШИЙ приклад для "${w.de}" (${w.uk}). Попередній: "${prev}". Зроби інше речення.
+ТІЛЬКИ JSON: {"example_de":"речення","example_ua":"переклад"}`;
     const reply = await callAI(prompt);
-    const m = reply.match(/\{[^}]+\}/);
+    const m = reply.match(/\{[\s\S]*?\}/);
     loadEl.remove();
     if (m) {
       const ex = JSON.parse(m[0]);
       exSession.currentExample = ex;
-      const msgDiv = document.createElement('div');
-      msgDiv.className = 'agent-msg ai';
-      msgDiv.innerHTML = `
-        <div class="agent-avatar">🤖</div>
-        <div class="agent-bubble">
-          <div class="agent-word-card">
-            <div class="agent-word-ex">${esc(ex.example_de)}<div class="agent-word-ex-ua">${esc(ex.example_ua)}</div></div>
-            <div class="agent-word-btns" style="margin-top:8px">
-              <button class="btn btn-sm" onclick="acceptExample()">✅ Додати</button>
-              <button class="btn btn-sm btn-ghost" onclick="newExampleForCurrent()">🔄 Ще інший</button>
-              <button class="btn btn-sm btn-ghost" onclick="skipExample()">⏭ Пропустити</button>
-            </div>
-          </div>
-        </div>`;
-      document.getElementById('agentMessages').appendChild(msgDiv);
-      document.getElementById('agentMessages').scrollTop = 99999;
+      showExampleCard(w, ex, exSession.idx, exSession.words.length);
     }
   } catch(e) { loadEl.remove(); addAgentMsg('ai', 'Помилка.'); }
 }
@@ -806,9 +874,15 @@ async function newExampleForCurrent() {
 function skipExample() {
   if (!exSession) return;
   addAgentMsg('user', '⏭ Пропустити');
-  addAgentMsg('ai', 'Пропускаємо...');
   exSession.idx++;
-  setTimeout(() => generateNextExample(), 600);
+  if (exSession.idx < exSession.words.length) {
+    addAgentMsg('ai', 'Пропускаємо, переходимо далі...');
+    setTimeout(() => generateNextExample(), 600);
+  } else {
+    addAgentMsg('ai', '✅ Готово! Всі слова оброблено.');
+    exSession = null;
+    renderWords();
+  }
 }
 
 function initAgent(){
@@ -1417,13 +1491,6 @@ function openHWDay(dateStr){
       ${taskBtn(2, words2.length, t2, 5, hwDir2)}
     </div>`;
 
-  // Add generate examples button at top if today and words without examples
-  const wordsNoEx = words1.filter(w=>!w.examples||!w.examples.length);
-  const genBtn = isToday && wordsNoEx.length > 0
-    ? `<button class="btn btn-full" style="margin-bottom:14px;background:linear-gradient(135deg,#1a3a6b,#7b61ff)" onclick="closeHWDay();startExampleSession('${dateStr}')">🤖 Згенерувати приклади (${wordsNoEx.length} слів)</button>`
-    : '';
-
-  document.getElementById('hwDayBody').innerHTML = genBtn + document.getElementById('hwDayBody').innerHTML;
   document.getElementById('hwDayOv').style.display='flex';
 }
 function closeHWDay(){document.getElementById('hwDayOv').style.display='none';}
