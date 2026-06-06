@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Deutsch Lektion – AI Урок</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d1117;
+  --sf: #161b22;
+  --sf2: #21262d;
+  --br: #30363d;
+  --gold: #d4a843;
+  --pink: #c0185a;
+  --pink2: #e8266e;
+  --grn: #3ecf8e;
+  --blue: #1a3a6b;
+  --tx: #e6edf3;
+  --mt: #7d8590;
+  --mt2: #9198a1;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--tx);
+  font-family: 'IBM Plex Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ── */
+.header {
+  background: linear-gradient(135deg, var(--blue) 0%, #2d1b5e 60%, var(--pink) 100%);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-brand { display: flex; flex-direction: column; }
+.header-di { font-size: 9px; letter-spacing: 2px; color: rgba(255,255,255,.6); text-transform: uppercase; }
+.header-title { font-size: 15px; font-weight: 600; color: #fff; }
+.header-right { display: flex; align-items: center; gap: 10px; }
+.back-btn {
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.2);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* ── LESSON SETUP ── */
+.setup-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  text-align: center;
+}
+.setup-icon { font-size: 64px; margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+.setup-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.setup-sub { font-size: 14px; color: var(--mt2); margin-bottom: 32px; line-height: 1.6; }
+
+.level-select {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.level-btn {
+  background: var(--sf2);
+  border: 2px solid var(--br);
+  color: var(--mt2);
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s;
+}
+.level-btn.active {
+  border-color: var(--pink);
+  color: #fff;
+  background: rgba(192,24,90,.15);
+}
+
+.start-btn {
+  background: linear-gradient(135deg, var(--pink), var(--pink2));
+  border: none;
+  color: #fff;
+  padding: 16px 48px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(192,24,90,.4);
+  transition: all .2s;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+.start-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(192,24,90,.5); }
+
+.tips {
+  margin-top: 28px;
+  background: var(--sf);
+  border: 1px solid var(--br);
+  border-radius: 14px;
+  padding: 16px 20px;
+  text-align: left;
+  max-width: 360px;
+  width: 100%;
+}
+.tips-title { font-size: 11px; letter-spacing: 2px; color: var(--mt); text-transform: uppercase; margin-bottom: 10px; }
+.tip { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; font-size: 13px; color: var(--mt2); }
+.tip:last-child { margin-bottom: 0; }
+
+/* ── LESSON SCREEN ── */
+.lesson-screen {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+  padding-bottom: 20px;
+}
+
+/* Status bar */
+.lesson-status {
+  padding: 10px 20px;
+  background: var(--sf);
+  border-bottom: 1px solid var(--br);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.lesson-topic { font-size: 13px; color: var(--gold); font-weight: 500; }
+.lesson-time { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--mt); }
+.end-btn {
+  background: rgba(192,24,90,.15);
+  border: 1px solid var(--pink);
+  color: var(--pink);
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.end-btn:hover { background: var(--pink); color: #fff; }
+
+/* Messages */
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  max-height: calc(100vh - 230px);
+}
+
+.msg {
+  display: flex;
+  gap: 10px;
+  animation: msgIn .3s ease;
+}
+@keyframes msgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.msg.user { flex-direction: row-reverse; }
+
+.msg-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.msg.ai .msg-avatar { background: linear-gradient(135deg, var(--blue), var(--pink)); }
+.msg.user .msg-avatar { background: var(--sf2); border: 1px solid var(--br); }
+
+.msg-bubble {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.msg.ai .msg-bubble {
+  background: var(--sf);
+  border: 1px solid var(--br);
+  border-radius: 4px 16px 16px 16px;
+  color: var(--tx);
+}
+.msg.user .msg-bubble {
+  background: linear-gradient(135deg, var(--blue), #2d5fa6);
+  border-radius: 16px 4px 16px 16px;
+  color: #fff;
+}
+.msg.loading .msg-bubble {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding: 14px 18px;
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--mt); animation: bounce .8s ease-in-out infinite; }
+.dot:nth-child(2) { animation-delay: .15s; }
+.dot:nth-child(3) { animation-delay: .3s; }
+@keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-8px)} }
+
+/* Input area */
+.input-area {
+  padding: 12px 16px;
+  background: var(--sf);
+  border-top: 1px solid var(--br);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mic-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.mic-main {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--pink), var(--pink2));
+  border: none;
+  color: #fff;
+  font-size: 26px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(192,24,90,.4);
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mic-main:active { transform: scale(.95); }
+.mic-main.listening {
+  background: linear-gradient(135deg, #e8266e, #ff6bb0);
+  box-shadow: 0 0 0 10px rgba(232,38,110,.15), 0 4px 16px rgba(192,24,90,.4);
+  animation: pulse-ring 1.2s ease-in-out infinite;
+}
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(232,38,110,.4), 0 4px 16px rgba(192,24,90,.4); }
+  70% { box-shadow: 0 0 0 14px rgba(232,38,110,0), 0 4px 16px rgba(192,24,90,.4); }
+  100% { box-shadow: 0 0 0 0 rgba(232,38,110,0), 0 4px 16px rgba(192,24,90,.4); }
+}
+
+.mic-status {
+  font-size: 12px;
+  color: var(--mt);
+  text-align: center;
+  font-family: 'IBM Plex Mono', monospace;
+  min-height: 18px;
+}
+
+.text-row {
+  display: flex;
+  gap: 8px;
+}
+.text-input {
+  flex: 1;
+  background: var(--sf2);
+  border: 1px solid var(--br);
+  border-radius: 20px;
+  color: var(--tx);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 14px;
+  padding: 10px 16px;
+  outline: none;
+  transition: border-color .2s;
+}
+.text-input:focus { border-color: var(--pink); }
+.text-input::placeholder { color: var(--mt); }
+
+.send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--pink);
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .2s;
+  flex-shrink: 0;
+}
+.send-btn:hover { background: var(--pink2); }
+
+/* ── SUMMARY SCREEN ── */
+.summary-screen {
+  display: none;
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 16px 40px;
+}
+.summary-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.summary-emoji { font-size: 56px; margin-bottom: 12px; }
+.summary-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.summary-sub { font-size: 14px; color: var(--mt2); }
+
+.summary-card {
+  background: var(--sf);
+  border: 1px solid var(--br);
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 14px;
+}
+.summary-card-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--mt);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.summary-card-title span { font-size: 16px; }
+.summary-text { font-size: 14px; line-height: 1.7; color: var(--tx); white-space: pre-line; }
+.summary-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--mt2);
+  font-size: 13px;
+}
+
+.vocab-item {
+  background: var(--sf2);
+  border: 1px solid var(--br);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.vocab-de {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  color: var(--gold);
+  min-width: 140px;
+}
+.vocab-ua { font-size: 13px; color: var(--mt2); flex: 1; }
+
+.summary-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+.btn-primary {
+  flex: 1;
+  background: linear-gradient(135deg, var(--pink), var(--pink2));
+  border: none;
+  color: #fff;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+.btn-secondary {
+  flex: 1;
+  background: var(--sf2);
+  border: 1px solid var(--br);
+  color: var(--tx);
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+/* Speaking animation in AI avatar */
+.speaking .msg-avatar { animation: speaking-glow 0.6s ease-in-out infinite alternate; }
+@keyframes speaking-glow {
+  from { box-shadow: 0 0 0 0 rgba(192,24,90,.4); }
+  to { box-shadow: 0 0 0 8px rgba(192,24,90,.15); }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-brand">
+    <span class="header-di">Deutsch</span>
+    <span class="header-title">INTENSIV · Урок</span>
+  </div>
+  <div class="header-right">
+    <a href="/" class="back-btn">← Словник</a>
+  </div>
+</div>
+
+<!-- SETUP SCREEN -->
+<div class="setup-screen" id="setupScreen">
+  <div class="setup-icon">🎓</div>
+  <div class="setup-title">AI Розмовний урок</div>
+  <div class="setup-sub">Спілкуйся з AI-вчителем по-німецьки.<br>Говори голосом або пиши текстом.</div>
+
+  <div class="level-select" id="levelSelect">
+    <button class="level-btn active" data-level="A1" onclick="selectLevel(this)">A1</button>
+    <button class="level-btn" data-level="A2" onclick="selectLevel(this)">A2</button>
+    <button class="level-btn active" data-level="B1" onclick="selectLevel(this)">B1</button>
+    <button class="level-btn" data-level="B2" onclick="selectLevel(this)">B2</button>
+  </div>
+
+  <button class="start-btn" onclick="startLesson()">🎤 Почати урок</button>
+
+  <div class="tips">
+    <div class="tips-title">Як це працює</div>
+    <div class="tip"><span>🎤</span><span>Натисни мікрофон і говори по-німецьки</span></div>
+    <div class="tip"><span>✍️</span><span>Або пиши текстом якщо не хочеш говорити</span></div>
+    <div class="tip"><span>🤖</span><span>AI відповідає голосом і виправляє помилки</span></div>
+    <div class="tip"><span>📋</span><span>Після уроку отримаєш підсумок і нові слова</span></div>
+  </div>
+</div>
+
+<!-- LESSON SCREEN -->
+<div class="lesson-screen" id="lessonScreen">
+  <div class="lesson-status">
+    <div class="lesson-topic" id="lessonTopic">Тема: визначається...</div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="lesson-time" id="lessonTimer">00:00</div>
+      <button class="end-btn" onclick="endLesson()">Завершити</button>
+    </div>
+  </div>
+
+  <div class="messages" id="messages"></div>
+
+  <div class="input-area">
+    <div class="mic-row">
+      <button class="mic-main" id="micBtn" onclick="toggleMic()">🎤</button>
+    </div>
+    <div class="mic-status" id="micStatus">Натисни 🎤 і говори</div>
+    <div class="text-row">
+      <input class="text-input" id="textInput" placeholder="Або пиши тут..." onkeydown="if(event.key==='Enter')sendText()">
+      <button class="send-btn" onclick="sendText()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUMMARY SCREEN -->
+<div class="summary-screen" id="summaryScreen"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════════════════════
+const GEMINI_KEY = null; // Uses /api/claude endpoint from Deutsch Intensiv
+let selectedLevel = 'B1';
+let lessonHistory = []; // {role, text}
+let lessonTopic = '';
+let timerInterval = null;
+let timerSeconds = 0;
+let recognition = null;
+let isListening = false;
+let aiSpeaking = false;
+
+// ── Level select ──
+function selectLevel(btn) {
+  // Toggle
+  const was = btn.classList.contains('active');
+  if (!was) btn.classList.add('active');
+  else btn.classList.remove('active');
+
+  const active = [...document.querySelectorAll('.level-btn.active')].map(b => b.dataset.level);
+  selectedLevel = active.length ? active.join('/') : 'B1';
+}
+
+// ══════════════════════════════════════════════════════════════
+// AI CALL
+// ══════════════════════════════════════════════════════════════
+async function callAI(systemPrompt, userMessage) {
+  const messages = [];
+
+  // Add history
+  for (const h of lessonHistory) {
+    messages.push({ role: h.role === 'ai' ? 'assistant' : 'user', content: h.text });
+  }
+  if (userMessage) messages.push({ role: 'user', content: userMessage });
+
+  const fullPrompt = systemPrompt + '\n\n' +
+    messages.map(m => (m.role === 'assistant' ? 'Вчитель: ' : 'Учень: ') + m.content).join('\n') +
+    '\nВчитель:';
+
+  const resp = await fetch('/api/claude', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt: fullPrompt })
+  });
+
+  if (!resp.ok) throw new Error('API error ' + resp.status);
+  const data = await resp.json();
+  return data.text || '';
+}
+
+// ══════════════════════════════════════════════════════════════
+// SPEECH
+// ══════════════════════════════════════════════════════════════
+function speak(text, onEnd) {
+  if (!('speechSynthesis' in window)) { if (onEnd) onEnd(); return; }
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'de-DE';
+  u.rate = 0.88;
+  u.pitch = 1;
+  const voices = speechSynthesis.getVoices();
+  const deVoice = voices.find(v => v.lang.startsWith('de'));
+  if (deVoice) u.voice = deVoice;
+  u.onend = () => { aiSpeaking = false; if (onEnd) onEnd(); };
+  u.onerror = () => { aiSpeaking = false; if (onEnd) onEnd(); };
+  aiSpeaking = true;
+  speechSynthesis.speak(u);
+}
+
+function speakUa(text) {
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'uk-UA';
+  u.rate = 0.9;
+  speechSynthesis.speak(u);
+}
+
+// Preload voices
+if ('speechSynthesis' in window) {
+  speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+}
+
+// ══════════════════════════════════════════════════════════════
+// MICROPHONE
+// ══════════════════════════════════════════════════════════════
+function toggleMic() {
+  if (isListening) {
+    stopMic();
+  } else {
+    startMic();
+  }
+}
+
+function startMic() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    setMicStatus('❌ Потрібен Chrome для голосу');
+    return;
+  }
+  if (aiSpeaking) { speechSynthesis.cancel(); aiSpeaking = false; }
+
+  recognition = new SR();
+  recognition.lang = 'de-DE';
+  recognition.interimResults = true;
+  recognition.continuous = false;
+  recognition.maxAlternatives = 3;
+
+  const btn = document.getElementById('micBtn');
+  btn.classList.add('listening');
+  btn.textContent = '⏹️';
+  isListening = true;
+  setMicStatus('🎙️ Слухаю… говори по-німецьки');
+
+  let finalTranscript = '';
+
+  recognition.onresult = (e) => {
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) finalTranscript += e.results[i][0].transcript;
+      else interim += e.results[i][0].transcript;
+    }
+    setMicStatus(interim || finalTranscript || '🎙️ Слухаю...');
+  };
+
+  recognition.onend = () => {
+    stopMic();
+    if (finalTranscript.trim()) {
+      processUserInput(finalTranscript.trim());
+    } else {
+      setMicStatus('Не почув. Спробуй ще раз.');
+    }
+  };
+
+  recognition.onerror = (e) => {
+    stopMic();
+    const msgs = {
+      'not-allowed': '❌ Дозволь мікрофон!',
+      'no-speech': '🔇 Не почув. Говори голосніше.',
+      'network': '🌐 Потрібен інтернет.',
+      'aborted': ''
+    };
+    if (msgs[e.error] !== undefined) setMicStatus(msgs[e.error]);
+  };
+
+  try { recognition.start(); }
+  catch(e) { stopMic(); setMicStatus('Помилка: ' + e.message); }
+}
+
+function stopMic() {
+  isListening = false;
+  if (recognition) { try { recognition.abort(); } catch(e){} recognition = null; }
+  const btn = document.getElementById('micBtn');
+  btn.classList.remove('listening');
+  btn.textContent = '🎤';
+  setMicStatus('Натисни 🎤 і говори');
+}
+
+function setMicStatus(text) {
+  document.getElementById('micStatus').textContent = text;
+}
+
+// ══════════════════════════════════════════════════════════════
+// MESSAGES
+// ══════════════════════════════════════════════════════════════
+function addMessage(role, text, isLoading) {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg ' + role + (isLoading ? ' loading' : '');
+
+  const avatar = role === 'ai' ? '🎓' : '👤';
+  const bubbleContent = isLoading
+    ? '<div class="dot"></div><div class="dot"></div><div class="dot"></div>'
+    : escapeHtml(text).replace(/\n/g, '<br>');
+
+  div.innerHTML = `
+    <div class="msg-avatar">${avatar}</div>
+    <div class="msg-bubble">${bubbleContent}</div>
+  `;
+
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function removeLoading(el) {
+  if (el && el.parentNode) el.parentNode.removeChild(el);
+}
+
+// ══════════════════════════════════════════════════════════════
+// LESSON LOGIC
+// ══════════════════════════════════════════════════════════════
+const SYSTEM_PROMPT = `Ти — AI-вчитель німецької мови. Ти ведеш розмовний урок із студентом рівня {LEVEL}.
+
+ПРАВИЛА:
+1. ЗАВЖДИ відповідай ТІЛЬКИ НІМЕЦЬКОЮ мовою (крім виправлень помилок)
+2. Якщо студент робить граматичну помилку — м'яко виправ у дужках: (Правильно: "...")
+3. Якщо студент пише українською — м'яко нагадай перейти на німецьку і допоможи сформулювати думку
+4. Задавай питання щоб підтримувати розмову
+5. Використовуй прості речення відповідно до рівня {LEVEL}
+6. НЕ перекладай весь свій текст на українську — тільки нові складні слова пояснюй у дужках
+7. Будь теплим і підтримуючим вчителем
+
+ПОЧАТОК УРОКУ:
+Коли студент тільки приходить — привітайся по-німецьки і запитай про що він хоче сьогодні поговорити.`;
+
+async function startLesson() {
+  document.getElementById('setupScreen').style.display = 'none';
+  const ls = document.getElementById('lessonScreen');
+  ls.style.display = 'flex';
+  ls.style.flexDirection = 'column';
+
+  // Start timer
+  timerSeconds = 0;
+  timerInterval = setInterval(() => {
+    timerSeconds++;
+    const m = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+    const s = String(timerSeconds % 60).padStart(2, '0');
+    document.getElementById('lessonTimer').textContent = m + ':' + s;
+  }, 1000);
+
+  // AI greeting
+  const loadEl = addMessage('ai', '', true);
+  try {
+    const sysPrompt = SYSTEM_PROMPT.replace(/{LEVEL}/g, selectedLevel);
+    const greeting = await callAI(sysPrompt, 'Привіт! Я хочу почати урок.');
+    removeLoading(loadEl);
+    const msgEl = addMessage('ai', greeting);
+    lessonHistory.push({ role: 'ai', text: greeting });
+
+    // Speak greeting
+    speak(greeting, null);
+  } catch(e) {
+    removeLoading(loadEl);
+    addMessage('ai', 'Hallo! Worüber möchten Sie heute sprechen?');
+    speak('Hallo! Worüber möchten Sie heute sprechen?', null);
+  }
+}
+
+async function processUserInput(text) {
+  if (!text.trim()) return;
+
+  // Show user message
+  addMessage('user', text);
+  lessonHistory.push({ role: 'user', text: text });
+
+  // Update topic if first user message
+  if (lessonHistory.filter(h => h.role === 'user').length === 1) {
+    document.getElementById('lessonTopic').textContent = '💬 ' + text.slice(0, 40);
+    lessonTopic = text;
+  }
+
+  // Loading
+  const loadEl = addMessage('ai', '', true);
+
+  try {
+    const sysPrompt = SYSTEM_PROMPT.replace(/{LEVEL}/g, selectedLevel);
+    const reply = await callAI(sysPrompt, null);
+    removeLoading(loadEl);
+    addMessage('ai', reply);
+    lessonHistory.push({ role: 'ai', text: reply });
+    speak(reply, null);
+  } catch(e) {
+    removeLoading(loadEl);
+    addMessage('ai', 'Entschuldigung, ich habe einen Fehler gemacht. Bitte versuchen Sie es noch einmal.');
+  }
+}
+
+function sendText() {
+  const input = document.getElementById('textInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  processUserInput(text);
+}
+
+// ══════════════════════════════════════════════════════════════
+// END LESSON + SUMMARY
+// ══════════════════════════════════════════════════════════════
+async function endLesson() {
+  clearInterval(timerInterval);
+  stopMic();
+  speechSynthesis.cancel();
+
+  document.getElementById('lessonScreen').style.display = 'none';
+  const ss = document.getElementById('summaryScreen');
+  ss.style.display = 'block';
+
+  const mins = Math.floor(timerSeconds / 60);
+
+  ss.innerHTML = `
+    <div class="summary-header">
+      <div class="summary-emoji">🎉</div>
+      <div class="summary-title">Урок завершено!</div>
+      <div class="summary-sub">Тривалість: ${mins} хв · Рівень: ${selectedLevel}</div>
+    </div>
+
+    <div class="summary-card" id="summaryErrors">
+      <div class="summary-card-title"><span>✏️</span> Помилки та виправлення</div>
+      <div class="summary-loading"><div style="width:20px;height:20px;border:2px solid var(--br);border-top-color:var(--pink);border-radius:50%;animation:spin .7s linear infinite"></div> Аналізую урок...</div>
+    </div>
+
+    <div class="summary-card" id="summaryVocab">
+      <div class="summary-card-title"><span>📚</span> Корисні слова та фрази на тему</div>
+      <div class="summary-loading"><div style="width:20px;height:20px;border:2px solid var(--br);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite"></div> Генерую словник...</div>
+    </div>
+
+    <div class="summary-card" id="summaryPhrases">
+      <div class="summary-card-title"><span>💬</span> Готові фрази на тему "${lessonTopic || 'уроку'}"</div>
+      <div class="summary-loading"><div style="width:20px;height:20px;border:2px solid var(--br);border-top-color:var(--grn);border-radius:50%;animation:spin .7s linear infinite"></div> Підбираю фрази...</div>
+    </div>
+
+    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+    <div class="summary-actions">
+      <button class="btn-primary" onclick="newLesson()">🎓 Новий урок</button>
+      <button class="btn-secondary" onclick="location.href='/'">← Словник</button>
+    </div>
+  `;
+
+  // Generate summary in parallel
+  const conversationText = lessonHistory.map(h =>
+    (h.role === 'ai' ? 'Вчитель' : 'Студент') + ': ' + h.text
+  ).join('\n');
+
+  // 1. Errors analysis
+  generateErrors(conversationText);
+  // 2. Vocabulary
+  generateVocabulary(conversationText);
+  // 3. Phrases
+  generatePhrases(conversationText);
+}
+
+async function generateErrors(conv) {
+  const prompt = `Проаналізуй цей діалог уроку німецької мови і знайди граматичні та лексичні помилки студента. 
+Діалог:
+${conv}
+
+Відповідь у форматі:
+- Помилка: [що сказав студент] → Правильно: [як правильно] (Пояснення українською)
+
+Якщо помилок не було — напиши "Відмінно! Серйозних помилок не виявлено."
+Відповідай українською мовою.`;
+
+  try {
+    const resp = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    const data = await resp.json();
+    document.getElementById('summaryErrors').innerHTML = `
+      <div class="summary-card-title"><span>✏️</span> Помилки та виправлення</div>
+      <div class="summary-text">${escapeHtml(data.text || 'Немає даних')}</div>
+    `;
+  } catch(e) {
+    document.getElementById('summaryErrors').innerHTML = `
+      <div class="summary-card-title"><span>✏️</span> Помилки та виправлення</div>
+      <div class="summary-text">Не вдалося проаналізувати.</div>
+    `;
+  }
+}
+
+async function generateVocabulary(conv) {
+  const topic = lessonTopic || 'загальна тема';
+  const prompt = `На основі цього уроку та теми "${topic}", склади список з 8-10 корисних німецьких слів і фраз для рівня ${selectedLevel}.
+
+Формат (строго JSON масив):
+[{"de":"слово або фраза","ua":"переклад"},...]
+
+Тільки JSON, без зайвого тексту.`;
+
+  try {
+    const resp = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    const data = await resp.json();
+    const clean = (data.text || '').replace(/```json|```/g, '').trim();
+    const match = clean.match(/\[[\s\S]+\]/);
+    if (match) {
+      const words = JSON.parse(match[0]);
+      const html = words.map(w => `
+        <div class="vocab-item">
+          <div class="vocab-de">${escapeHtml(w.de)}</div>
+          <div class="vocab-ua">${escapeHtml(w.ua)}</div>
+        </div>
+      `).join('');
+      document.getElementById('summaryVocab').innerHTML = `
+        <div class="summary-card-title"><span>📚</span> Корисні слова та фрази</div>
+        ${html}
+      `;
+    }
+  } catch(e) {
+    document.getElementById('summaryVocab').innerHTML = `
+      <div class="summary-card-title"><span>📚</span> Корисні слова та фрази</div>
+      <div class="summary-text">Не вдалося згенерувати.</div>
+    `;
+  }
+}
+
+async function generatePhrases(conv) {
+  const topic = lessonTopic || 'загальна тема';
+  const prompt = `Склади 6 готових розмовних фраз на тему "${topic}" для рівня ${selectedLevel} з перекладом.
+
+Формат:
+🗣 [фраза по-німецьки]
+→ [переклад українською]
+
+Без нумерації, тільки фрази.`;
+
+  try {
+    const resp = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    const data = await resp.json();
+    document.getElementById('summaryPhrases').innerHTML = `
+      <div class="summary-card-title"><span>💬</span> Готові фрази на тему "${escapeHtml(lessonTopic || 'уроку')}"</div>
+      <div class="summary-text">${escapeHtml(data.text || 'Немає даних')}</div>
+    `;
+  } catch(e) {
+    document.getElementById('summaryPhrases').innerHTML = `
+      <div class="summary-card-title"><span>💬</span> Готові фрази</div>
+      <div class="summary-text">Не вдалося згенерувати.</div>
+    `;
+  }
+}
+
+function newLesson() {
+  lessonHistory = [];
+  lessonTopic = '';
+  timerSeconds = 0;
+  document.getElementById('messages').innerHTML = '';
+  document.getElementById('lessonTopic').textContent = 'Тема: визначається...';
+  document.getElementById('summaryScreen').style.display = 'none';
+  document.getElementById('setupScreen').style.display = 'flex';
+  document.getElementById('setupScreen').style.flexDirection = 'column';
+  document.getElementById('setupScreen').style.alignItems = 'center';
+  document.getElementById('setupScreen').style.justifyContent = 'center';
+}
+
+function escapeHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>
