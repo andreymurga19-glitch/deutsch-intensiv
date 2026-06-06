@@ -6611,8 +6611,10 @@ function closeLanding() {
   lp.style.opacity = '0';
   setTimeout(() => {
     lp.style.display = 'none';
-    // Init dict clicks after landing closes and DOM is visible
-    setTimeout(() => initDictClicks('b1_1'), 100);
+    // Show first lektion and init dict clicks
+    const firstLk = document.getElementById('lkb1_1');
+    if (firstLk) firstLk.style.display = 'block';
+    setTimeout(() => initDictClicks('b1_1'), 150);
   }, 500);
 }
 
