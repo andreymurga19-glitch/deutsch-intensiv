@@ -217,7 +217,7 @@ body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh
 .hw-task{background:var(--sf);border:1px solid var(--br);border-radius:10px;padding:14px 16px;margin-bottom:10px}
 .hw-task-title{font-size:.82rem;font-weight:600;margin-bottom:3px}
 .hw-task-sub{font-size:.71rem;color:var(--mt2);margin-bottom:10px}
-.hw-circles{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.hw-circles{display:flex;gap:3px;margin-bottom:10px;overflow-x:auto}
 .hw-circle{width:28px;height:28px;border-radius:50%;border:2px solid var(--br2);display:flex;align-items:center;justify-content:center;font-size:.63rem;color:var(--mt2);transition:all .2s}
 .hw-circle.done{background:var(--grn);border-color:var(--grn);color:#000}
 .hw-circle.cur{border-color:var(--gold);color:var(--gold)}
@@ -344,7 +344,7 @@ body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh
     <select style="flex:1;background:var(--sf2);border:1px solid var(--br);border-radius:8px;color:var(--tx);font-family:var(--ff);font-size:.82rem;padding:8px 10px;outline:none" id="vtFilter" onchange="vtInit()">
       <option value="all">Всі слова</option>
       <option value="today">Сьогоднішні</option>
-      <option value="week">За тиждень</option>
+      <option value="5days">За 5 днів</option>
       <option value="hard">Важкі 🔥</option>
     </select>
     <button class="btn btn-ghost btn-sm" onclick="vtInit()">🔀 Перемішати</button>
@@ -383,7 +383,7 @@ body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh
       <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px" id="cardsPillsWords">
         <div class="fc-pill on" data-v="all" onclick="pickPill(this,'cardsPillsWords')">Всі слова</div>
         <div class="fc-pill" data-v="today" onclick="pickPill(this,'cardsPillsWords')">Сьогодні</div>
-        <div class="fc-pill" data-v="week" onclick="pickPill(this,'cardsPillsWords')">За тиждень</div>
+        <div class="fc-pill" data-v="5days" onclick="pickPill(this,'cardsPillsWords')">За 5 днів</div>
         <div class="fc-pill" data-v="hard" onclick="pickPill(this,'cardsPillsWords')">🔥 Важкі</div>
       </div>
       <div style="font-size:.72rem;color:var(--mt2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px">Напрямок?</div>
@@ -1019,7 +1019,7 @@ function vtInit(){
   const filter=document.getElementById('vtFilter')?.value||'all';
   let pool=[...D.words];
   if(filter==='today') pool=pool.filter(w=>w.date===tod());
-  else if(filter==='week'){const wa=new Date();wa.setDate(wa.getDate()-7);pool=pool.filter(w=>new Date(w.date+'T12:00:00')>=wa);}
+  else if(filter==='5days'){const days5=[];for(let i=0;i<5;i++){const d=new Date();d.setDate(d.getDate()-i);days5.push(d.toISOString().split('T')[0]);}pool=pool.filter(w=>days5.includes(w.date));}
   else if(filter==='hard') pool=pool.filter(w=>(w.hardCount||0)>=3);
   if(!pool.length){toast('Немає слів для цього фільтру','var(--mt2)');return;}
   vtWords=pool.sort(()=>Math.random()-.5);
@@ -1105,7 +1105,7 @@ function getVal(gid){const el=document.querySelector('#'+gid+' .fc-pill.on');ret
 
 function getFilteredWords(filter){
   if(filter==='today') return D.words.filter(w=>w.date===tod());
-  if(filter==='week'){const wa=new Date();wa.setDate(wa.getDate()-7);return D.words.filter(w=>new Date(w.date+'T12:00:00')>=wa);}
+  if(filter==='5days'){const days5=[];for(let i=0;i<5;i++){const d=new Date();d.setDate(d.getDate()-i);days5.push(d.toISOString().split('T')[0]);}return D.words.filter(w=>days5.includes(w.date));}
   if(filter==='hard') return D.words.filter(w=>(w.hardCount||0)>=3&&(w.mastery||0)<4);
   return [...D.words];
 }
