@@ -1158,11 +1158,33 @@ function showResult(){
   document.getElementById('cardsResult').style.display='block';
   const total=C.knew+C.didnt;
   const pct=total?Math.round(C.knew/total*100):0;
+
+  // HW mode: count 1 round after completing ALL words
+  if(C.hwTask&&C.hwDate){
+    if(!D.homework)D.homework={};
+    if(!D.homework[C.hwDate])D.homework[C.hwDate]={task1:0,task2:0};
+    const goal=C.hwTask===1?10:5;
+    const key=C.hwTask===1?'task1':'task2';
+    const prev=D.homework[C.hwDate][key]||0;
+    if(prev<goal){
+      D.homework[C.hwDate][key]=prev+1;
+      saveD();
+    }
+    const done=D.homework[C.hwDate][key];
+    const remaining=goal-done;
+    document.getElementById('cResEmoji').textContent=remaining<=0?'🏆':'✅';
+    document.getElementById('cResScore').textContent='Раунд '+done+'/'+goal;
+    document.getElementById('cResSub').textContent=remaining>0
+      ?'Ще '+remaining+' '+(remaining===1?'раунд':'раундів')+' до завершення ДЗ'
+      :'🏆 ДЗ виконано!';
+    document.getElementById('repeatUnknownBtn').style.display='none';
+    return;
+  }
+
   document.getElementById('cResEmoji').textContent=pct>=80?'🏆':pct>=50?'💪':'📚';
   document.getElementById('cResScore').textContent=C.knew+'/'+total;
   document.getElementById('cResSub').textContent=pct+'% правильно';
   document.getElementById('repeatUnknownBtn').style.display=C.unknown.length?'inline-flex':'none';
-  if(C.hwTask){renderHW();}
 }
 
 function repeatUnknown(){
