@@ -7405,7 +7405,6 @@ function lrRenderCard() {
       <button class="btn-unknown" onclick="lrRate(false)">✗ Не знав</button>
       <button class="btn-knew" onclick="lrRate(true)">✓ Знав</button>
     </div>
-    <button class="lr-task-btn" style="width:100%;justify-content:center;margin-top:10px;background:transparent;border:1px solid #30363d;color:#7d8590" onclick="closeLernen()">← Вийти</button>
   `;
 }
 
@@ -7818,7 +7817,7 @@ async function lrStartChat() {
     <div id="lrChatMsgs" style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px;min-height:200px;max-height:50vh;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:10px"></div>
     <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
       <button id="lrChatMic" onclick="lrChatToggleMic()" style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#c0185a,#e8266e);border:none;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s">🎤</button>
-      <input id="lrChatInput" style="flex:1;background:#21262d;border:1px solid #30363d;border-radius:8px;color:#e6edf3;font-family:'IBM Plex Sans',sans-serif;font-size:14px;padding:10px;outline:none;transition:border-color .2s" placeholder="Antwort auf Deutsch..." onfocus="this.style.borderColor='#d4a843'" onblur="this.style.borderColor='#30363d'" onkeydown="if(event.key==='Enter')lrChatSend()">
+      <textarea id="lrChatInput" rows="2" style="flex:1;background:#21262d;border:1px solid #30363d;border-radius:8px;color:#e6edf3;font-family:'IBM Plex Sans',sans-serif;font-size:14px;padding:10px;outline:none;transition:border-color .2s;resize:none;line-height:1.4" placeholder="Antwort auf Deutsch..." onfocus="this.style.borderColor='#d4a843'" onblur="this.style.borderColor='#30363d'" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();lrChatSend()}"></textarea>
       <button class="lr-task-btn" onclick="lrChatSend()" style="height:42px;padding:0 14px">➤</button>
     </div>
     <div style="display:flex;gap:8px">
