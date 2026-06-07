@@ -7371,6 +7371,9 @@ function lrRenderCard() {
   const cacheKey = 'dict|' + lrCurrentLk + '|' + w.de;
   const ex = exampleCache[cacheKey] || null;
 
+  const exHtml = ex
+    ? `<div class="lr-card-example" style="color:#a0cfb8;font-style:italic;font-size:11px;margin-top:8px;text-align:center;line-height:1.5">${ex.de}<br><span style="color:#3ecf8e">${ex.ua}</span></div>`
+    : `<div class="lr-card-example" style="color:#7d8590;font-size:11px;margin-top:8px;cursor:pointer" onclick="lrGenCardExample('${w.de.replace(/'/g,"\'")}','${w.ua.replace(/'/g,"\'")}','${cacheKey.replace(/'/g,"\'")}')">💡 Натисни щоб згенерувати приклад</div>`;
   document.getElementById('lrContent').innerHTML = `
     <div class="lr-round-info">🃏 Раунд ${roundsDone+1}/5 · Картка ${s.idx+1}/${s.words.length}</div>
     <div class="lr-counter">${s.knew} ✓ · ${s.didnt} ✗</div>
@@ -7385,7 +7388,7 @@ function lrRenderCard() {
         <div class="lr-card-back">
           <div class="lr-card-label">Переклад</div>
           <div class="lr-card-word">${w.ua}</div>
-          ${ex ? `<div class="lr-card-example" style="color:#a0cfb8;font-style:italic;font-size:11px;margin-top:8px;text-align:center;line-height:1.5">${ex.de}<br><span style="color:#3ecf8e">${ex.ua}</span></div>` : '<div class="lr-card-example" style="color:#30363d;font-size:11px;margin-top:8px">Немає прикладу · клікни 🎤 щоб послухати</div>'}
+          <div id="lrCardEx">${exHtml}</div>
         </div>
       </div>
     </div>
@@ -7395,6 +7398,27 @@ function lrRenderCard() {
     </div>
     <button class="lr-task-btn" style="width:100%;justify-content:center;margin-top:4px;background:transparent;border:1px solid #30363d;color:#7d8590" onclick="closeLernen()">← Вийти</button>
   `;
+}
+
+
+async function lrGenCardExample(de, ua, cacheKey) {
+  const el = document.getElementById('lrCardEx');
+  if (!el) return;
+  el.innerHTML = '<div style="font-size:11px;color:#7d8590;text-align:center"><div style="width:14px;height:14px;border:2px solid #30363d;border-top-color:#d4a843;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;margin-right:6px"></div>Генерую...</div>';
+  try {
+    const isB1 = typeof lrCurrentLk === 'string' && lrCurrentLk.startsWith('b1_');
+    const level = isB1 ? 'B1' : 'B2';
+    const prompt = 'Erstelle 1 Beispielsatz auf Niveau ' + level + ' für: "' + de + '" (' + ua + '). Nur JSON: {"de":"Satz","ua":"Переклад"}';
+    const text = await callAI(prompt);
+    const clean = text.replace(/```json|```/g,'').trim();
+    const m = clean.match(/\{[\s\S]*?\}/);
+    if (!m) throw new Error();
+    const ex = JSON.parse(m[0]);
+    exampleCache[cacheKey] = ex;
+    el.innerHTML = '<div style="color:#a0cfb8;font-style:italic;font-size:11px;margin-top:4px;text-align:center;line-height:1.5">' + ex.de + '<br><span style="color:#3ecf8e">' + ex.ua + '</span></div>';
+  } catch(e) {
+    el.innerHTML = '<div style="font-size:11px;color:#c0185a;text-align:center">Помилка генерації</div>';
+  }
 }
 
 function lrFlipCard() {
@@ -7643,10 +7667,11 @@ function lrShowExampleWriter(pIdx, allWords, pending) {
     <div style="font-size:12px;color:#7d8590;margin-bottom:7px">Напиши своє речення по-німецьки:</div>
     <textarea id="lrExInput" style="width:100%;background:#161b22;border:1px solid #30363d;border-radius:8px;color:#e6edf3;font-family:'IBM Plex Sans',sans-serif;font-size:14px;padding:10px;outline:none;resize:none;height:80px;margin-bottom:10px" placeholder="Речення..." onfocus="this.style.borderColor='#d4a843'" onblur="this.style.borderColor='#30363d'"></textarea>
     <div id="lrExFeedback" style="display:none;border-radius:8px;padding:12px;margin-bottom:12px;font-size:13px;line-height:1.6"></div>
-    <div style="display:flex;gap:9px">
+    <div style="display:flex;gap:9px;margin-bottom:8px">
       <button class="lr-task-btn" style="flex:1;background:#21262d;color:#e6edf3" onclick="lrSkipExample(${pIdx},${pending.length})">⏭ Пропустити</button>
       <button class="lr-task-btn" style="flex:1" onclick="lrCheckExample(${globalIdx},${pIdx},${pending.length})">✓ Перевірити</button>
     </div>
+    <button class="lr-task-btn" style="width:100%;background:#7b61ff;color:#fff" onclick="lrAiSuggestExample(${globalIdx},${pIdx},${pending.length})">💡 Підказка від AI</button>
   `;
 }
 
@@ -7657,6 +7682,15 @@ function lrSkipExample(pIdx, total) {
   if (!st.examples) st.examples = {};
   const pending = data.words.filter((_,i) => !st.examples[i]);
   lrShowExampleWriter(pIdx + 1, data.words, pending);
+}
+
+
+function lrWriteAnother(globalIdx, pIdx, total) {
+  // Clear feedback, let user write new sentence
+  const fb = document.getElementById('lrExFeedback');
+  const input = document.getElementById('lrExInput');
+  if (fb) { fb.style.display = 'none'; fb.innerHTML = ''; }
+  if (input) { input.value = ''; input.focus(); }
 }
 
 async function lrCheckExample(globalIdx, pIdx, total) {
@@ -7688,9 +7722,10 @@ async function lrCheckExample(globalIdx, pIdx, total) {
       <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#e6edf3;background:#161b22;padding:8px 10px;border-radius:6px;margin:4px 0">${res.corrected}</div>
       <div style="font-size:12px;color:#3ecf8e;margin-top:3px;font-style:italic">${res.corrected_ua||''}</div>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-        <button class="lr-task-btn" style="flex:1;min-width:120px" onclick="lrSaveExample(${globalIdx},'${(res.corrected||own).replace(/'/g,"\'")}','${(res.corrected_ua||'').replace(/'/g,"\'")}',${pIdx},${total})">✅ Зафіксувати</button>
-        <button class="lr-task-btn" style="flex:1;min-width:120px;background:#7b61ff;color:#fff" onclick="lrAiSuggestExample(${globalIdx},${pIdx},${total})">🤖 Інший</button>
-        <button class="lr-task-btn" style="width:100%;background:#21262d;color:#7d8590;margin-top:4px" onclick="lrSkipExample(${pIdx},${total})">⏭ Далі без збереження</button>
+        <button class="lr-task-btn" style="flex:1;min-width:100px" onclick="lrSaveExample(${globalIdx},'${(res.corrected||own).replace(/'/g,"\'")}','${(res.corrected_ua||'').replace(/'/g,"\'")}',${pIdx},${total})">✅ Зафіксувати</button>
+        <button class="lr-task-btn" style="flex:1;min-width:100px;background:#21262d;color:#e6edf3" onclick="lrWriteAnother(${globalIdx},${pIdx},${total})">✍️ Написати інший</button>
+        <button class="lr-task-btn" style="flex:1;min-width:100px;background:#7b61ff;color:#fff" onclick="lrAiSuggestExample(${globalIdx},${pIdx},${total})">💡 Підказка AI</button>
+        <button class="lr-task-btn" style="width:100%;background:transparent;color:#7d8590;border:1px solid #30363d;margin-top:4px" onclick="lrSkipExample(${pIdx},${total})">⏭ Далі без збереження</button>
       </div>`;
   } catch(e) {
     fb.innerHTML = '<div style="color:#c0185a">Помилка перевірки.</div>';
@@ -7761,9 +7796,10 @@ async function lrStartChat() {
     <div style="font-size:15px;font-weight:700;color:#e6edf3;margin-bottom:4px">💬 Розмова · ${data.title}</div>
     <div style="font-size:12px;color:#7d8590;margin-bottom:14px">AI задає питання · відповідай по-німецьки</div>
     <div id="lrChatMsgs" style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px;min-height:200px;max-height:50vh;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:10px"></div>
-    <div style="display:flex;gap:8px">
+    <div style="display:flex;gap:8px;align-items:center">
+      <button id="lrChatMic" onclick="lrChatToggleMic()" style="width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#c0185a,#e8266e);border:none;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s">🎤</button>
       <input id="lrChatInput" style="flex:1;background:#21262d;border:1px solid #30363d;border-radius:8px;color:#e6edf3;font-family:'IBM Plex Sans',sans-serif;font-size:14px;padding:10px;outline:none;transition:border-color .2s" placeholder="Antwort auf Deutsch..." onfocus="this.style.borderColor='#d4a843'" onblur="this.style.borderColor='#30363d'" onkeydown="if(event.key==='Enter')lrChatSend()">
-      <button class="lr-task-btn" onclick="lrChatSend()">➤</button>
+      <button class="lr-task-btn" onclick="lrChatSend()" style="height:42px;padding:0 14px">➤</button>
     </div>
   `;
 
@@ -7799,6 +7835,45 @@ let lrChatLk = null;
 let lrChatTopic = '';
 let lrChatLevel = 'B1';
 let lrChatWordList = '';
+
+
+let lrChatMicRec = null;
+let lrChatMicListening = false;
+
+function lrChatToggleMic() {
+  if (lrChatMicListening) {
+    if (lrChatMicRec) { try { lrChatMicRec.abort(); } catch(e){} }
+    lrChatMicListening = false;
+    const btn = document.getElementById('lrChatMic');
+    if (btn) { btn.style.background = 'linear-gradient(135deg,#c0185a,#e8266e)'; btn.textContent = '🎤'; }
+    return;
+  }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { return; }
+  lrChatMicRec = new SR();
+  lrChatMicRec.lang = 'de-DE';
+  lrChatMicRec.interimResults = false;
+  lrChatMicListening = true;
+  const btn = document.getElementById('lrChatMic');
+  if (btn) { btn.style.background = 'linear-gradient(135deg,#e8266e,#ff6bb0)'; btn.textContent = '⏹️'; }
+  lrChatMicRec.onresult = (e) => {
+    const text = e.results[0][0].transcript;
+    const input = document.getElementById('lrChatInput');
+    if (input) input.value = text;
+    lrChatMicListening = false;
+    if (btn) { btn.style.background = 'linear-gradient(135deg,#c0185a,#e8266e)'; btn.textContent = '🎤'; }
+    lrChatSend();
+  };
+  lrChatMicRec.onerror = () => {
+    lrChatMicListening = false;
+    if (btn) { btn.style.background = 'linear-gradient(135deg,#c0185a,#e8266e)'; btn.textContent = '🎤'; }
+  };
+  lrChatMicRec.onend = () => {
+    lrChatMicListening = false;
+    if (btn && btn.textContent === '⏹️') { btn.style.background = 'linear-gradient(135deg,#c0185a,#e8266e)'; btn.textContent = '🎤'; }
+  };
+  try { lrChatMicRec.start(); } catch(e) { lrChatMicListening = false; }
+}
 
 function lrChatAddMsg(role, text) {
   const msgs = document.getElementById('lrChatMsgs');
