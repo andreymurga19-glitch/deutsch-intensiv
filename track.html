@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>DeutschTrack Pro</title>
+<title>DeutschTrack by Andrii Murha</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -192,6 +192,7 @@ body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh
 
 <header class="hdr">
   <div class="logo">DEUTSCH<span>TRACK</span></div>
+  <div style="font-size:.55rem;color:var(--mt);letter-spacing:2px;text-transform:uppercase;margin-top:-4px;padding-left:2px">by Andrii Murha</div>
   <div class="streak-badge" id="streakBadge">🔥 0 днів</div>
   <button class="hdr-icon" onclick="openExport()" title="Експорт/Імпорт">💾</button>
 </header>
@@ -201,6 +202,7 @@ body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh
   <button class="tab" onclick="goTab('words',this)">📝 Слова</button>
   <button class="tab" onclick="goTab('voice',this)">🎤 Голос</button>
   <button class="tab" onclick="goTab('cards',this)">🃏 Картки</button>
+  <button class="tab" onclick="goTab('dz-voice',this)">🎤 ДЗ Голос</button>
 </nav>
 
 <div class="cnt">
@@ -348,6 +350,24 @@ body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh
       </div>
     </div>
   </div>
+
+<!-- ══════════ ДЗ ГОЛОС ══════════ -->
+<div class="view" id="view-dz-voice">
+  <div class="card">
+    <div class="card-title">🎤 ДЗ Голос</div>
+    <div style="font-size:.78rem;color:var(--mt2);margin-bottom:14px">Вибери день і тренуй вимову</div>
+
+    <div style="font-size:.72rem;color:var(--mt2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Які слова?</div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap" id="dzVoicePills">
+      <div class="fc-pill on" data-v="today" onclick="dzVoicePickPill(this)">Сьогодні</div>
+      <div class="fc-pill" data-v="5days" onclick="dzVoicePickPill(this)">За 5 днів</div>
+      <div class="fc-pill" data-v="all" onclick="dzVoicePickPill(this)">Всі слова</div>
+    </div>
+
+    <button class="btn btn-full" onclick="startDzVoice()">▶ Почати</button>
+    <div id="dzVoiceInfo" style="font-size:.72rem;color:var(--mt2);margin-top:8px"></div>
+  </div>
+</div>
 </div>
 
 </div><!-- /cnt -->
@@ -483,6 +503,7 @@ function goTab(tab,btn){
   if(tab==='words')renderWords();
   if(tab==='voice')vtInit();
   if(tab==='cards')renderHardCount();
+  if(tab==='dz-voice')initDzVoice();
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1235,23 +1256,6 @@ function openHWDay(dateStr){
 
   document.getElementById('hwDayOv').style.display='flex';
 }
-function startHWVoice(num, date){
-  const days5=[];
-  for(let i=0;i<5;i++){
-    const d=new Date(date+'T12:00:00');
-    d.setDate(d.getDate()-i);
-    days5.push(d.toISOString().split('T')[0]);
-  }
-  let pool=num===1
-    ? D.words.filter(w=>w.date===date)
-    : D.words.filter(w=>days5.includes(w.date));
-  if(!pool.length){toast('Немає слів!','var(--pink)');return;}
-  vtWords=pool.sort(()=>Math.random()-.5);
-  vtIdx=0; vtCorrect=0; vtWrong=0;
-  goTab('voice', document.querySelector('.tab:nth-child(3)'));
-  vtShowWord();
-}
-
 function closeHWDay(){document.getElementById('hwDayOv').style.display='none';}
 
 // ══════════════════════════════════════════════════════════════
@@ -1272,6 +1276,50 @@ function doImport(){
     renderProgress();renderWords();renderHardCount();
     toast('Імпортовано '+D.words.length+' слів!','var(--grn)');
   }catch(e){toast('Помилка: '+e.message,'var(--pink)');}
+}
+
+
+// ══════════════════════════════════════════════════════════════
+// ДЗ ГОЛОС
+// ══════════════════════════════════════════════════════════════
+function dzVoicePickPill(el) {
+  document.querySelectorAll('#dzVoicePills .fc-pill').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  // Update info
+  const filter = el.dataset.v;
+  const pool = dzVoiceGetPool(filter);
+  const info = document.getElementById('dzVoiceInfo');
+  if (info) info.textContent = pool.length + ' слів';
+}
+
+function dzVoiceGetPool(filter) {
+  if (filter === 'today') return D.words.filter(w => w.date === tod());
+  if (filter === '5days') {
+    const days5 = [];
+    for (let i = 0; i < 5; i++) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      days5.push(d.toISOString().split('T')[0]);
+    }
+    return D.words.filter(w => days5.includes(w.date));
+  }
+  return [...D.words];
+}
+
+function startDzVoice() {
+  const pill = document.querySelector('#dzVoicePills .fc-pill.on');
+  const filter = pill ? pill.dataset.v : 'today';
+  const pool = dzVoiceGetPool(filter);
+  if (!pool.length) { toast('Немає слів!', 'var(--pink)'); return; }
+  vtWords = pool.sort(() => Math.random() - .5);
+  vtIdx = 0; vtCorrect = 0; vtWrong = 0;
+  goTab('voice', document.querySelector('.tab:nth-child(3)'));
+  vtShowWord();
+}
+
+function initDzVoice() {
+  const pool = dzVoiceGetPool('today');
+  const info = document.getElementById('dzVoiceInfo');
+  if (info) info.textContent = pool.length + ' слів сьогодні';
 }
 
 // ══════════════════════════════════════════════════════════════
