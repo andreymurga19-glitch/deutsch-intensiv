@@ -7411,6 +7411,37 @@ function lrRenderCard() {
 
 
 
+
+function lrToggleCardEx(de, ua, cacheKey, btn) {
+  const exDiv = document.getElementById('lr-card-ex');
+  if (!exDiv) return;
+  if (exDiv.style.display !== 'none' && exDiv.innerHTML) {
+    exDiv.style.display = 'none';
+    btn.textContent = '📖 Показати приклад';
+    return;
+  }
+  btn.textContent = '📖 Сховати приклад';
+  exDiv.style.display = 'block';
+  if (exDiv.innerHTML) return;
+  const ex = exampleCache[cacheKey];
+  if (ex) {
+    exDiv.innerHTML = '<div style="border-left:3px solid var(--green);padding-left:10px;margin-top:8px;font-size:13px;color:var(--text);line-height:1.5">' + ex.de + '<br><span style="color:var(--green);font-size:12px;font-style:italic">' + ex.ua + '</span></div>';
+    return;
+  }
+  exDiv.innerHTML = '<div style="color:var(--muted);font-size:12px;margin-top:6px">⏳ Генерую...</div>';
+  const isB1 = typeof lrCurrentLk === 'string' && lrCurrentLk.startsWith('b1_');
+  callAI('Erstelle 1 Beispielsatz auf Niveau ' + (isB1?'B1':'B2') + ' für: "' + de + '" (' + ua + '). Nur JSON: {"de":"Satz","ua":"Переклад"}')
+    .then(text => {
+      const m = text.replace(/```json|```/g,'').trim().match(/\{[\s\S]*?\}/);
+      if (m) {
+        const parsed = JSON.parse(m[0]);
+        exampleCache[cacheKey] = parsed;
+        exDiv.innerHTML = '<div style="border-left:3px solid var(--green);padding-left:10px;margin-top:8px;font-size:13px;color:var(--text);line-height:1.5">' + parsed.de + '<br><span style="color:var(--green);font-size:12px;font-style:italic">' + parsed.ua + '</span></div>';
+      }
+    })
+    .catch(() => { exDiv.innerHTML = '<div style="color:red;font-size:12px">Помилка</div>'; });
+}
+
 function lrFlipCard() {
   document.getElementById('lrCardInner')?.classList.toggle('flipped');
 }
@@ -7873,19 +7904,18 @@ function lrChatToggleMic() {
   lrChatMicRec = new SR();
   lrChatMicRec.lang = 'de-DE';
   lrChatMicRec.interimResults = true;
-  lrChatMicRec.continuous = true;
+  lrChatMicRec.continuous = false;
   lrChatMicListening = true;
   const btn = document.getElementById('lrChatMic');
   if (btn) { btn.style.background = 'linear-gradient(135deg,#e8266e,#ff6bb0)'; btn.textContent = '⏹️'; }
-  let _accumulated = '';
   lrChatMicRec.onresult = (e) => {
-    let interim = '';
+    let final = '', interim = '';
     for (let i = e.resultIndex; i < e.results.length; i++) {
-      if (e.results[i].isFinal) _accumulated += e.results[i][0].transcript;
+      if (e.results[i].isFinal) final += e.results[i][0].transcript;
       else interim += e.results[i][0].transcript;
     }
     const input = document.getElementById('lrChatInput');
-    if (input) input.value = (_accumulated + interim).trim();
+    if (input) input.value = (final || interim).trim();
   };
   lrChatMicRec.onspeechend = () => {
     // Don't auto-stop, let user press button
