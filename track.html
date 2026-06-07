@@ -1218,7 +1218,7 @@ function openHWDay(dateStr){
       <div class="hw-dir-btn${(num===1?hwDir1:hwDir2)==='mix'?' on':''}" onclick="setHWDir(${num},'mix','${dateStr}');openHWDay('${dateStr}')">Мікс</div>
     </div>
     <div style="display:flex;gap:8px;margin-top:0">
-      <button class="btn btn-full" onclick="closeHWDay();startHWTask(${num},'${dateStr}')">🃏 Картки (${done+1}/${goal})</button>
+      <button class="btn" style="flex:1" onclick="closeHWDay();startHWTask(${num},'${dateStr}')">🃏 Картки (${done+1}/${goal})</button>
       <button class="btn btn-ghost" style="flex:1" onclick="closeHWDay();startHWVoice(${num},'${dateStr}')">🎤 Голос</button>
     </div>`;
   };
@@ -1239,7 +1239,6 @@ function openHWDay(dateStr){
 
   document.getElementById('hwDayOv').style.display='flex';
 }
-
 function startHWVoice(num, date){
   const days5=[];
   for(let i=0;i<5;i++){
@@ -1247,21 +1246,19 @@ function startHWVoice(num, date){
     d.setDate(d.getDate()-i);
     days5.push(d.toISOString().split('T')[0]);
   }
-  // Same pool as HW cards
-  let pool = num===1
+  let pool=num===1
     ? D.words.filter(w=>w.date===date)
     : D.words.filter(w=>days5.includes(w.date));
   if(!pool.length){toast('Немає слів!','var(--pink)');return;}
-  pool = pool.sort(()=>Math.random()-.5);
-
-  // Set voice trainer with this pool
-  vtWords = pool;
-  vtIdx = 0;
-  vtCorrect = 0;
-  vtWrong = 0;
-
-  // Switch to voice tab
-  goTab('voice', document.querySelector('.tab:nth-child(3)'));
+  pool=pool.sort(()=>Math.random()-.5);
+  // Load into voice trainer
+  vtWords=pool;
+  vtIdx=0;
+  vtCorrect=0;
+  vtWrong=0;
+  // Switch to voice tab (3rd tab)
+  const voiceTab=document.querySelector(".tab:nth-child(3)");
+  goTab('voice', voiceTab);
   vtShowWord();
 }
 
