@@ -7366,100 +7366,53 @@ function lrRenderCard() {
   const w = s.words[s.idx];
   const st = lrState[lrCurrentLk];
   const roundsDone = st.cardRounds[s.day] || 0;
-
-  // Find example from exampleCache or state
   const cacheKey = 'dict|' + lrCurrentLk + '|' + w.de;
   const ex = exampleCache[cacheKey] || null;
-
-  // Card like textbook - show word, flip reveals translation, example shown separately
   const safeDE = w.de.replace(/'/g,"\'");
   const safeUA = w.ua.replace(/'/g,"\'");
   const safeKey = cacheKey.replace(/'/g,"\'");
+  const lk = lrCurrentLk;
+
+  // EXACT copy of textbook card structure
+  const frontWord = s.mode === 'ua2de'
+    ? '<span style="font-family:'IBM Plex Sans',sans-serif;font-size:20px;">' + w.ua + '</span>'
+    : w.de.replace(/^(das|die|der|der\/die)\s/, '<span class="art">$1 </span>');
+  const frontGr = s.mode !== 'ua2de' ? (w.gr || '') : '';
+  const frontLbl = s.mode !== 'ua2de' ? 'Deutsch' : 'Українська';
+  const backWord = s.mode !== 'ua2de' ? w.ua : (w.de + (w.gr ? ' · ' + w.gr : ''));
+  const backLbl = s.mode !== 'ua2de' ? 'Українська' : 'Deutsch';
+
   document.getElementById('lrContent').innerHTML = `
     <div class="lr-round-info">🃏 Раунд ${roundsDone+1}/5 · Картка ${s.idx+1}/${s.words.length}</div>
     <div class="lr-counter">${s.knew} ✓ · ${s.didnt} ✗</div>
-
-    <div style="background:#161b22;border:1px solid #30363d;border-radius:14px;overflow:hidden;margin-bottom:12px">
-      <!-- Front: DE word -->
-      <div style="padding:24px 20px;text-align:center;border-bottom:1px solid #30363d">
-        <div style="font-size:10px;letter-spacing:2px;color:#7d8590;text-transform:uppercase;margin-bottom:10px">Deutsch</div>
-        <div style="font-family:'Playfair Display',serif;font-size:1.8rem;color:#d4a843;line-height:1.2">${w.de}</div>
-        ${w.gr ? `<div style="font-size:11px;color:#7d8590;margin-top:4px">${w.gr}</div>` : ''}
-        <button onclick="speakDe('${safeDE}')" style="margin-top:10px;background:rgba(212,168,67,.1);border:1px solid #d4a843;color:#d4a843;padding:4px 14px;border-radius:20px;font-size:12px;cursor:pointer">🔊</button>
-      </div>
-      <!-- Answer hidden -->
-      <div id="lrCardAnswer" style="display:none;padding:20px;text-align:center;background:#0f2a1c;border-bottom:1px solid #3ecf8e">
-        <div style="font-size:10px;letter-spacing:2px;color:#7d8590;text-transform:uppercase;margin-bottom:8px">Переклад</div>
-        <div style="font-family:'Playfair Display',serif;font-size:1.5rem;color:#3ecf8e">${w.ua}</div>
-      </div>
-      <!-- Example section -->
-      <div style="padding:10px 16px">
-        <div id="lrCardExSection">
-          ${ex
-            ? `<button onclick="lrToggleCardEx()" style="background:none;border:none;color:#7d8590;font-size:12px;cursor:pointer;padding:4px 0">📖 Показати приклад</button>
-               <div id="lrCardExText" style="display:none;font-size:12px;color:#a0cfb8;font-style:italic;line-height:1.5;padding:6px 0;border-left:3px solid #3ecf8e;padding-left:10px;margin-top:4px">${ex.de}<br><span style="color:#3ecf8e">${ex.ua}</span></div>`
-            : `<button onclick="lrGenCardExample('${safeDE}','${safeUA}','${safeKey}')" style="background:none;border:none;color:#7d8590;font-size:12px;cursor:pointer;padding:4px 0">📖 Показати приклад</button>`
-          }
+    <div class="flip-hint">Натисни на картку щоб перевернути</div>
+    <div class="card-scene" onclick="lrFlipCard()">
+      <div class="card-inner" id="lrCardInner">
+        <div class="card-face front">
+          <div class="c-label">${frontLbl}</div>
+          <div class="c-word">${frontWord}</div>
+          <div class="c-grammar">${frontGr}</div>
+        </div>
+        <div class="card-face back">
+          <div class="c-label">${backLbl}</div>
+          <div class="c-trans">${backWord}</div>
+          <button class="card-ex-btn" onclick="event.stopPropagation();lrToggleCardEx('${safeDE}','${safeUA}','${safeKey}',this)">📖 Показати приклад</button>
+          <div id="lr-card-ex" style="display:none"></div>
         </div>
       </div>
     </div>
-
-    <button id="lrShowAnswerBtn" class="lr-task-btn" style="width:100%;justify-content:center;background:#1a3a6b;color:#fff;margin-bottom:10px" onclick="lrRevealAnswer()">
-      👁 Показати відповідь
-    </button>
-
-    <div class="lr-card-btns" id="lrCardBtns" style="display:none">
-      <button class="lr-btn-bad" onclick="lrRate(false)">✗ Не знав</button>
-      <button class="lr-btn-ok" onclick="lrRate(true)">✓ Знав</button>
+    <div class="card-nav" style="gap:10px;margin-top:16px;">
+      <button class="btn-unknown" onclick="lrRate(false)">✗ Не знав</button>
+      <button class="btn-knew" onclick="lrRate(true)">✓ Знав</button>
     </div>
-    <button class="lr-task-btn" style="width:100%;justify-content:center;margin-top:8px;background:transparent;border:1px solid #30363d;color:#7d8590" onclick="closeLernen()">← Вийти</button>
+    <button class="lr-task-btn" style="width:100%;justify-content:center;margin-top:10px;background:transparent;border:1px solid #30363d;color:#7d8590" onclick="closeLernen()">← Вийти</button>
   `;
 }
 
 
-async function lrGenCardExample(de, ua, cacheKey) {
-  const el = document.getElementById('lrCardExSection');
-  if (!el) return;
-  el.innerHTML = '<div style="font-size:11px;color:#7d8590"><div style="width:12px;height:12px;border:2px solid #30363d;border-top-color:#d4a843;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;margin-right:6px"></div>Генерую...</div>';
-  try {
-    const isB1 = typeof lrCurrentLk === 'string' && lrCurrentLk.startsWith('b1_');
-    const level = isB1 ? 'B1' : 'B2';
-    const prompt = 'Erstelle 1 Beispielsatz auf Niveau ' + level + ' für: "' + de + '" (' + ua + '). Nur JSON: {"de":"Satz","ua":"Переклад"}';
-    const text = await callAI(prompt);
-    const clean = text.replace(/```json|```/g,'').trim();
-    const m = clean.match(/\{[\s\S]*?\}/);
-    if (!m) throw new Error();
-    const ex = JSON.parse(m[0]);
-    exampleCache[cacheKey] = ex;
-    exampleCache[cacheKey] = ex;
-    el.innerHTML = '<button onclick="lrToggleCardEx()" style="background:none;border:none;color:#7d8590;font-size:12px;cursor:pointer;padding:4px 0">📖 Показати приклад</button><div id="lrCardExText" style="display:none;font-size:12px;color:#a0cfb8;font-style:italic;line-height:1.5;padding:6px 0;border-left:3px solid #3ecf8e;padding-left:10px;margin-top:4px">' + ex.de + '<br><span style=\'color:#3ecf8e\'>' + ex.ua + '</span></div>';
-  } catch(e) {
-    el.innerHTML = '<div style="font-size:11px;color:#c0185a;text-align:center">Помилка генерації</div>';
-  }
-}
-
-
-function lrRevealAnswer() {
-  const ans = document.getElementById('lrCardAnswer');
-  const btn = document.getElementById('lrShowAnswerBtn');
-  const btns = document.getElementById('lrCardBtns');
-  if (ans) ans.style.display = 'block';
-  if (btn) btn.style.display = 'none';
-  if (btns) btns.style.display = 'grid';
-}
-
-function lrToggleCardEx() {
-  const el = document.getElementById('lrCardExText');
-  const btn = el?.previousElementSibling;
-  if (!el) return;
-  const show = el.style.display === 'none';
-  el.style.display = show ? 'block' : 'none';
-  if (btn) btn.textContent = show ? '📖 Сховати приклад' : '📖 Показати приклад';
-}
 
 function lrFlipCard() {
   document.getElementById('lrCardInner')?.classList.toggle('flipped');
-  document.getElementById('lrCardBtns').style.display = 'grid';
 }
 
 function lrRate(knew) {
@@ -7906,27 +7859,36 @@ let lrChatMicListening = false;
 
 function lrChatToggleMic() {
   if (lrChatMicListening) {
-    if (lrChatMicRec) { try { lrChatMicRec.abort(); } catch(e){} }
+    if (lrChatMicRec) { try { lrChatMicRec.stop(); } catch(e){} }
     lrChatMicListening = false;
     const btn = document.getElementById('lrChatMic');
     if (btn) { btn.style.background = 'linear-gradient(135deg,#c0185a,#e8266e)'; btn.textContent = '🎤'; }
+    // Auto-send what was captured
+    const input = document.getElementById('lrChatInput');
+    if (input && input.value.trim()) setTimeout(() => lrChatSend(), 300);
     return;
   }
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) { return; }
   lrChatMicRec = new SR();
   lrChatMicRec.lang = 'de-DE';
-  lrChatMicRec.interimResults = false;
+  lrChatMicRec.interimResults = true;
+  lrChatMicRec.continuous = true;
   lrChatMicListening = true;
   const btn = document.getElementById('lrChatMic');
   if (btn) { btn.style.background = 'linear-gradient(135deg,#e8266e,#ff6bb0)'; btn.textContent = '⏹️'; }
+  let lrMicFinal = '';
   lrChatMicRec.onresult = (e) => {
-    const text = e.results[0][0].transcript;
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) lrMicFinal += e.results[i][0].transcript;
+      else interim += e.results[i][0].transcript;
+    }
     const input = document.getElementById('lrChatInput');
-    if (input) input.value = text;
-    lrChatMicListening = false;
-    if (btn) { btn.style.background = 'linear-gradient(135deg,#c0185a,#e8266e)'; btn.textContent = '🎤'; }
-    lrChatSend();
+    if (input) input.value = lrMicFinal || interim;
+  };
+  lrChatMicRec.onspeechend = () => {
+    // Don't auto-stop, let user press button
   };
   lrChatMicRec.onerror = () => {
     lrChatMicListening = false;
