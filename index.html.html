@@ -7385,7 +7385,7 @@ function lrRenderCard() {
         <div class="lr-card-back">
           <div class="lr-card-label">Переклад</div>
           <div class="lr-card-word">${w.ua}</div>
-          ${ex ? `<div class="lr-card-example">${ex.de}<br><i style="color:#3ecf8e">${ex.ua}</i></div>` : ''}
+          ${ex ? `<div class="lr-card-example" style="color:#a0cfb8;font-style:italic;font-size:11px;margin-top:8px;text-align:center;line-height:1.5">${ex.de}<br><span style="color:#3ecf8e">${ex.ua}</span></div>` : '<div class="lr-card-example" style="color:#30363d;font-size:11px;margin-top:8px">Немає прикладу · клікни 🎤 щоб послухати</div>'}
         </div>
       </div>
     </div>
@@ -7644,10 +7644,19 @@ function lrShowExampleWriter(pIdx, allWords, pending) {
     <textarea id="lrExInput" style="width:100%;background:#161b22;border:1px solid #30363d;border-radius:8px;color:#e6edf3;font-family:'IBM Plex Sans',sans-serif;font-size:14px;padding:10px;outline:none;resize:none;height:80px;margin-bottom:10px" placeholder="Речення..." onfocus="this.style.borderColor='#d4a843'" onblur="this.style.borderColor='#30363d'"></textarea>
     <div id="lrExFeedback" style="display:none;border-radius:8px;padding:12px;margin-bottom:12px;font-size:13px;line-height:1.6"></div>
     <div style="display:flex;gap:9px">
-      <button class="lr-task-btn" style="flex:1;background:#21262d;color:#e6edf3" onclick="lrShowExampleWriter(${pIdx+1},getWordData('${lrCurrentLk}').words,${JSON.stringify(pending.map(x=>({de:x.de,ua:x.ua,gr:x.gr||''})))})">⏭ Пропустити</button>
+      <button class="lr-task-btn" style="flex:1;background:#21262d;color:#e6edf3" onclick="lrSkipExample(${pIdx},${pending.length})">⏭ Пропустити</button>
       <button class="lr-task-btn" style="flex:1" onclick="lrCheckExample(${globalIdx},${pIdx},${pending.length})">✓ Перевірити</button>
     </div>
   `;
+}
+
+
+function lrSkipExample(pIdx, total) {
+  const data = getWordData(lrCurrentLk);
+  const st = lrState[lrCurrentLk];
+  if (!st.examples) st.examples = {};
+  const pending = data.words.filter((_,i) => !st.examples[i]);
+  lrShowExampleWriter(pIdx + 1, data.words, pending);
 }
 
 async function lrCheckExample(globalIdx, pIdx, total) {
@@ -7676,8 +7685,8 @@ async function lrCheckExample(globalIdx, pIdx, total) {
     fb.style.border = '1px solid ' + (ok ? '#3ecf8e' : '#fb923c');
     fb.innerHTML = `<div style="font-weight:600;color:${ok?'#3ecf8e':'#fb923c'};margin-bottom:5px">${ok?'✅ Правильно!':'⚠️ Є помилки'}</div>
       <div style="color:#7d8590;margin-bottom:6px">${res.comment}</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:13px">${res.corrected}</div>
-      <div style="font-size:12px;color:#3ecf8e;margin-top:3px">${res.corrected_ua||''}</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#e6edf3;background:#161b22;padding:8px 10px;border-radius:6px;margin:4px 0">${res.corrected}</div>
+      <div style="font-size:12px;color:#3ecf8e;margin-top:3px;font-style:italic">${res.corrected_ua||''}</div>
       <div style="margin-top:10px;display:flex;gap:8px">
         <button class="lr-task-btn" style="flex:1" onclick="lrSaveExample(${globalIdx},'${(res.corrected||own).replace(/'/g,"\\'")}','${(res.corrected_ua||'').replace(/'/g,"\\'")}',${pIdx},${total})">✅ Зберегти</button>
         <button class="lr-task-btn" style="flex:1;background:#21262d;color:#e6edf3" onclick="lrShowExampleWriter(${pIdx+1},getWordData('${lrCurrentLk}').words,getWordData('${lrCurrentLk}').words.filter((_,i)=>!lrState['${lrCurrentLk}'].examples[i]))">⏭ Далі</button>
@@ -7686,6 +7695,44 @@ async function lrCheckExample(globalIdx, pIdx, total) {
     fb.innerHTML = '<div style="color:#c0185a">Помилка перевірки.</div>';
   }
 }
+
+
+async function lrAiSuggestExample(globalIdx, pIdx, total) {
+  const data = getWordData(lrCurrentLk);
+  const w = data.words[globalIdx];
+  const fb = document.getElementById('lrExFeedback');
+  if (!fb) return;
+  fb.style.background = '#21262d';
+  fb.style.border = '1px solid #30363d';
+  fb.innerHTML = '<div style="width:16px;height:16px;border:2px solid #30363d;border-top-color:#d4a843;border-radius:50%;animation:spin .7s linear infinite;display:inline-block"></div> AI генерує приклад...';
+
+  try {
+    const isB1 = typeof lrCurrentLk === 'string' && lrCurrentLk.startsWith('b1_');
+    const level = isB1 ? 'B1' : 'B2';
+    const prompt = `Придумай 1 живий приклад речення рівня ${level} для: "${w.de}" (${w.ua}).
+ТІЛЬКИ JSON: {"de":"речення","ua":"переклад"}`;
+    const text = await callAI(prompt);
+    const clean = text.replace(/\`\`\`json|\`\`\`/g,'').trim();
+    const m = clean.match(/\{[\s\S]*?\}/);
+    if (!m) throw new Error();
+    const ex = JSON.parse(m[0]);
+    fb.style.background = 'rgba(123,97,255,.1)';
+    fb.style.border = '1px solid #7b61ff';
+    fb.innerHTML = `
+      <div style="font-weight:600;color:#7b61ff;margin-bottom:6px">🤖 Варіант від AI:</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#e6edf3;background:#161b22;padding:8px 10px;border-radius:6px;margin:4px 0">${esc(ex.de)}</div>
+      <div style="font-size:12px;color:#3ecf8e;margin-top:3px;font-style:italic">${esc(ex.ua)}</div>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="lr-task-btn" style="flex:1;min-width:120px" onclick="lrSaveExample(${globalIdx},'${ex.de.replace(/'/g,"\'")}','${ex.ua.replace(/'/g,"\'")}',${pIdx},${total})">✅ Зафіксувати</button>
+        <button class="lr-task-btn" style="flex:1;min-width:120px;background:#7b61ff;color:#fff" onclick="lrAiSuggestExample(${globalIdx},${pIdx},${total})">🔄 Ще інший</button>
+        <button class="lr-task-btn" style="width:100%;background:#21262d;color:#7d8590;margin-top:4px" onclick="lrShowExampleWriter(${pIdx+1},getWordData('${lrCurrentLk}').words,getWordData('${lrCurrentLk}').words.filter((_,i)=>!lrState['${lrCurrentLk}'].examples[i]))">⏭ Далі без збереження</button>
+      </div>`;
+  } catch(e) {
+    fb.innerHTML = '<div style="color:#c0185a">Помилка генерації.</div>';
+  }
+}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 function lrSaveExample(globalIdx, de, ua, pIdx, total) {
   const st = lrState[lrCurrentLk];
