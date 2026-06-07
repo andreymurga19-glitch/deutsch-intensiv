@@ -1032,16 +1032,26 @@ function vtShowResult(ok,heard,target){
   document.getElementById('vtStatus').textContent=ok?'🎉 Відмінно!':'🔄 Спробуй ще раз';
   if(ok){
     vtCorrect++;document.getElementById('vtCorrect').textContent=vtCorrect;
-    // Track voice HW
+    // Track voice HW rounds
     if(vtHwMode&&vtHwMode.active){
-      vtHwMode.done++;
-      if(!D.homework)D.homework={};
-      if(!D.homework[vtHwMode.date])D.homework[vtHwMode.date]={};
-      D.homework[vtHwMode.date][vtHwMode.key]=Math.min(vtHwMode.goal,(D.homework[vtHwMode.date][vtHwMode.key]||0)+1);
-      saveD();
-      if(vtHwMode.done>=vtHwMode.goal){
-        toast('🏆 Голосове ДЗ виконано!','var(--gold)');
-        vtHwMode={active:false};
+      vtHwMode.wordsThisRound=(vtHwMode.wordsThisRound||0)+1;
+      // Check if completed a full round
+      if(vtHwMode.wordsThisRound>=vtHwMode.wordsInRound){
+        vtHwMode.roundsDone++;
+        vtHwMode.wordsThisRound=0;
+        if(!D.homework)D.homework={};
+        if(!D.homework[vtHwMode.date])D.homework[vtHwMode.date]={};
+        D.homework[vtHwMode.date][vtHwMode.key]=Math.min(vtHwMode.goal,vtHwMode.roundsDone);
+        saveD();
+        if(vtHwMode.roundsDone>=vtHwMode.goal){
+          toast('🏆 Голосове ДЗ виконано! '+vtHwMode.goal+' раундів!','var(--gold)');
+          vtHwMode={active:false};
+        } else {
+          toast('✅ Раунд '+(vtHwMode.roundsDone)+'/'+vtHwMode.goal+' завершено!','var(--grn)');
+          // Reshuffle for next round
+          vtWords=vtWords.sort(()=>Math.random()-.5);
+          vtIdx=0;
+        }
       }
     }
     setTimeout(()=>vtNext(),1500);
@@ -1169,11 +1179,43 @@ function showResult(){
   document.getElementById('cardsResult').style.display='block';
   const total=C.knew+C.didnt;
   const pct=total?Math.round(C.knew/total*100):0;
+
+  // HW round mode - count completed round
+  if(C.hwRoundMode && C.hwKey && C.hwDate){
+    if(!D.homework)D.homework={};
+    if(!D.homework[C.hwDate])D.homework[C.hwDate]={};
+    const newDone = Math.min(C.hwGoal, (D.homework[C.hwDate][C.hwKey]||0)+1);
+    D.homework[C.hwDate][C.hwKey] = newDone;
+    saveD();
+    C.hwRoundDone = newDone;
+    const remaining = C.hwGoal - newDone;
+    if(remaining > 0){
+      document.getElementById('cResEmoji').textContent = pct>=80?'✅':'💪';
+      document.getElementById('cResScore').textContent = C.knew+'/'+total;
+      document.getElementById('cResSub').textContent = `Раунд ${newDone}/${C.hwGoal} · Ще ${remaining} раундів`;
+      document.getElementById('repeatUnknownBtn').style.display='none';
+      // Show "next round" button
+      document.getElementById('cResScore').insertAdjacentHTML('afterend',
+        `<div style="margin-top:12px"><button class="btn btn-full" onclick="nextHWRound()">▶ Раунд ${newDone+1}/${C.hwGoal}</button></div>`);
+      return;
+    } else {
+      toast('🏆 Картки виконано!','var(--gold)');
+    }
+  }
+
   document.getElementById('cResEmoji').textContent=pct>=80?'🏆':pct>=50?'💪':'📚';
   document.getElementById('cResScore').textContent=C.knew+'/'+total;
-  document.getElementById('cResSub').textContent=pct+'% правильно';
+  document.getElementById('cResSub').textContent=pct+'% правильно · '+total+' карток';
   document.getElementById('repeatUnknownBtn').style.display=C.unknown.length?'inline-flex':'none';
-  if(C.hwTask){renderHW();}
+}
+
+function nextHWRound(){
+  // Restart same pool for next round
+  const pool=[...C.words].sort(()=>Math.random()-.5);
+  C={...C, words:pool, idx:0, knew:0, didnt:0, unknown:[]};
+  document.getElementById('cardsResult').style.display='none';
+  document.getElementById('cardsRun').style.display='block';
+  showCard();
 }
 
 function repeatUnknown(){
@@ -1275,9 +1317,13 @@ function startHWCards(num, date){
   if(!pool.length){toast('Немає слів!','var(--pink)');return;}
   pool=pool.sort(()=>Math.random()-.5);
   const dir=num===1?hwDir1:hwDir2;
-  const goal=num===1?5:3;
+  const roundGoal=num===1?5:3; // кількість раундів
   const doneKey=num===1?'task1_cards':'task2_cards';
-  C={words:pool,idx:0,knew:0,didnt:0,dir,unknown:[],hwTask:num,hwDate:date,hwKey:doneKey,hwGoal:goal};
+  const doneRounds=(D.homework[date]||{})[doneKey]||0;
+  // One round = all words once
+  C={words:pool,idx:0,knew:0,didnt:0,dir,unknown:[],
+     hwTask:num,hwDate:date,hwKey:doneKey,hwGoal:roundGoal,
+     hwRoundMode:true, hwRoundDone:doneRounds};
   goTab('cards',document.querySelector('.tab:nth-child(4)'));
   document.getElementById('cardsSetup').style.display='none';
   document.getElementById('cardsRun').style.display='block';
@@ -1290,10 +1336,14 @@ function startHWVoice(num, date){
   let pool=num===1?D.words.filter(w=>w.date===date):D.words.filter(w=>days5.includes(w.date));
   if(!pool.length){toast('Немає слів!','var(--pink)');return;}
   pool=pool.sort(()=>Math.random()-.5);
-  const goal=num===1?5:2;
+  const roundGoal=num===1?5:2; // кількість раундів
   const doneKey=num===1?'task1_voice':'task2_voice';
+  const doneRounds=(D.homework[date]||{})[doneKey]||0;
   vtWords=pool;vtIdx=0;vtCorrect=0;vtWrong=0;
-  vtHwMode={active:true,date,key:doneKey,goal,done:0};
+  // Round = all words once, count rounds
+  vtHwMode={active:true,date,key:doneKey,goal:roundGoal,
+             wordsInRound:pool.length,wordsThisRound:0,
+             roundsDone:doneRounds};
   goTab('voice',document.querySelector('.tab:nth-child(3)'));
   vtShowWord();
 }
