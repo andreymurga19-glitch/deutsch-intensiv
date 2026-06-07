@@ -7687,9 +7687,10 @@ async function lrCheckExample(globalIdx, pIdx, total) {
       <div style="color:#7d8590;margin-bottom:6px">${res.comment}</div>
       <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#e6edf3;background:#161b22;padding:8px 10px;border-radius:6px;margin:4px 0">${res.corrected}</div>
       <div style="font-size:12px;color:#3ecf8e;margin-top:3px;font-style:italic">${res.corrected_ua||''}</div>
-      <div style="margin-top:10px;display:flex;gap:8px">
-        <button class="lr-task-btn" style="flex:1" onclick="lrSaveExample(${globalIdx},'${(res.corrected||own).replace(/'/g,"\\'")}','${(res.corrected_ua||'').replace(/'/g,"\\'")}',${pIdx},${total})">✅ Зберегти</button>
-        <button class="lr-task-btn" style="flex:1;background:#21262d;color:#e6edf3" onclick="lrShowExampleWriter(${pIdx+1},getWordData('${lrCurrentLk}').words,getWordData('${lrCurrentLk}').words.filter((_,i)=>!lrState['${lrCurrentLk}'].examples[i]))">⏭ Далі</button>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="lr-task-btn" style="flex:1;min-width:120px" onclick="lrSaveExample(${globalIdx},'${(res.corrected||own).replace(/'/g,"\'")}','${(res.corrected_ua||'').replace(/'/g,"\'")}',${pIdx},${total})">✅ Зафіксувати</button>
+        <button class="lr-task-btn" style="flex:1;min-width:120px;background:#7b61ff;color:#fff" onclick="lrAiSuggestExample(${globalIdx},${pIdx},${total})">🤖 Інший</button>
+        <button class="lr-task-btn" style="width:100%;background:#21262d;color:#7d8590;margin-top:4px" onclick="lrSkipExample(${pIdx},${total})">⏭ Далі без збереження</button>
       </div>`;
   } catch(e) {
     fb.innerHTML = '<div style="color:#c0185a">Помилка перевірки.</div>';
