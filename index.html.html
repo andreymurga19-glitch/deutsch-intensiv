@@ -693,6 +693,85 @@
   }
   .speak-btn:hover { opacity: 1; }
 
+
+  /* ══ LERNEN MODULE ══════════════════════════════════════════ */
+  .lernen-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: #0d1117; overflow-y: auto;
+    display: none; font-family: 'IBM Plex Sans', sans-serif;
+  }
+  .lernen-overlay.open { display: block; }
+  .lr-header {
+    background: linear-gradient(135deg, #1a3a6b 0%, #2d1b5e 60%, #c0185a 100%);
+    padding: 16px 18px; display: flex; align-items: center; gap: 12px;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .lr-back { background: rgba(255,255,255,.15); border: none; color: #fff;
+    width: 34px; height: 34px; border-radius: 50%; font-size: 18px;
+    cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .lr-title { flex: 1; }
+  .lr-title-main { font-size: 13px; font-weight: 700; color: #fff; }
+  .lr-title-sub { font-size: 10px; color: rgba(255,255,255,.6); letter-spacing: 1px; text-transform: uppercase; margin-top: 1px; }
+  .lr-content { padding: 18px; max-width: 540px; margin: 0 auto; }
+  .lr-week-card { background: #161b22; border: 1px solid #30363d; border-radius: 14px; padding: 18px; margin-bottom: 16px; }
+  .lr-week-title { font-size: 10px; letter-spacing: 2px; color: #7d8590; text-transform: uppercase; margin-bottom: 12px; }
+  .lr-days-row { display: flex; gap: 6px; margin-bottom: 14px; }
+  .lr-day-pill { flex: 1; padding: 8px 4px; border-radius: 8px; text-align: center; cursor: pointer; transition: all .2s; border: 1.5px solid #30363d; background: #21262d; }
+  .lr-day-pill.active { border-color: #d4a843; background: rgba(212,168,67,.1); }
+  .lr-day-pill.done { border-color: #3ecf8e; background: rgba(62,207,142,.1); }
+  .lr-day-num { font-size: 11px; font-weight: 700; color: #e6edf3; }
+  .lr-day-lbl { font-size: 9px; color: #7d8590; margin-top: 1px; }
+  .lr-day-pill.done .lr-day-num { color: #3ecf8e; }
+  .lr-day-pill.active .lr-day-num { color: #d4a843; }
+  .lr-task { background: #21262d; border: 1px solid #30363d; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
+  .lr-task-icon { font-size: 22px; flex-shrink: 0; }
+  .lr-task-body { flex: 1; min-width: 0; }
+  .lr-task-title { font-size: 13px; font-weight: 600; color: #e6edf3; }
+  .lr-task-sub { font-size: 11px; color: #7d8590; margin-top: 2px; }
+  .lr-task-btn { background: #d4a843; color: #000; border: none; border-radius: 8px; padding: 7px 14px; font-size: 12px; font-weight: 700; cursor: pointer; flex-shrink: 0; transition: all .15s; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px; }
+  .lr-task-btn:hover { opacity: .85; }
+  .lr-task-btn.done-btn { background: #3ecf8e; color: #000; }
+  .lr-task-btn.voice-btn { background: linear-gradient(135deg,#c0185a,#e8266e); color: #fff; }
+  .lr-task-btn.ex-btn { background: #7b61ff; color: #fff; }
+  .lr-task-btn.chat-btn { background: linear-gradient(135deg,#1a3a6b,#2d5fa6); color: #fff; }
+  .lr-progress-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  .lr-pbar { flex: 1; height: 6px; background: #30363d; border-radius: 3px; overflow: hidden; }
+  .lr-pbar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg,#7b61ff,#d4a843); transition: width .5s; }
+  .lr-pbar-lbl { font-size: 11px; color: #7d8590; min-width: 35px; text-align: right; }
+  .lr-word-row { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-bottom: 1px solid #21262d; transition: background .12s; cursor: pointer; }
+  .lr-word-row:hover { background: #21262d; }
+  .lr-word-de { font-family: 'IBM Plex Mono',monospace; font-size: 13px; color: #e6edf3; flex: 1; }
+  .lr-word-ua { font-size: 12px; color: #7d8590; flex: 1; }
+  .lr-word-hard { background: none; border: none; font-size: 14px; cursor: pointer; opacity: .5; transition: opacity .2s; }
+  .lr-word-hard:hover, .lr-word-hard.on { opacity: 1; }
+  .lr-card-wrap { width: 100%; height: 200px; perspective: 1000px; cursor: pointer; margin-bottom: 14px; user-select: none; }
+  .lr-card-inner { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform .4s ease; }
+  .lr-card-inner.flipped { transform: rotateY(180deg); }
+  .lr-card-front, .lr-card-back { position: absolute; inset: 0; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .lr-card-front { background: #161b22; border: 1px solid #30363d; }
+  .lr-card-back { background: #0f2a1c; border: 1px solid #3ecf8e; transform: rotateY(180deg); }
+  .lr-card-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #7d8590; margin-bottom: 8px; }
+  .lr-card-word { font-family: 'Playfair Display',serif; font-size: 1.8rem; color: #d4a843; text-align: center; line-height: 1.2; }
+  .lr-card-back .lr-card-word { color: #3ecf8e; font-size: 1.5rem; }
+  .lr-card-example { font-size: 12px; color: #7d8590; margin-top: 10px; text-align: center; font-style: italic; line-height: 1.4; }
+  .lr-card-hint { font-size: 10px; color: #30363d; margin-top: 8px; }
+  .lr-card-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .lr-btn-bad { background: rgba(192,24,90,.15); border: 1.5px solid #c0185a; color: #c0185a; border-radius: 10px; padding: 13px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .lr-btn-bad:hover { background: #c0185a; color: #fff; }
+  .lr-btn-ok { background: rgba(62,207,142,.1); border: 1.5px solid #3ecf8e; color: #3ecf8e; border-radius: 10px; padding: 13px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .lr-btn-ok:hover { background: #3ecf8e; color: #000; }
+  .lr-counter { font-family: 'IBM Plex Mono',monospace; font-size: 12px; color: #7d8590; text-align: center; margin-bottom: 10px; }
+  .lr-round-info { background: rgba(212,168,67,.1); border: 1px solid #d4a843; border-radius: 8px; padding: 8px 14px; text-align: center; font-size: 12px; color: #d4a843; margin-bottom: 10px; }
+  .lr-mic-btn { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg,#c0185a,#e8266e); border: none; color: #fff; font-size: 28px; cursor: pointer; box-shadow: 0 4px 16px rgba(192,24,90,.4); transition: all .3s; display: inline-flex; align-items: center; justify-content: center; }
+  .lr-mic-btn.listening { animation: lr-pulse 1.2s ease-in-out infinite; background: linear-gradient(135deg,#e8266e,#ff6bb0); }
+  @keyframes lr-pulse { 0% { box-shadow: 0 0 0 0 rgba(232,38,110,.4); } 70% { box-shadow: 0 0 0 14px rgba(232,38,110,0); } 100% { box-shadow: 0 0 0 0 rgba(232,38,110,0); } }
+  .lr-hard-badge { background: rgba(192,24,90,.15); border: 1px solid #c0185a; color: #c0185a; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
+  .lr-result-card { background: #161b22; border: 1px solid #30363d; border-radius: 14px; padding: 28px 20px; text-align: center; }
+  .lr-result-score { font-family: 'Playfair Display',serif; font-size: 3rem; color: #d4a843; }
+  .lr-result-label { font-size: 13px; color: #7d8590; margin-top: 6px; }
+  .lr-section-title { font-size: 10px; letter-spacing: 2px; color: #7d8590; text-transform: uppercase; margin: 16px 0 8px; display: flex; align-items: center; gap: 8px; }
+  .lr-section-title::after { content: ''; flex: 1; height: 1px; background: #30363d; }
+  @keyframes spin { to { transform: rotate(360deg); } }
   @media (max-width: 600px) {
     .ai-panel { padding: 16px; }
     .trn-word-select { grid-template-columns: 1fr; }
@@ -903,7 +982,10 @@
 
   <!-- B1 list -->
   <div class="side-menu-list" id="menu-b1">
-    <div class="menu-section-label">B1 · Wortschatz</div>
+    <div class="menu-section-label" style="display:flex;align-items:center;justify-content:space-between">
+      B1 · Wortschatz
+      <button onclick="document.getElementById('side-menu').classList.remove('open');document.getElementById('menu-overlay').classList.remove('open');openLernen(activeLk||'b1_1')" style="background:linear-gradient(135deg,#1a3a6b,#c0185a);border:none;color:#fff;font-size:10px;padding:3px 9px;border-radius:10px;cursor:pointer;font-weight:600">📅 Lernen</button>
+    </div>
     <div class="lk-btn" onclick="switchLektion('b1_1', this)">1 · Menschen</div>
     <div class="lk-btn" onclick="switchLektion('b1_2', this)">2 · Stationen im Leben</div>
     <div class="lk-btn" onclick="switchLektion('b1_3', this)">3 · Wohnen</div>
@@ -6988,10 +7070,838 @@ function spLevenshtein(a, b) {
 }
 
 
+// ══════════════════════════════════════════════════════════════
+// LERNEN MODULE — Structured weekly learning
+// ══════════════════════════════════════════════════════════════
+const LR_KEY = 'lernen_v1';
+let lrState = {}; // {lk: {day, rounds_cards, rounds_voice, hard:[], examples:{}, finalDone}}
+let lrCurrentLk = null;
+let lrSession = null; // current active session
+
+// ── Load/Save ──
+function lrLoad() {
+  try { const c = localStorage.getItem(LR_KEY); if(c) return JSON.parse(c); } catch(e) {}
+  return {};
+}
+function lrSave() { localStorage.setItem(LR_KEY, JSON.stringify(lrState)); }
+
+// ── Open Lernen for a lektion ──
+function openLernen(lk) {
+  lrState = lrLoad();
+  lrCurrentLk = lk;
+  if (!lrState[lk]) lrState[lk] = {hard:[], cardRounds:{}, voiceRounds:{}, finalDone:false};
+
+  const data = getWordData(lk);
+  if (!data) return;
+
+  const isB1 = typeof lk === 'string' && lk.startsWith('b1_');
+  const num = isB1 ? lk.split('_')[1] : lk;
+  const level = isB1 ? 'B1' : 'B2';
+
+  document.getElementById('lrTitleMain').textContent = level + ' · Lektion ' + num + ' · ' + data.title;
+  document.getElementById('lrTitleSub').textContent = 'Структурне навчання';
+  document.getElementById('lernenOverlay').classList.add('open');
+
+  lrRenderMain(lk, data);
+}
+
+function closeLernen() {
+  document.getElementById('lernenOverlay').classList.remove('open');
+  lrSession = null;
+}
+
+// ── Split words into 5 days ──
+function lrGetDayWords(words, day) {
+  // Split into 5 groups
+  const perDay = Math.ceil(words.length / 5);
+  const start = (day - 1) * perDay;
+  const end = Math.min(start + perDay, words.length);
+  return words.slice(start, end);
+}
+
+// ── Main screen ──
+function lrRenderMain(lk, data) {
+  const st = lrState[lk];
+  const words = data.words;
+  const hardCount = st.hard.length;
+
+  // Update badge
+  const badge = document.getElementById('lrHardBadge');
+  if (hardCount > 0) {
+    badge.style.display = 'inline-flex';
+    document.getElementById('lrHardCount').textContent = hardCount;
+  } else {
+    badge.style.display = 'none';
+  }
+
+  const DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт'];
+  const today = new Date().getDay(); // 0=Sun, 1=Mon...
+  const dayIndex = today === 0 ? 4 : Math.min(today - 1, 4); // Mon=0..Fri=4
+
+  let html = '';
+
+  // ── Week overview ──
+  html += `<div class="lr-week-card">
+    <div class="lr-week-title">📅 Тижневий план · ${words.length} слів · 5 днів</div>
+    <div class="lr-days-row">`;
+
+  for (let d = 1; d <= 5; d++) {
+    const dayWords = lrGetDayWords(words, d);
+    const cardsDone = (st.cardRounds[d] || 0) >= 5;
+    const voiceDone = (st.voiceRounds[d] || 0) >= 5;
+    const allDone = cardsDone && voiceDone;
+    const isToday = (d - 1) === dayIndex;
+    const cls = allDone ? 'done' : isToday ? 'active' : '';
+    html += `<div class="lr-day-pill ${cls}" onclick="lrShowDay(${d})">
+      <div class="lr-day-num">${allDone ? '✓' : d}</div>
+      <div class="lr-day-lbl">${DAYS[d-1]}</div>
+      <div class="lr-day-lbl">${dayWords.length}сл</div>
+    </div>`;
+  }
+  html += `</div>`;
+
+  // Overall progress
+  let totalDone = 0, totalMax = 5 * 2 * 5; // 5 days × 2 tasks × 5 rounds
+  for (let d = 1; d <= 5; d++) {
+    totalDone += Math.min(st.cardRounds[d] || 0, 5) + Math.min(st.voiceRounds[d] || 0, 5);
+  }
+  const pct = Math.round(totalDone / totalMax * 100);
+  html += `<div class="lr-progress-row">
+    <div class="lr-pbar"><div class="lr-pbar-fill" style="width:${pct}%"></div></div>
+    <div class="lr-pbar-lbl">${pct}%</div>
+  </div></div>`;
+
+  // ── Today's tasks ──
+  const todayDay = dayIndex + 1;
+  const todayWords = lrGetDayWords(words, todayDay);
+  const cardRounds = st.cardRounds[todayDay] || 0;
+  const voiceRounds = st.voiceRounds[todayDay] || 0;
+
+  html += `<div class="lr-section-title">Сьогодні · День ${todayDay} · ${todayWords.length} слів</div>`;
+
+  // Cards task
+  const cardsDone = cardRounds >= 5;
+  html += `<div class="lr-task">
+    <div class="lr-task-icon">🃏</div>
+    <div class="lr-task-body">
+      <div class="lr-task-title">Картки з прикладами</div>
+      <div class="lr-task-sub">${cardRounds}/5 раундів · ${todayWords.length} слів</div>
+      <div class="lr-progress-row" style="margin-top:5px">
+        <div class="lr-pbar"><div class="lr-pbar-fill" style="width:${Math.round(cardRounds/5*100)}%"></div></div>
+      </div>
+    </div>
+    <button class="lr-task-btn ${cardsDone?'done-btn':''}" onclick="lrStartCards(${todayDay})">
+      ${cardsDone ? '✓ Готово' : '▶ Раунд ' + (cardRounds+1)}
+    </button>
+  </div>`;
+
+  // Voice task
+  const voiceDoneToday = voiceRounds >= 5;
+  html += `<div class="lr-task">
+    <div class="lr-task-icon">🎤</div>
+    <div class="lr-task-body">
+      <div class="lr-task-title">Голосова перевірка</div>
+      <div class="lr-task-sub">${voiceRounds}/5 раундів · ${todayWords.length} слів</div>
+      <div class="lr-progress-row" style="margin-top:5px">
+        <div class="lr-pbar"><div class="lr-pbar-fill" style="width:${Math.round(voiceRounds/5*100)}%"></div></div>
+      </div>
+    </div>
+    <button class="lr-task-btn voice-btn ${voiceDoneToday?'done-btn':''}" onclick="lrStartVoice(${todayDay})">
+      ${voiceDoneToday ? '✓ Готово' : '▶ Раунд ' + (voiceRounds+1)}
+    </button>
+  </div>`;
+
+  // ── Weekly tasks ──
+  html += `<div class="lr-section-title">Протягом тижня</div>`;
+
+  // Hard words
+  if (hardCount > 0) {
+    html += `<div class="lr-task">
+      <div class="lr-task-icon">🔥</div>
+      <div class="lr-task-body">
+        <div class="lr-task-title">Важкі слова</div>
+        <div class="lr-task-sub">${hardCount} слів на повторення</div>
+      </div>
+      <button class="lr-task-btn" style="background:linear-gradient(135deg,#c0185a,#e8266e);color:#fff" onclick="lrStartHard()">▶ Вчити</button>
+    </div>`;
+  }
+
+  // Examples task
+  const exCount = Object.keys(st.examples || {}).length;
+  const exTotal = words.length;
+  html += `<div class="lr-task">
+    <div class="lr-task-icon">✍️</div>
+    <div class="lr-task-body">
+      <div class="lr-task-title">Придумай приклади</div>
+      <div class="lr-task-sub">${exCount}/${exTotal} слів · AI перевіряє</div>
+      <div class="lr-progress-row" style="margin-top:5px">
+        <div class="lr-pbar"><div class="lr-pbar-fill" style="width:${Math.round(exCount/exTotal*100)}%"></div></div>
+      </div>
+    </div>
+    <button class="lr-task-btn ex-btn" onclick="lrStartExamples()">✍️ Писати</button>
+  </div>`;
+
+  // AI Chat task
+  html += `<div class="lr-task">
+    <div class="lr-task-icon">💬</div>
+    <div class="lr-task-body">
+      <div class="lr-task-title">Розмова на тему</div>
+      <div class="lr-task-sub">AI задає питання · виправляє помилки</div>
+    </div>
+    <button class="lr-task-btn chat-btn" onclick="lrStartChat()">▶ Говорити</button>
+  </div>`;
+
+  // ── Final test ──
+  const allComplete = pct >= 80;
+  html += `<div class="lr-section-title">Фінальний тест</div>`;
+  html += `<div class="lr-task" style="${!allComplete?'opacity:.5':''}">
+    <div class="lr-task-icon">🏆</div>
+    <div class="lr-task-body">
+      <div class="lr-task-title">Фінальний тест</div>
+      <div class="lr-task-sub">${allComplete ? 'Готово до тесту!' : 'Виконай 80%+ завдань спочатку'}</div>
+    </div>
+    <button class="lr-task-btn" style="background:#d4a843;color:#000" onclick="lrStartFinalTest()" ${!allComplete?'disabled':''}>🏆 Тест</button>
+  </div>`;
+
+  // ── All words list ──
+  html += `<div class="lr-section-title">Всі слова лекції</div>`;
+  html += `<div style="background:#161b22;border:1px solid #30363d;border-radius:10px;overflow:hidden;margin-bottom:20px">`;
+  words.forEach((w, i) => {
+    const isHard = (st.hard || []).includes(i);
+    html += `<div class="lr-word-row" onclick="lrWordClick(${i})">
+      <div class="lr-word-de">${w.de}</div>
+      <div class="lr-word-ua">${w.ua}</div>
+      <button class="lr-word-hard ${isHard?'on':''}" onclick="event.stopPropagation();lrToggleHard(${i})" title="Позначити важким">${isHard?'🔥':'☆'}</button>
+    </div>`;
+  });
+  html += `</div>`;
+
+  document.getElementById('lrContent').innerHTML = html;
+}
+
+// ── Toggle hard word ──
+function lrToggleHard(idx) {
+  const st = lrState[lrCurrentLk];
+  if (!st.hard) st.hard = [];
+  const pos = st.hard.indexOf(idx);
+  if (pos === -1) st.hard.push(idx);
+  else st.hard.splice(pos, 1);
+  lrSave();
+  const data = getWordData(lrCurrentLk);
+  lrRenderMain(lrCurrentLk, data);
+}
+
+// ── Show specific day ──
+function lrShowDay(day) {
+  const data = getWordData(lrCurrentLk);
+  const st = lrState[lrCurrentLk];
+  const words = lrGetDayWords(data.words, day);
+  const cardRounds = st.cardRounds[day] || 0;
+  const voiceRounds = st.voiceRounds[day] || 0;
+  const DAYS = ['Понеділок','Вівторок','Середа','Четвер','П\'ятниця'];
+
+  let html = `
+    <button onclick="lrRenderMain('${lrCurrentLk}',getWordData('${lrCurrentLk}'))" style="background:none;border:none;color:#d4a843;font-size:13px;cursor:pointer;margin-bottom:14px">← Назад</button>
+    <div style="font-size:16px;font-weight:700;color:#e6edf3;margin-bottom:4px">${DAYS[day-1]} · День ${day}</div>
+    <div style="font-size:12px;color:#7d8590;margin-bottom:16px">${words.length} слів</div>
+
+    <div class="lr-task">
+      <div class="lr-task-icon">🃏</div>
+      <div class="lr-task-body">
+        <div class="lr-task-title">Картки з прикладами</div>
+        <div class="lr-task-sub">${cardRounds}/5 раундів</div>
+      </div>
+      <button class="lr-task-btn ${cardRounds>=5?'done-btn':''}" onclick="lrStartCards(${day})">
+        ${cardRounds>=5?'✓':'▶ Раунд '+(cardRounds+1)}
+      </button>
+    </div>
+
+    <div class="lr-task">
+      <div class="lr-task-icon">🎤</div>
+      <div class="lr-task-body">
+        <div class="lr-task-title">Голосова перевірка</div>
+        <div class="lr-task-sub">${voiceRounds}/5 раундів</div>
+      </div>
+      <button class="lr-task-btn voice-btn ${voiceRounds>=5?'done-btn':''}" onclick="lrStartVoice(${day})">
+        ${voiceRounds>=5?'✓':'▶ Раунд '+(voiceRounds+1)}
+      </button>
+    </div>
+
+    <div class="lr-section-title">Слова дня</div>
+    <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;overflow:hidden;margin-bottom:20px">`;
+
+  words.forEach((w, localIdx) => {
+    const globalIdx = data.words.indexOf(w);
+    const isHard = (st.hard||[]).includes(globalIdx);
+    html += `<div class="lr-word-row">
+      <div class="lr-word-de">${w.de}</div>
+      <div class="lr-word-ua">${w.ua}</div>
+      <button class="lr-word-hard ${isHard?'on':''}" onclick="lrToggleHard(${globalIdx})">${isHard?'🔥':'☆'}</button>
+    </div>`;
+  });
+  html += `</div>`;
+
+  document.getElementById('lrContent').innerHTML = html;
+}
+
+// ── CARDS SESSION ──
+let lrCardsSession = null;
+
+function lrStartCards(day) {
+  const data = getWordData(lrCurrentLk);
+  const words = lrGetDayWords(data.words, day);
+  lrCardsSession = {
+    words: [...words].sort(()=>Math.random()-.5),
+    idx: 0, knew: 0, didnt: 0,
+    day, mode: 'cards',
+    lk: lrCurrentLk
+  };
+  lrSession = lrCardsSession;
+  lrRenderCard();
+}
+
+function lrRenderCard() {
+  const s = lrCardsSession;
+  if (!s || s.idx >= s.words.length) { lrCardRoundDone(); return; }
+  const w = s.words[s.idx];
+  const st = lrState[lrCurrentLk];
+  const roundsDone = st.cardRounds[s.day] || 0;
+
+  // Find example from exampleCache or state
+  const cacheKey = 'dict|' + lrCurrentLk + '|' + w.de;
+  const ex = exampleCache[cacheKey] || null;
+
+  document.getElementById('lrContent').innerHTML = `
+    <div class="lr-round-info">🃏 Раунд ${roundsDone+1}/5 · Картка ${s.idx+1}/${s.words.length}</div>
+    <div class="lr-counter">${s.knew} ✓ · ${s.didnt} ✗</div>
+    <div class="lr-card-wrap" id="lrCardWrap" onclick="lrFlipCard()">
+      <div class="lr-card-inner" id="lrCardInner">
+        <div class="lr-card-front">
+          <div class="lr-card-label">Deutsch</div>
+          <div class="lr-card-word">${w.de}</div>
+          ${w.gr ? `<div class="lr-card-example" style="color:#7d8590">${w.gr}</div>` : ''}
+          <div class="lr-card-hint">Натисни щоб перевернути</div>
+        </div>
+        <div class="lr-card-back">
+          <div class="lr-card-label">Переклад</div>
+          <div class="lr-card-word">${w.ua}</div>
+          ${ex ? `<div class="lr-card-example">${ex.de}<br><i style="color:#3ecf8e">${ex.ua}</i></div>` : ''}
+        </div>
+      </div>
+    </div>
+    <div class="lr-card-btns" id="lrCardBtns" style="display:none">
+      <button class="lr-btn-bad" onclick="lrRate(false)">✗ Не знав</button>
+      <button class="lr-btn-ok" onclick="lrRate(true)">✓ Знав</button>
+    </div>
+    <button class="lr-task-btn" style="width:100%;justify-content:center;margin-top:4px;background:transparent;border:1px solid #30363d;color:#7d8590" onclick="closeLernen()">← Вийти</button>
+  `;
+}
+
+function lrFlipCard() {
+  document.getElementById('lrCardInner')?.classList.toggle('flipped');
+  document.getElementById('lrCardBtns').style.display = 'grid';
+}
+
+function lrRate(knew) {
+  const s = lrCardsSession;
+  if (!s) return;
+  if (knew) s.knew++; else s.didnt++;
+  s.idx++;
+  if (s.idx >= s.words.length) lrCardRoundDone();
+  else lrRenderCard();
+}
+
+function lrCardRoundDone() {
+  const s = lrCardsSession;
+  const st = lrState[lrCurrentLk];
+  if (!st.cardRounds) st.cardRounds = {};
+  const prev = st.cardRounds[s.day] || 0;
+  if (prev < 5) st.cardRounds[s.day] = prev + 1;
+  lrSave();
+
+  const newDone = st.cardRounds[s.day];
+  const remaining = 5 - newDone;
+
+  document.getElementById('lrContent').innerHTML = `
+    <div class="lr-result-card">
+      <div style="font-size:3rem">${remaining<=0?'🏆':'✅'}</div>
+      <div class="lr-result-score">${s.knew}/${s.words.length}</div>
+      <div class="lr-result-label">Раунд ${newDone}/5</div>
+      <div style="font-size:13px;color:#7d8590;margin:8px 0 20px">
+        ${remaining>0 ? 'Ще '+remaining+' '+(remaining===1?'раунд':'раундів') : '🏆 Картки виконано на сьогодні!'}
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        ${remaining>0 ? `<button class="lr-task-btn" onclick="lrStartCards(${s.day})">▶ Наступний раунд</button>` : ''}
+        <button class="lr-task-btn" style="background:#21262d;color:#e6edf3" onclick="lrRenderMain('${lrCurrentLk}',getWordData('${lrCurrentLk}'))">← Меню</button>
+      </div>
+    </div>`;
+}
+
+// ── VOICE SESSION ──
+let lrVoiceSession = null;
+let lrVoiceRec = null;
+let lrVoiceListening = false;
+
+function lrStartVoice(day) {
+  const data = getWordData(lrCurrentLk);
+  const words = lrGetDayWords(data.words, day);
+  lrVoiceSession = {
+    words: [...words].sort(()=>Math.random()-.5),
+    idx: 0, correct: 0, wrong: 0,
+    day, lk: lrCurrentLk
+  };
+  lrRenderVoiceCard();
+}
+
+function lrRenderVoiceCard() {
+  const s = lrVoiceSession;
+  if (!s) return;
+  const w = s.words[s.idx % s.words.length];
+  const st = lrState[lrCurrentLk];
+  const roundsDone = st.voiceRounds[s.day] || 0;
+  const cleanWord = w.de.replace(/^(der|die|das|der\/die)\s+/i,'').replace(/,.*$/,'').replace(/\s*\(.*?\)/g,'').replace(/\s*\+.*$/,'').trim();
+
+  document.getElementById('lrContent').innerHTML = `
+    <div class="lr-round-info">🎤 Раунд ${roundsDone+1}/5 · ${s.idx+1}/${s.words.length}</div>
+    <div class="lr-counter">${s.correct} ✓ · ${s.wrong} ✗</div>
+    <div style="background:#161b22;border:1px solid #30363d;border-radius:14px;padding:28px 20px;text-align:center;margin-bottom:16px">
+      <div style="font-size:13px;color:#3ecf8e;margin-bottom:10px;font-weight:500">${w.ua}</div>
+      <div id="lrVWord" style="font-family:'Playfair Display',serif;font-size:2rem;color:#d4a843;filter:blur(10px);transition:filter .3s;cursor:pointer" onclick="lrRevealVoice()">${w.de}</div>
+      <div id="lrVHint" style="font-size:11px;color:#30363d;margin-top:8px">👆 Натисни щоб підказати</div>
+      <button onclick="speakDe('${cleanWord.replace(/'/g,"\\'")}')" style="margin-top:12px;background:rgba(212,168,67,.15);border:1px solid #d4a843;color:#d4a843;padding:6px 16px;border-radius:20px;font-size:13px;cursor:pointer">🔊 Послухати</button>
+    </div>
+    <div id="lrVResult" style="display:none;border-radius:10px;padding:12px;text-align:center;margin-bottom:14px"></div>
+    <div style="text-align:center;margin-bottom:14px">
+      <button class="lr-mic-btn" id="lrMicBtn" onclick="lrVoiceListen('${cleanWord.replace(/'/g,"\\'")}')">🎤</button>
+      <div id="lrMicStatus" style="font-size:12px;color:#7d8590;margin-top:10px;font-family:'IBM Plex Mono',monospace">Натисни 🎤 і вимов по-німецьки</div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="lr-task-btn" style="flex:1;background:#21262d;color:#e6edf3" onclick="lrVPrev()">← Назад</button>
+      <button class="lr-task-btn" style="flex:1" onclick="lrVNext('${cleanWord.replace(/'/g,"\\'")}')">Далі →</button>
+    </div>
+  `;
+}
+
+function lrRevealVoice() {
+  const el = document.getElementById('lrVWord');
+  const hint = document.getElementById('lrVHint');
+  if (el) el.style.filter = 'none';
+  if (hint) hint.textContent = '';
+}
+
+function lrVNext(target) {
+  const s = lrVoiceSession;
+  const st = lrState[lrCurrentLk];
+  if (!lrVoiceListening) {
+    s.idx++;
+    if (s.idx >= s.words.length) lrVoiceRoundDone();
+    else lrRenderVoiceCard();
+  }
+}
+
+function lrVPrev() {
+  const s = lrVoiceSession;
+  if (s.idx > 0) s.idx--;
+  lrRenderVoiceCard();
+}
+
+function lrVoiceListen(target) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { document.getElementById('lrMicStatus').textContent = '❌ Тільки Chrome'; return; }
+  if (lrVoiceListening) return;
+
+  if (lrVoiceRec) { try { lrVoiceRec.abort(); } catch(e){} }
+  const rec = new SR();
+  rec.lang = 'de-DE';
+  rec.interimResults = false;
+  rec.maxAlternatives = 5;
+  lrVoiceRec = rec;
+  lrVoiceListening = true;
+
+  const btn = document.getElementById('lrMicBtn');
+  const status = document.getElementById('lrMicStatus');
+  if (btn) { btn.classList.add('listening'); btn.textContent = '⏹️'; }
+  if (status) status.textContent = '🎙️ Слухаю…';
+
+  const reset = () => {
+    lrVoiceListening = false;
+    if (btn) { btn.classList.remove('listening'); btn.textContent = '🎤'; }
+  };
+
+  rec.onresult = (e) => {
+    reset();
+    const alts = [];
+    for (let i=0;i<e.results[0].length;i++) alts.push(e.results[0][i].transcript.toLowerCase().trim());
+    const heard = alts[0];
+    const t = target.toLowerCase().replace(/[^a-zäöüß\s]/gi,'').trim();
+    const isOk = alts.some(a => {
+      const c = a.replace(/[^a-zäöüß\s]/gi,'').trim();
+      return c===t || c.includes(t) || t.includes(c) || lrLevenshtein(c,t) <= Math.max(1, Math.floor(t.length*.3));
+    });
+    lrVShowResult(isOk, heard, target);
+  };
+
+  rec.onerror = (e) => {
+    reset();
+    const msgs = {'not-allowed':'❌ Дозволь мікрофон!','no-speech':'🔇 Не почув.','network':'🌐 Потрібен інтернет.'};
+    if (status) status.textContent = msgs[e.error] || '';
+  };
+  rec.onend = reset;
+  try { rec.start(); } catch(e) { reset(); }
+}
+
+function lrVShowResult(ok, heard, target) {
+  const s = lrVoiceSession;
+  lrRevealVoice();
+  const r = document.getElementById('lrVResult');
+  if (!r) return;
+  r.style.display = 'block';
+  if (ok) {
+    s.correct++;
+    r.style.background = 'rgba(62,207,142,.15)';
+    r.style.border = '1px solid #3ecf8e';
+    r.innerHTML = `<div style="font-size:24px">✅</div><div style="color:#3ecf8e;font-weight:600">Правильно!</div><div style="font-size:11px;color:#7d8590">Почув: "${heard}"</div>`;
+    const status = document.getElementById('lrMicStatus');
+    if (status) status.textContent = '🎉 Відмінно!';
+    setTimeout(() => lrVNext(target), 1400);
+  } else {
+    s.wrong++;
+    r.style.background = 'rgba(192,24,90,.15)';
+    r.style.border = '1px solid #c0185a';
+    r.innerHTML = `<div style="font-size:24px">❌</div><div style="color:#c0185a;font-weight:600">Правильно: "${target}"</div><div style="font-size:11px;color:#7d8590">Почув: "${heard}"</div>`;
+    setTimeout(() => speakDe(target), 400);
+  }
+}
+
+function lrVoiceRoundDone() {
+  const s = lrVoiceSession;
+  const st = lrState[lrCurrentLk];
+  if (!st.voiceRounds) st.voiceRounds = {};
+  const prev = st.voiceRounds[s.day] || 0;
+  if (prev < 5) st.voiceRounds[s.day] = prev + 1;
+  lrSave();
+
+  const newDone = st.voiceRounds[s.day];
+  const remaining = 5 - newDone;
+
+  document.getElementById('lrContent').innerHTML = `
+    <div class="lr-result-card">
+      <div style="font-size:3rem">${remaining<=0?'🏆':'✅'}</div>
+      <div class="lr-result-score">${s.correct}/${s.words.length}</div>
+      <div class="lr-result-label">Раунд ${newDone}/5</div>
+      <div style="font-size:13px;color:#7d8590;margin:8px 0 20px">
+        ${remaining>0 ? 'Ще '+remaining+' '+(remaining===1?'раунд':'раундів') : '🏆 Голос виконано!'}
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        ${remaining>0 ? `<button class="lr-task-btn voice-btn" onclick="lrStartVoice(${s.day})">▶ Наступний раунд</button>` : ''}
+        <button class="lr-task-btn" style="background:#21262d;color:#e6edf3" onclick="lrRenderMain('${lrCurrentLk}',getWordData('${lrCurrentLk}'))">← Меню</button>
+      </div>
+    </div>`;
+}
+
+// ── HARD WORDS ──
+function lrStartHard() {
+  const data = getWordData(lrCurrentLk);
+  const st = lrState[lrCurrentLk];
+  const hardWords = (st.hard||[]).map(i => data.words[i]).filter(Boolean);
+  if (!hardWords.length) { toast('Немає важких слів!', 'var(--grn)'); return; }
+  lrCardsSession = {words: [...hardWords].sort(()=>Math.random()-.5), idx:0, knew:0, didnt:0, day:'hard', lk:lrCurrentLk};
+  lrRenderCard();
+}
+
+// ── EXAMPLES WRITING ──
+async function lrStartExamples() {
+  const data = getWordData(lrCurrentLk);
+  const st = lrState[lrCurrentLk];
+  if (!st.examples) st.examples = {};
+  const words = data.words;
+  const pending = words.filter((w,i) => !st.examples[i]);
+  if (!pending.length) {
+    document.getElementById('lrContent').innerHTML = `<div class="lr-result-card"><div style="font-size:3rem">✅</div><div class="lr-result-label">Всі приклади написано!</div><button class="lr-task-btn" style="margin-top:16px" onclick="lrRenderMain('${lrCurrentLk}',getWordData('${lrCurrentLk}'))">← Меню</button></div>`;
+    return;
+  }
+  lrShowExampleWriter(0, words, pending);
+}
+
+function lrShowExampleWriter(pIdx, allWords, pending) {
+  const st = lrState[lrCurrentLk];
+  if (!st.examples) st.examples = {};
+  if (pIdx >= pending.length) {
+    document.getElementById('lrContent').innerHTML = `<div class="lr-result-card"><div style="font-size:3rem">✅</div><div class="lr-result-score">${pending.length}</div><div class="lr-result-label">Прикладів написано!</div><button class="lr-task-btn" style="margin-top:16px" onclick="lrRenderMain('${lrCurrentLk}',getWordData('${lrCurrentLk}'))">← Меню</button></div>`;
+    return;
+  }
+  const w = pending[pIdx];
+  const globalIdx = allWords.indexOf(w);
+
+  document.getElementById('lrContent').innerHTML = `
+    <button onclick="lrRenderMain('${lrCurrentLk}',getWordData('${lrCurrentLk}'))" style="background:none;border:none;color:#d4a843;font-size:13px;cursor:pointer;margin-bottom:14px">← Назад</button>
+    <div style="font-size:11px;color:#7d8590;margin-bottom:14px">Слово ${pIdx+1}/${pending.length}</div>
+    <div style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:16px;margin-bottom:14px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:1.1rem;color:#d4a843">${w.de}</div>
+      <div style="font-size:13px;color:#7d8590;margin-top:4px">${w.ua}</div>
+    </div>
+    <div style="font-size:12px;color:#7d8590;margin-bottom:7px">Напиши своє речення по-німецьки:</div>
+    <textarea id="lrExInput" style="width:100%;background:#161b22;border:1px solid #30363d;border-radius:8px;color:#e6edf3;font-family:'IBM Plex Sans',sans-serif;font-size:14px;padding:10px;outline:none;resize:none;height:80px;margin-bottom:10px" placeholder="Речення..." onfocus="this.style.borderColor='#d4a843'" onblur="this.style.borderColor='#30363d'"></textarea>
+    <div id="lrExFeedback" style="display:none;border-radius:8px;padding:12px;margin-bottom:12px;font-size:13px;line-height:1.6"></div>
+    <div style="display:flex;gap:9px">
+      <button class="lr-task-btn" style="flex:1;background:#21262d;color:#e6edf3" onclick="lrShowExampleWriter(${pIdx+1},getWordData('${lrCurrentLk}').words,${JSON.stringify(pending.map(x=>({de:x.de,ua:x.ua,gr:x.gr||''})))})">⏭ Пропустити</button>
+      <button class="lr-task-btn" style="flex:1" onclick="lrCheckExample(${globalIdx},${pIdx},${pending.length})">✓ Перевірити</button>
+    </div>
+  `;
+}
+
+async function lrCheckExample(globalIdx, pIdx, total) {
+  const input = document.getElementById('lrExInput');
+  const own = input?.value.trim();
+  if (!own) { toast('Напиши речення!', 'var(--pink)'); return; }
+  const data = getWordData(lrCurrentLk);
+  const w = data.words[globalIdx];
+  const fb = document.getElementById('lrExFeedback');
+  fb.style.display = 'block';
+  fb.style.background = '#21262d';
+  fb.style.border = '1px solid #30363d';
+  fb.innerHTML = '<div style="width:16px;height:16px;border:2px solid #30363d;border-top-color:#d4a843;border-radius:50%;animation:spin .7s linear infinite;display:inline-block"></div> Перевіряю...';
+
+  try {
+    const prompt = `Перевір речення учня для слова "${w.de}" (${w.ua}).
+Речення: "${own}"
+ТІЛЬКИ JSON: {"correct":true,"comment":"коментар українською","corrected":"виправлене або те саме","corrected_ua":"переклад"}`;
+    const text = await callAI(prompt);
+    const clean = text.replace(/\`\`\`json|\`\`\`/g,'').trim();
+    const m = clean.match(/\{[\s\S]*?\}/);
+    if (!m) throw new Error();
+    const res = JSON.parse(m[0]);
+    const ok = res.correct;
+    fb.style.background = ok ? 'rgba(62,207,142,.1)' : 'rgba(255,165,0,.1)';
+    fb.style.border = '1px solid ' + (ok ? '#3ecf8e' : '#fb923c');
+    fb.innerHTML = `<div style="font-weight:600;color:${ok?'#3ecf8e':'#fb923c'};margin-bottom:5px">${ok?'✅ Правильно!':'⚠️ Є помилки'}</div>
+      <div style="color:#7d8590;margin-bottom:6px">${res.comment}</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:13px">${res.corrected}</div>
+      <div style="font-size:12px;color:#3ecf8e;margin-top:3px">${res.corrected_ua||''}</div>
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <button class="lr-task-btn" style="flex:1" onclick="lrSaveExample(${globalIdx},'${(res.corrected||own).replace(/'/g,"\\'")}','${(res.corrected_ua||'').replace(/'/g,"\\'")}',${pIdx},${total})">✅ Зберегти</button>
+        <button class="lr-task-btn" style="flex:1;background:#21262d;color:#e6edf3" onclick="lrShowExampleWriter(${pIdx+1},getWordData('${lrCurrentLk}').words,getWordData('${lrCurrentLk}').words.filter((_,i)=>!lrState['${lrCurrentLk}'].examples[i]))">⏭ Далі</button>
+      </div>`;
+  } catch(e) {
+    fb.innerHTML = '<div style="color:#c0185a">Помилка перевірки.</div>';
+  }
+}
+
+function lrSaveExample(globalIdx, de, ua, pIdx, total) {
+  const st = lrState[lrCurrentLk];
+  if (!st.examples) st.examples = {};
+  st.examples[globalIdx] = {de, ua};
+  // Also save to exampleCache for use in cards
+  const data = getWordData(lrCurrentLk);
+  const w = data.words[globalIdx];
+  exampleCache['dict|' + lrCurrentLk + '|' + w.de] = {de, ua};
+  lrSave();
+  toast('✅ Приклад збережено!', 'var(--grn)');
+  const pending = data.words.filter((_,i) => !st.examples[i]);
+  lrShowExampleWriter(0, data.words, pending);
+}
+
+// ── AI CHAT ──
+async function lrStartChat() {
+  const data = getWordData(lrCurrentLk);
+  const isB1 = typeof lrCurrentLk === 'string' && lrCurrentLk.startsWith('b1_');
+  const num = isB1 ? lrCurrentLk.split('_')[1] : lrCurrentLk;
+  const level = isB1 ? 'B1' : 'B2';
+
+  document.getElementById('lrContent').innerHTML = `
+    <button onclick="lrRenderMain('${lrCurrentLk}',getWordData('${lrCurrentLk}'))" style="background:none;border:none;color:#d4a843;font-size:13px;cursor:pointer;margin-bottom:14px">← Назад</button>
+    <div style="font-size:15px;font-weight:700;color:#e6edf3;margin-bottom:4px">💬 Розмова · ${data.title}</div>
+    <div style="font-size:12px;color:#7d8590;margin-bottom:14px">AI задає питання · відповідай по-німецьки</div>
+    <div id="lrChatMsgs" style="background:#161b22;border:1px solid #30363d;border-radius:10px;padding:14px;min-height:200px;max-height:50vh;overflow-y:auto;margin-bottom:12px;display:flex;flex-direction:column;gap:10px"></div>
+    <div style="display:flex;gap:8px">
+      <input id="lrChatInput" style="flex:1;background:#21262d;border:1px solid #30363d;border-radius:8px;color:#e6edf3;font-family:'IBM Plex Sans',sans-serif;font-size:14px;padding:10px;outline:none;transition:border-color .2s" placeholder="Antwort auf Deutsch..." onfocus="this.style.borderColor='#d4a843'" onblur="this.style.borderColor='#30363d'" onkeydown="if(event.key==='Enter')lrChatSend()">
+      <button class="lr-task-btn" onclick="lrChatSend()">➤</button>
+    </div>
+  `;
+
+  // Start with AI question
+  const wordList = data.words.slice(0,10).map(w=>w.de).join(', ');
+  const prompt = `Du bist ein Deutschlehrer. Führe ein Gespräch auf ${level}-Niveau zum Thema "${data.title}".
+Verwende diese Vokabeln wenn möglich: ${wordList}.
+Stelle eine interessante offene Frage auf Deutsch. Antworte NUR auf Deutsch.
+Wenn der Schüler Fehler macht, korrigiere sie in Klammern: (Richtig: "...")`;
+
+  const msgs = document.getElementById('lrChatMsgs');
+  const loadDiv = document.createElement('div');
+  loadDiv.style.cssText = 'color:#7d8590;font-size:13px';
+  loadDiv.textContent = '...';
+  msgs.appendChild(loadDiv);
+
+  try {
+    const reply = await callAI(prompt);
+    loadDiv.remove();
+    lrChatAddMsg('ai', reply);
+    lrChatHistory = [{role:'ai',text:reply}];
+    lrChatLk = lrCurrentLk;
+    lrChatTopic = data.title;
+    lrChatLevel = level;
+    lrChatWordList = wordList;
+  } catch(e) {
+    loadDiv.textContent = 'Помилка. Спробуй ще раз.';
+  }
+}
+
+let lrChatHistory = [];
+let lrChatLk = null;
+let lrChatTopic = '';
+let lrChatLevel = 'B1';
+let lrChatWordList = '';
+
+function lrChatAddMsg(role, text) {
+  const msgs = document.getElementById('lrChatMsgs');
+  if (!msgs) return;
+  const div = document.createElement('div');
+  const isAi = role === 'ai';
+  div.style.cssText = `background:${isAi?'#21262d':'rgba(26,58,107,.4)'};border:1px solid ${isAi?'#30363d':'#1a3a6b'};border-radius:${isAi?'4px 12px 12px 12px':'12px 4px 12px 12px'};padding:10px 13px;font-size:13px;line-height:1.6;color:#e6edf3;${isAi?'':'text-align:right'}`;
+  div.textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+async function lrChatSend() {
+  const input = document.getElementById('lrChatInput');
+  const text = input?.value.trim();
+  if (!text) return;
+  input.value = '';
+  lrChatAddMsg('user', text);
+  lrChatHistory.push({role:'user',text});
+
+  const history = lrChatHistory.slice(-6).map(h=>(h.role==='ai'?'Lehrer: ':'Schüler: ')+h.text).join('\n');
+  const prompt = `Du bist ein Deutschlehrer. Thema: "${lrChatTopic}", Niveau: ${lrChatLevel}.
+Vokabeln: ${lrChatWordList}.
+${history}
+Lehrer: `;
+
+  const msgs = document.getElementById('lrChatMsgs');
+  const loadDiv = document.createElement('div');
+  loadDiv.style.cssText = 'color:#7d8590;font-size:13px';
+  loadDiv.textContent = '...';
+  msgs?.appendChild(loadDiv);
+  msgs && (msgs.scrollTop = msgs.scrollHeight);
+
+  try {
+    const reply = await callAI(prompt);
+    loadDiv.remove();
+    lrChatAddMsg('ai', reply);
+    lrChatHistory.push({role:'ai',text:reply});
+  } catch(e) {
+    loadDiv.remove();
+    lrChatAddMsg('ai', 'Fehler. Bitte versuche es noch einmal.');
+  }
+}
+
+// ── FINAL TEST ──
+function lrStartFinalTest() {
+  const data = getWordData(lrCurrentLk);
+  lrVoiceSession = {
+    words: [...data.words].sort(()=>Math.random()-.5),
+    idx: 0, correct: 0, wrong: 0,
+    day: 'final', lk: lrCurrentLk, isFinal: true
+  };
+  lrRenderFinalVoice();
+}
+
+function lrRenderFinalVoice() {
+  const s = lrVoiceSession;
+  if (!s) return;
+  const w = s.words[s.idx];
+  const cleanWord = w.de.replace(/^(der|die|das|der\/die)\s+/i,'').replace(/,.*$/,'').replace(/\s*\(.*?\)/g,'').replace(/\s*\+.*$/,'').trim();
+
+  document.getElementById('lrContent').innerHTML = `
+    <div class="lr-round-info">🏆 Фінальний тест · ${s.idx+1}/${s.words.length}</div>
+    <div class="lr-counter">${s.correct} ✓ · ${s.wrong} ✗</div>
+    <div style="background:#161b22;border:1px solid #30363d;border-radius:14px;padding:28px 20px;text-align:center;margin-bottom:16px">
+      <div style="font-size:13px;color:#3ecf8e;margin-bottom:10px">${w.ua}</div>
+      <div id="lrVWord" style="font-family:'Playfair Display',serif;font-size:2rem;color:#d4a843;filter:blur(10px);cursor:pointer" onclick="lrRevealVoice()">${w.de}</div>
+      <button onclick="speakDe('${cleanWord.replace(/'/g,"\\'")}',event)" style="margin-top:12px;background:rgba(212,168,67,.15);border:1px solid #d4a843;color:#d4a843;padding:6px 16px;border-radius:20px;font-size:13px;cursor:pointer">🔊 Послухати</button>
+    </div>
+    <div id="lrVResult" style="display:none;border-radius:10px;padding:12px;text-align:center;margin-bottom:14px"></div>
+    <div style="text-align:center">
+      <button class="lr-mic-btn" id="lrMicBtn" onclick="lrFinalListen('${cleanWord.replace(/'/g,"\\'")}')">🎤</button>
+      <div id="lrMicStatus" style="font-size:12px;color:#7d8590;margin-top:10px">Натисни 🎤 і вимов по-німецьки</div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="lr-task-btn" style="flex:1;background:#21262d;color:#e6edf3" onclick="lrFinalNext('${cleanWord.replace(/'/g,"\\'")}',false)">✗ Не знав</button>
+      <button class="lr-task-btn" style="flex:1" onclick="lrFinalNext('${cleanWord.replace(/'/g,"\\'")}',true)">✓ Знав</button>
+    </div>
+  `;
+}
+
+function lrFinalListen(target) { lrVoiceListen(target); }
+
+function lrFinalNext(target, knew) {
+  const s = lrVoiceSession;
+  if (knew) s.correct++; else s.wrong++;
+  s.idx++;
+  if (s.idx >= s.words.length) lrShowFinalResult();
+  else lrRenderFinalVoice();
+}
+
+function lrShowFinalResult() {
+  const s = lrVoiceSession;
+  const total = s.words.length;
+  const pct = Math.round(s.correct / total * 100);
+  const passed = pct >= 80;
+  if (passed) {
+    const st = lrState[lrCurrentLk];
+    st.finalDone = true;
+    lrSave();
+  }
+  document.getElementById('lrContent').innerHTML = `
+    <div class="lr-result-card">
+      <div style="font-size:4rem">${passed?'🏆':'📚'}</div>
+      <div class="lr-result-score">${pct}%</div>
+      <div class="lr-result-label">${s.correct}/${total} слів · ${passed?'Лекцію пройдено!':'Потрібно повторити'}</div>
+      <div style="font-size:13px;color:#7d8590;margin:10px 0 20px">
+        ${passed?'Відмінно! Можеш переходити до наступної лекції 🎉':'Пройди ще раз картки і голос перед тестом'}
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        ${!passed?`<button class="lr-task-btn voice-btn" onclick="lrStartFinalTest()">🔄 Спробувати ще</button>`:''}
+        <button class="lr-task-btn" style="background:#21262d;color:#e6edf3" onclick="lrRenderMain('${lrCurrentLk}',getWordData('${lrCurrentLk}'))">← Меню</button>
+      </div>
+    </div>`;
+}
+
+// ── Levenshtein ──
+function lrLevenshtein(a, b) {
+  if(!a||!b) return Math.max((a||'').length,(b||'').length);
+  const dp=Array.from({length:a.length+1},(_,i)=>Array.from({length:b.length+1},(_,j)=>i===0?j:j===0?i:0));
+  for(let i=1;i<=a.length;i++) for(let j=1;j<=b.length;j++) dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]:1+Math.min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1]);
+  return dp[a.length][b.length];
+}
+
 // init — show B1 lektion 1 first
 switchLevel('B1');
 // initDictClicks called in closeLanding() after DOM is visible
 </script>
+
+<!-- ══════════════════════════════════════════════════════════
+     LERNEN MODULE OVERLAY
+══════════════════════════════════════════════════════════ -->
+<div class="lernen-overlay" id="lernenOverlay">
+
+  <!-- HEADER -->
+  <div class="lr-header">
+    <button class="lr-back" onclick="closeLernen()">←</button>
+    <div class="lr-title">
+      <div class="lr-title-main" id="lrTitleMain">B1 · Lektion 1 · Menschen</div>
+      <div class="lr-title-sub" id="lrTitleSub">Тиждень навчання</div>
+    </div>
+    <div class="lr-hard-badge" id="lrHardBadge" style="display:none">
+      🔥 <span id="lrHardCount">0</span>
+    </div>
+  </div>
+
+  <div class="lr-content" id="lrContent">
+    <!-- динамічно заповнюється -->
+  </div>
+
+</div>
 
 </body>
 </html>
