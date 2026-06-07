@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>DeutschTrack by Andrii Murha</title>
+<title>DeutschTrack Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -192,7 +192,6 @@ body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh
 
 <header class="hdr">
   <div class="logo">DEUTSCH<span>TRACK</span></div>
-  <div style="font-size:.55rem;color:var(--mt);letter-spacing:2px;text-transform:uppercase;margin-top:-4px;padding-left:2px">by Andrii Murha</div>
   <div class="streak-badge" id="streakBadge">🔥 0 днів</div>
   <button class="hdr-icon" onclick="openExport()" title="Експорт/Імпорт">💾</button>
 </header>
@@ -937,7 +936,7 @@ function startHWTask(num,date){
   pool=pool.sort(()=>Math.random()-.5);
   const dir=num===1?hwDir1:hwDir2;
   C={words:pool,idx:0,knew:0,didnt:0,dir,unknown:[],hwTask:num,hwDate:date};
-  goTab('cards',document.querySelector('.tab:nth-child(6)'));
+  goTab('cards',document.querySelector('.tab:nth-child(4)'));
   document.getElementById('cardsSetup').style.display='none';
   document.getElementById('cardsRun').style.display='block';
   document.getElementById('cardsResult').style.display='none';
@@ -1217,10 +1216,7 @@ function openHWDay(dateStr){
       <div class="hw-dir-btn${(num===1?hwDir1:hwDir2)==='uk2de'?' on':''}" onclick="setHWDir(${num},'uk2de','${dateStr}');openHWDay('${dateStr}')">УКР→DE</div>
       <div class="hw-dir-btn${(num===1?hwDir1:hwDir2)==='mix'?' on':''}" onclick="setHWDir(${num},'mix','${dateStr}');openHWDay('${dateStr}')">Мікс</div>
     </div>
-    <div style="display:flex;gap:8px;margin-top:0">
-      <button class="btn" style="flex:1" onclick="closeHWDay();startHWTask(${num},'${dateStr}')">🃏 Картки (${done+1}/${goal})</button>
-      <button class="btn btn-ghost" style="flex:1" onclick="closeHWDay();startHWVoice(${num},'${dateStr}')">🎤 Голос</button>
-    </div>`;
+    <button class="btn btn-full" onclick="closeHWDay();startHWTask(${num},'${dateStr}')">▶ Почати (${done+1}/${goal})</button>`;
   };
 
   document.getElementById('hwDayBody').innerHTML = `
@@ -1250,15 +1246,9 @@ function startHWVoice(num, date){
     ? D.words.filter(w=>w.date===date)
     : D.words.filter(w=>days5.includes(w.date));
   if(!pool.length){toast('Немає слів!','var(--pink)');return;}
-  pool=pool.sort(()=>Math.random()-.5);
-  // Load into voice trainer
-  vtWords=pool;
-  vtIdx=0;
-  vtCorrect=0;
-  vtWrong=0;
-  // Switch to voice tab (3rd tab)
-  const voiceTab=document.querySelector(".tab:nth-child(3)");
-  goTab('voice', voiceTab);
+  vtWords=pool.sort(()=>Math.random()-.5);
+  vtIdx=0; vtCorrect=0; vtWrong=0;
+  goTab('voice', document.querySelector('.tab:nth-child(3)'));
   vtShowWord();
 }
 
