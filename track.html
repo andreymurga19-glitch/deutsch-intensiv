@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>DeutschTrack by Andrii Murha</title>
+<title>DeutschTrack Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -192,7 +192,6 @@ body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh
 
 <header class="hdr">
   <div class="logo">DEUTSCH<span>TRACK</span></div>
-  <div style="font-size:.55rem;color:var(--mt);letter-spacing:2px;text-transform:uppercase;margin-top:-4px;padding-left:2px">by Andrii Murha</div>
   <div class="streak-badge" id="streakBadge">🔥 0 днів</div>
   <button class="hdr-icon" onclick="openExport()" title="Експорт/Імпорт">💾</button>
 </header>
@@ -562,15 +561,19 @@ function renderHWStats(){
     const d=new Date();d.setDate(d.getDate()-i);
     const k=d.toISOString().split('T')[0];
     const day=d.toLocaleDateString('uk-UA',{weekday:'short',day:'numeric',month:'numeric'});
-    const hd=hw[k]||{task1:0,task2:0};
-    const t1=Math.min(hd.task1||0,10),t2=Math.min(hd.task2||0,5);
+    const hd=hw[k]||{};
+    const t1c=Math.min(hd.task1_cards||hd.task1||0,5),t1v=Math.min(hd.task1_voice||0,5);
+    const t2c=Math.min(hd.task2_cards||hd.task2||0,3),t2v=Math.min(hd.task2_voice||0,2);
+    const t1=t1c+t1v,t2=t2c+t2v;
     const isToday=k===tod();
     h+=`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--br);cursor:pointer" onclick="openHWDay('${k}')">`;
     h+=`<div style="font-size:.76rem;color:${isToday?'var(--gold)':'var(--mt2)'};min-width:78px">${isToday?'Сьогодні':day}</div>`;
     h+=`<div style="flex:1">`;
-    h+=`<div style="display:flex;gap:4px;margin-bottom:3px"><div style="font-size:.63rem;color:var(--mt2);width:56px">День:</div><div class="pbar" style="flex:1"><div class="pbar-fill" style="width:${Math.round(t1/10*100)}%"></div></div><div style="font-size:.63rem;color:${t1>=10?'var(--grn)':'var(--mt2)'};min-width:30px">${t1}/10${t1>=10?' ✓':''}</div></div>`;
-    h+=`<div style="display:flex;gap:4px"><div style="font-size:.63rem;color:var(--mt2);width:56px">5 днів:</div><div class="pbar" style="flex:1"><div class="pbar-fill" style="width:${Math.round(t2/5*100)}%"></div></div><div style="font-size:.63rem;color:${t2>=5?'var(--grn)':'var(--mt2)'};min-width:30px">${t2}/5${t2>=5?' ✓':''}</div></div>`;
-    h+=`</div><div style="font-size:1.1rem">${t1>=10&&t2>=5?'🏆':t1>0||t2>0?'⚡':'○'}</div></div>`;
+    h+=`<div style="display:flex;gap:4px;margin-bottom:2px"><div style="font-size:.6rem;color:var(--mt2);width:56px">🃏 Картки:</div><div class="pbar" style="flex:1"><div class="pbar-fill" style="width:${Math.round(t1c/5*100)}%"></div></div><div style="font-size:.6rem;color:${t1c>=5?'var(--grn)':'var(--mt2)'};min-width:24px">${t1c}/5</div></div>`;
+    h+=`<div style="display:flex;gap:4px;margin-bottom:3px"><div style="font-size:.6rem;color:var(--mt2);width:56px">🎤 Голос:</div><div class="pbar" style="flex:1"><div class="pbar-fill" style="width:${Math.round(t1v/5*100)}%"></div></div><div style="font-size:.6rem;color:${t1v>=5?'var(--grn)':'var(--mt2)'};min-width:24px">${t1v}/5</div></div>`;
+    h+=`<div style="display:flex;gap:4px;margin-bottom:2px"><div style="font-size:.6rem;color:var(--mt2);width:56px">🃏 5днів:</div><div class="pbar" style="flex:1"><div class="pbar-fill" style="width:${Math.round(t2c/3*100)}%"></div></div><div style="font-size:.6rem;color:${t2c>=3?'var(--grn)':'var(--mt2)'};min-width:24px">${t2c}/3</div></div>`;
+    h+=`<div style="display:flex;gap:4px"><div style="font-size:.6rem;color:var(--mt2);width:56px">🎤 5днів:</div><div class="pbar" style="flex:1"><div class="pbar-fill" style="width:${Math.round(t2v/2*100)}%"></div></div><div style="font-size:.6rem;color:${t2v>=2?'var(--grn)':'var(--mt2)'};min-width:24px">${t2v}/2</div></div>`;
+    h+=`</div><div style="font-size:1.1rem">${t1c>=5&&t1v>=5&&t2c>=3&&t2v>=2?'🏆':t1>0||t2>0?'⚡':'○'}</div></div>`;
   }
   document.getElementById('hwStats').innerHTML=h;
 }
@@ -947,7 +950,7 @@ function startHWTask(num,date){
 // ══════════════════════════════════════════════════════════════
 // VOICE TRAINER
 // ══════════════════════════════════════════════════════════════
-let vtWords=[], vtIdx=0, vtCorrect=0, vtWrong=0, vtCurrentWord='', vtRec=null, vtListening=false;
+let vtWords=[], vtIdx=0, vtCorrect=0, vtWrong=0, vtCurrentWord='', vtRec=null, vtListening=false, vtHwMode={active:false};
 
 function vtInit(){
   const filter=document.getElementById('vtFilter')?.value||'all';
@@ -1027,7 +1030,22 @@ function vtShowResult(ok,heard,target){
   document.getElementById('vtResultHeard').textContent='Почув: "'+heard+'"';
   document.getElementById('vtCard').classList.add(ok?'correct':'wrong');
   document.getElementById('vtStatus').textContent=ok?'🎉 Відмінно!':'🔄 Спробуй ще раз';
-  if(ok){vtCorrect++;document.getElementById('vtCorrect').textContent=vtCorrect;setTimeout(()=>vtNext(),1500);}
+  if(ok){
+    vtCorrect++;document.getElementById('vtCorrect').textContent=vtCorrect;
+    // Track voice HW
+    if(vtHwMode&&vtHwMode.active){
+      vtHwMode.done++;
+      if(!D.homework)D.homework={};
+      if(!D.homework[vtHwMode.date])D.homework[vtHwMode.date]={};
+      D.homework[vtHwMode.date][vtHwMode.key]=Math.min(vtHwMode.goal,(D.homework[vtHwMode.date][vtHwMode.key]||0)+1);
+      saveD();
+      if(vtHwMode.done>=vtHwMode.goal){
+        toast('🏆 Голосове ДЗ виконано!','var(--gold)');
+        vtHwMode={active:false};
+      }
+    }
+    setTimeout(()=>vtNext(),1500);
+  }
   else{vtWrong++;document.getElementById('vtWrong').textContent=vtWrong;setTimeout(()=>speakDe(target),400);}
 }
 
@@ -1129,9 +1147,15 @@ function rateCard(knew){
   // Update HW progress
   if(C.hwTask&&C.hwDate){
     if(!D.homework)D.homework={};
-    if(!D.homework[C.hwDate])D.homework[C.hwDate]={task1:0,task2:0};
-    if(C.hwTask===1)D.homework[C.hwDate].task1=Math.min(10,(D.homework[C.hwDate].task1||0)+1);
-    else D.homework[C.hwDate].task2=Math.min(5,(D.homework[C.hwDate].task2||0)+1);
+    if(!D.homework[C.hwDate])D.homework[C.hwDate]={};
+    if(C.hwKey){
+      const maxVal=C.hwGoal||5;
+      D.homework[C.hwDate][C.hwKey]=Math.min(maxVal,(D.homework[C.hwDate][C.hwKey]||0)+1);
+    } else {
+      // legacy
+      if(C.hwTask===1)D.homework[C.hwDate].task1=Math.min(10,(D.homework[C.hwDate].task1||0)+1);
+      else D.homework[C.hwDate].task2=Math.min(5,(D.homework[C.hwDate].task2||0)+1);
+    }
   }
   bump('t');saveD();
 
@@ -1188,54 +1212,92 @@ if('speechSynthesis' in window){speechSynthesis.getVoices();speechSynthesis.onvo
 // ══════════════════════════════════════════════════════════════
 function openHWDay(dateStr){
   const hw = D.homework || {};
-  if(!hw[dateStr]) hw[dateStr] = {task1:0, task2:0};
+  if(!hw[dateStr]) hw[dateStr] = {};
   D.homework = hw;
+  const h = hw[dateStr];
 
   const d = new Date(dateStr+'T12:00:00');
   const isToday = dateStr === tod();
   const dayLabel = isToday ? 'Сьогодні' : d.toLocaleDateString('uk-UA',{weekday:'long',day:'numeric',month:'long'});
 
-  // Get words for task1 (day) and task2 (5 days)
   const days5 = [];
   for(let i=0;i<5;i++){const dx=new Date(dateStr+'T12:00:00');dx.setDate(dx.getDate()-i);days5.push(dx.toISOString().split('T')[0]);}
   const words1 = D.words.filter(w=>w.date===dateStr);
   const words2 = D.words.filter(w=>days5.includes(w.date));
-  const h = hw[dateStr];
-  const t1=h.task1||0, t2=h.task2||0;
+
+  // Task 1: 5 cards + 5 voice
+  const t1c = Math.min(h.task1_cards||0, 5);
+  const t1v = Math.min(h.task1_voice||0, 5);
+  // Task 2: 3 cards + 2 voice
+  const t2c = Math.min(h.task2_cards||0, 3);
+  const t2v = Math.min(h.task2_voice||0, 2);
+
+  const task1Done = t1c>=5 && t1v>=5;
+  const task2Done = t2c>=3 && t2v>=2;
 
   document.getElementById('hwDayTitle').textContent = '📚 ' + dayLabel;
   document.getElementById('hwDayDateLabel').textContent = dateStr;
 
-  const circles1 = Array.from({length:10},(_,i)=>`<div class="hw-circle${i<t1?' done':i===t1?' cur':''}">${i+1}</div>`).join('');
-  const circles2 = Array.from({length:5},(_,i)=>`<div class="hw-circle${i<t2?' done':i===t2?' cur':''}">${i+1}</div>`).join('');
+  const mkCircles = (done, goal) => Array.from({length:goal},(_,i)=>
+    `<div class="hw-circle${i<done?' done':i===done?' cur':''}">${i+1}</div>`).join('');
 
-  const taskBtn = (num, wordCount, done, goal, dir) => {
-    if(!wordCount) return '<div style="font-size:.75rem;color:var(--mt2);padding:6px 0">Немає слів</div>';
-    if(done>=goal) return '<div style="color:var(--grn);font-weight:600;padding:6px 0">✅ Виконано!</div>';
-    return `<div class="hw-dir" style="margin:8px 0">
-      <div class="hw-dir-btn${(num===1?hwDir1:hwDir2)==='de2uk'?' on':''}" onclick="setHWDir(${num},'de2uk','${dateStr}');openHWDay('${dateStr}')">DE→УКР</div>
-      <div class="hw-dir-btn${(num===1?hwDir1:hwDir2)==='uk2de'?' on':''}" onclick="setHWDir(${num},'uk2de','${dateStr}');openHWDay('${dateStr}')">УКР→DE</div>
-      <div class="hw-dir-btn${(num===1?hwDir1:hwDir2)==='mix'?' on':''}" onclick="setHWDir(${num},'mix','${dateStr}');openHWDay('${dateStr}')">Мікс</div>
-    </div>
-    <button class="btn btn-full" onclick="closeHWDay();startHWTask(${num},'${dateStr}')">▶ Почати (${done+1}/${goal})</button>`;
+  const mkSection = (label, done, goal, btnLabel, onclick) => {
+    if(!goal) return '';
+    const isDone = done >= goal;
+    return `<div style="margin-bottom:10px">
+      <div style="font-size:.72rem;color:var(--mt2);margin-bottom:5px">${label}</div>
+      <div class="hw-circles">${mkCircles(done, goal)}</div>
+      ${isDone
+        ? '<div style="color:var(--grn);font-size:.75rem;font-weight:600">✅ Виконано!</div>'
+        : `<button class="btn btn-full" style="margin-top:6px" onclick="${onclick}">${btnLabel} (${done+1}/${goal})</button>`
+      }
+    </div>`;
   };
 
   document.getElementById('hwDayBody').innerHTML = `
-    <div style="margin-bottom:16px">
-      <div style="font-size:.78rem;font-weight:600;margin-bottom:8px">📅 Картки дня (${words1.length} слів)</div>
-      <div class="hw-circles">${circles1}</div>
-      <div style="display:flex;gap:4px;margin:6px 0"><div class="pbar" style="flex:1"><div class="pbar-fill" style="width:${Math.round(t1/10*100)}%"></div></div><div style="font-size:.7rem;color:${t1>=10?'var(--grn)':'var(--mt2)'};margin-left:6px">${t1}/10</div></div>
-      ${taskBtn(1, words1.length, t1, 10, hwDir1)}
+    <div style="margin-bottom:18px">
+      <div style="font-size:.8rem;font-weight:600;margin-bottom:10px">📅 Слова дня (${words1.length} слів) ${task1Done?'🏆':''}</div>
+      ${mkSection('🃏 Картки', t1c, 5, '▶ Картки', `closeHWDay();startHWCards(1,'${dateStr}')`)}
+      ${mkSection('🎤 Голос', t1v, 5, '▶ Голос', `closeHWDay();startHWVoice(1,'${dateStr}')`)}
     </div>
     <div>
-      <div style="font-size:.78rem;font-weight:600;margin-bottom:8px">📚 Картки за 5 днів (${words2.length} слів)</div>
-      <div class="hw-circles">${circles2}</div>
-      <div style="display:flex;gap:4px;margin:6px 0"><div class="pbar" style="flex:1"><div class="pbar-fill" style="width:${Math.round(t2/5*100)}%"></div></div><div style="font-size:.7rem;color:${t2>=5?'var(--grn)':'var(--mt2)'};margin-left:6px">${t2}/5</div></div>
-      ${taskBtn(2, words2.length, t2, 5, hwDir2)}
+      <div style="font-size:.8rem;font-weight:600;margin-bottom:10px">📚 За 5 днів (${words2.length} слів) ${task2Done?'🏆':''}</div>
+      ${mkSection('🃏 Картки', t2c, 3, '▶ Картки', `closeHWDay();startHWCards(2,'${dateStr}')`)}
+      ${mkSection('🎤 Голос', t2v, 2, '▶ Голос', `closeHWDay();startHWVoice(2,'${dateStr}')`)}
     </div>`;
 
   document.getElementById('hwDayOv').style.display='flex';
 }
+
+function startHWCards(num, date){
+  const days5=[];for(let i=0;i<5;i++){const d=new Date(date+'T12:00:00');d.setDate(d.getDate()-i);days5.push(d.toISOString().split('T')[0]);}
+  let pool=num===1?D.words.filter(w=>w.date===date):D.words.filter(w=>days5.includes(w.date));
+  if(!pool.length){toast('Немає слів!','var(--pink)');return;}
+  pool=pool.sort(()=>Math.random()-.5);
+  const dir=num===1?hwDir1:hwDir2;
+  const goal=num===1?5:3;
+  const doneKey=num===1?'task1_cards':'task2_cards';
+  C={words:pool,idx:0,knew:0,didnt:0,dir,unknown:[],hwTask:num,hwDate:date,hwKey:doneKey,hwGoal:goal};
+  goTab('cards',document.querySelector('.tab:nth-child(4)'));
+  document.getElementById('cardsSetup').style.display='none';
+  document.getElementById('cardsRun').style.display='block';
+  document.getElementById('cardsResult').style.display='none';
+  showCard();
+}
+
+function startHWVoice(num, date){
+  const days5=[];for(let i=0;i<5;i++){const d=new Date(date+'T12:00:00');d.setDate(d.getDate()-i);days5.push(d.toISOString().split('T')[0]);}
+  let pool=num===1?D.words.filter(w=>w.date===date):D.words.filter(w=>days5.includes(w.date));
+  if(!pool.length){toast('Немає слів!','var(--pink)');return;}
+  pool=pool.sort(()=>Math.random()-.5);
+  const goal=num===1?5:2;
+  const doneKey=num===1?'task1_voice':'task2_voice';
+  vtWords=pool;vtIdx=0;vtCorrect=0;vtWrong=0;
+  vtHwMode={active:true,date,key:doneKey,goal,done:0};
+  goTab('voice',document.querySelector('.tab:nth-child(3)'));
+  vtShowWord();
+}
+
 function closeHWDay(){document.getElementById('hwDayOv').style.display='none';}
 
 // ══════════════════════════════════════════════════════════════
