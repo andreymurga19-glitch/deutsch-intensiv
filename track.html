@@ -356,17 +356,27 @@ body{background:var(--bg);color:var(--tx);font-family:var(--ff);min-height:100vh
   <div class="card">
     <div class="card-title">🎤 ДЗ Голос</div>
 
-    <div style="font-size:.72rem;color:var(--mt2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Які слова?</div>
-    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap" id="dzVoicePills">
-      <div class="fc-pill on" data-v="today" onclick="dzVoicePickPill(this)">Сьогодні</div>
-      <div class="fc-pill" data-v="5days" onclick="dzVoicePickPill(this)">За 5 днів</div>
+    <!-- Task 1: слова дня -->
+    <div style="margin-bottom:18px">
+      <div style="font-size:.8rem;font-weight:600;margin-bottom:8px">📅 Слова дня — 5 раундів</div>
+      <div class="hw-circles" id="dzV1Circles"></div>
+      <div style="display:flex;gap:4px;margin:6px 0">
+        <div class="pbar" style="flex:1"><div class="pbar-fill" id="dzV1Bar" style="width:0%"></div></div>
+        <div style="font-size:.7rem;color:var(--mt2);min-width:30px" id="dzV1Label">0/5</div>
+      </div>
+      <div id="dzV1Btn"></div>
     </div>
 
-    <div id="dzVoiceRoundsInfo" style="background:var(--sf2);border:1px solid var(--br);border-radius:8px;padding:12px;margin-bottom:14px;font-size:.8rem;color:var(--mt2)">
-      Раундів: <span id="dzRoundsGoal" style="color:var(--gold);font-weight:600"></span> по <span id="dzWordsCount" style="color:var(--gold);font-weight:600"></span> слів
+    <!-- Task 2: за 5 днів -->
+    <div>
+      <div style="font-size:.8rem;font-weight:600;margin-bottom:8px">📚 За 5 днів — 2 раунди</div>
+      <div class="hw-circles" id="dzV2Circles"></div>
+      <div style="display:flex;gap:4px;margin:6px 0">
+        <div class="pbar" style="flex:1"><div class="pbar-fill" id="dzV2Bar" style="width:0%"></div></div>
+        <div style="font-size:.7rem;color:var(--mt2);min-width:30px" id="dzV2Label">0/2</div>
+      </div>
+      <div id="dzV2Btn"></div>
     </div>
-
-    <button class="btn btn-full" onclick="startDzVoice()">▶ Почати раунд</button>
   </div>
 </div>
 </div>
@@ -1008,7 +1018,15 @@ function vtReveal(){
   speakDe(vtCurrentWord);
 }
 
-function vtNext(){vtIdx=(vtIdx+1)%vtWords.length;vtShowWord();if(vtRec){try{vtRec.abort();}catch(e){}}}
+function vtNext(){
+  if(vtDzMode && vtIdx+1>=vtWords.length){
+    // Completed all words in this round
+    dzVoiceRoundComplete();
+    return;
+  }
+  vtIdx=(vtIdx+1)%vtWords.length;vtShowWord();
+  if(vtRec){try{vtRec.abort();}catch(e){}}
+}
 function vtPrev(){vtIdx=(vtIdx-1+vtWords.length)%vtWords.length;vtShowWord();}
 
 function vtListen(){
@@ -1310,48 +1328,124 @@ function doImport(){
 // ══════════════════════════════════════════════════════════════
 // ДЗ ГОЛОС
 // ══════════════════════════════════════════════════════════════
-function dzVoicePickPill(el) {
-  document.querySelectorAll('#dzVoicePills .fc-pill').forEach(p => p.classList.remove('on'));
-  el.classList.add('on');
-  dzVoiceUpdateInfo(el.dataset.v);
+let dzVoiceTask = null; // {pool, taskNum, roundsDone, goal, dateStr}
+
+function initDzVoice() {
+  renderDzVoice();
 }
 
-function dzVoiceGetPool(filter) {
-  if (filter === 'today') return D.words.filter(w => w.date === tod());
-  if (filter === '5days') {
-    const days5 = [];
-    for (let i = 0; i < 5; i++) {
-      const d = new Date(); d.setDate(d.getDate() - i);
-      days5.push(d.toISOString().split('T')[0]);
+function renderDzVoice() {
+  const today = tod();
+  const hw = D.homework || {};
+  const h = hw[today] || {};
+  const v1 = Math.min(h.voice1 || 0, 5);
+  const v2 = Math.min(h.voice2 || 0, 2);
+
+  // Circles task1 (5 rounds)
+  const c1 = document.getElementById('dzV1Circles');
+  if (c1) c1.innerHTML = Array.from({length:5},(_,i) =>
+    `<div class="hw-circle${i<v1?' done':i===v1?' cur':''}">${i+1}</div>`).join('');
+
+  const bar1 = document.getElementById('dzV1Bar');
+  if (bar1) bar1.style.width = Math.round(v1/5*100)+'%';
+  const lbl1 = document.getElementById('dzV1Label');
+  if (lbl1) lbl1.textContent = v1+'/5';
+  if (lbl1) lbl1.style.color = v1>=5 ? 'var(--grn)' : 'var(--mt2)';
+
+  const btn1 = document.getElementById('dzV1Btn');
+  if (btn1) {
+    const words1 = D.words.filter(w => w.date === today);
+    if (!words1.length) {
+      btn1.innerHTML = '<div style="font-size:.75rem;color:var(--mt2)">Немає слів за сьогодні</div>';
+    } else if (v1 >= 5) {
+      btn1.innerHTML = '<div style="color:var(--grn);font-weight:600">✅ Виконано!</div>';
+    } else {
+      btn1.innerHTML = `<button class="btn btn-full" onclick="startDzVoiceTask(1,'${today}')">▶ Раунд ${v1+1}/5 (${words1.length} слів)</button>`;
     }
-    return D.words.filter(w => days5.includes(w.date));
   }
-  return [...D.words];
+
+  // Circles task2 (2 rounds)
+  const c2 = document.getElementById('dzV2Circles');
+  if (c2) c2.innerHTML = Array.from({length:2},(_,i) =>
+    `<div class="hw-circle${i<v2?' done':i===v2?' cur':''}">${i+1}</div>`).join('');
+
+  const bar2 = document.getElementById('dzV2Bar');
+  if (bar2) bar2.style.width = Math.round(v2/2*100)+'%';
+  const lbl2 = document.getElementById('dzV2Label');
+  if (lbl2) lbl2.textContent = v2+'/2';
+  if (lbl2) lbl2.style.color = v2>=2 ? 'var(--grn)' : 'var(--mt2)';
+
+  const btn2 = document.getElementById('dzV2Btn');
+  if (btn2) {
+    const days5 = [];
+    for (let i=0;i<5;i++){const d=new Date();d.setDate(d.getDate()-i);days5.push(d.toISOString().split('T')[0]);}
+    const words2 = D.words.filter(w => days5.includes(w.date));
+    if (!words2.length) {
+      btn2.innerHTML = '<div style="font-size:.75rem;color:var(--mt2)">Немає слів за 5 днів</div>';
+    } else if (v2 >= 2) {
+      btn2.innerHTML = '<div style="color:var(--grn);font-weight:600">✅ Виконано!</div>';
+    } else {
+      btn2.innerHTML = `<button class="btn btn-full" onclick="startDzVoiceTask(2,'${today}')">▶ Раунд ${v2+1}/2 (${words2.length} слів)</button>`;
+    }
+  }
 }
 
-function startDzVoice() {
-  const pill = document.querySelector('#dzVoicePills .fc-pill.on');
-  const filter = pill ? pill.dataset.v : 'today';
-  const pool = dzVoiceGetPool(filter);
+function startDzVoiceTask(taskNum, dateStr) {
+  const days5 = [];
+  for (let i=0;i<5;i++){const d=new Date(dateStr+'T12:00:00');d.setDate(d.getDate()-i);days5.push(d.toISOString().split('T')[0]);}
+  let pool = taskNum===1
+    ? D.words.filter(w => w.date === dateStr)
+    : D.words.filter(w => days5.includes(w.date));
   if (!pool.length) { toast('Немає слів!', 'var(--pink)'); return; }
+
+  const hw = D.homework || {};
+  const h = hw[dateStr] || {};
+  const goal = taskNum===1 ? 5 : 2;
+  const key = taskNum===1 ? 'voice1' : 'voice2';
+  const done = h[key] || 0;
+
+  dzVoiceTask = {pool, taskNum, goal, key, dateStr, done};
+
   vtWords = pool.sort(() => Math.random() - .5);
   vtIdx = 0; vtCorrect = 0; vtWrong = 0;
+
+  // Track when round ends - override vtNext behavior
+  vtDzMode = true;
   goTab('voice', document.querySelector('.tab:nth-child(3)'));
   vtShowWord();
 }
 
-function initDzVoice() {
-  dzVoiceUpdateInfo('today');
+// Called when voice round completes (all words passed)
+function dzVoiceRoundComplete() {
+  if (!dzVoiceTask) return;
+  const {goal, key, dateStr} = dzVoiceTask;
+  if (!D.homework) D.homework = {};
+  if (!D.homework[dateStr]) D.homework[dateStr] = {};
+  const prev = D.homework[dateStr][key] || 0;
+  if (prev < goal) {
+    D.homework[dateStr][key] = prev + 1;
+    saveD();
+    const done = D.homework[dateStr][key];
+    const rem = goal - done;
+    if (rem <= 0) {
+      toast('🏆 ДЗ Голос виконано!', 'var(--gold)');
+      dzVoiceTask = null;
+      vtDzMode = false;
+    } else {
+      toast('✅ Раунд '+done+'/'+goal+' завершено! Ще '+rem, 'var(--grn)');
+      // Reshuffle for next round
+      vtWords = [...dzVoiceTask.pool].sort(() => Math.random() - .5);
+      vtIdx = 0; vtCorrect = 0; vtWrong = 0;
+      vtShowWord();
+      return;
+    }
+  }
+  // Redirect back to ДЗ Голос tab
+  goTab('dz-voice', document.querySelector('.tab:nth-child(5)'));
+  renderDzVoice();
 }
 
-function dzVoiceUpdateInfo(filter) {
-  const pool = dzVoiceGetPool(filter);
-  const goal = filter==='today' ? 5 : 2;
-  const goalEl = document.getElementById('dzRoundsGoal');
-  const cntEl = document.getElementById('dzWordsCount');
-  if(goalEl) goalEl.textContent = goal;
-  if(cntEl) cntEl.textContent = pool.length;
-}
+let vtDzMode = false;
 
 // ══════════════════════════════════════════════════════════════
 // UTILS
