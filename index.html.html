@@ -7375,7 +7375,7 @@ function lrRenderCard() {
 
   // EXACT copy of textbook card structure
   const frontWord = s.mode === 'ua2de'
-    ? '<span style="font-family:'IBM Plex Sans',sans-serif;font-size:20px;">' + w.ua + '</span>'
+    ? '<span style="font-family: IBM Plex Sans, sans-serif;font-size:20px;">' + w.ua + '</span>'
     : w.de.replace(/^(das|die|der|der\/die)\s/, '<span class="art">$1 </span>');
   const frontGr = s.mode !== 'ua2de' ? (w.gr || '') : '';
   const frontLbl = s.mode !== 'ua2de' ? 'Deutsch' : 'Українська';
@@ -7877,15 +7877,15 @@ function lrChatToggleMic() {
   lrChatMicListening = true;
   const btn = document.getElementById('lrChatMic');
   if (btn) { btn.style.background = 'linear-gradient(135deg,#e8266e,#ff6bb0)'; btn.textContent = '⏹️'; }
-  let lrMicFinal = '';
+  let _accumulated = '';
   lrChatMicRec.onresult = (e) => {
     let interim = '';
     for (let i = e.resultIndex; i < e.results.length; i++) {
-      if (e.results[i].isFinal) lrMicFinal += e.results[i][0].transcript;
+      if (e.results[i].isFinal) _accumulated += e.results[i][0].transcript;
       else interim += e.results[i][0].transcript;
     }
     const input = document.getElementById('lrChatInput');
-    if (input) input.value = lrMicFinal || interim;
+    if (input) input.value = (_accumulated + interim).trim();
   };
   lrChatMicRec.onspeechend = () => {
     // Don't auto-stop, let user press button
