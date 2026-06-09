@@ -5247,41 +5247,101 @@ function saveMyExample(lk, idx, originalSentence, correctedSentence) {
 
 function showMyExamples(lk) {
   const saved = loadMyExamples();
-  const keys = Object.keys(saved).filter(k => !lk || saved[k].lk === lk);
-  const entries = keys.map(k => saved[k]);
-  if (!entries.length) {
-    alert('Поки немає збережених прикладів.');
-    return;
-  }
-  // Видаляємо старий модал якщо є
+  const data = lk ? getWordData(lk) : null;
+  const words = data ? data.words : [];
+
+  // Видаляємо старий модал
   document.getElementById('myExModal') && document.getElementById('myExModal').remove();
   const modal = document.createElement('div');
   modal.id = 'myExModal';
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;overflow-y:auto;padding:16px';
-  const box = document.createElement('div');
-  box.style.cssText = 'max-width:600px;margin:0 auto;background:#161b22;border-radius:12px;padding:16px';
-  let inner = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">';
-  inner += '<h3 style="color:#e6edf3;margin:0;font-size:15px">✎ Мої приклади (' + entries.length + ')</h3>';
-  inner += '<button id="myExClose" style="background:none;border:none;color:#7d8590;font-size:22px;cursor:pointer;line-height:1">✕</button>';
-  inner += '</div>';
-  entries.forEach((e, i) => {
-    const k = keys[i].replace(/'/g, "\'");
-    inner += '<div style="border:1px solid #30363d;border-radius:8px;padding:10px;margin-bottom:8px;background:#21262d">';
-    inner += '<div style="color:#7d8590;font-size:11px;margin-bottom:4px">' + (e.word || '') + '</div>';
-    inner += '<div style="color:#e6edf3;font-size:13px;line-height:1.5" id="myex-' + i + '">' + e.de + '</div>';
-    inner += '<div style="display:flex;gap:6px;margin-top:8px">';
-    inner += '<button data-key="' + keys[i] + '" data-i="' + i + '" class="myex-edit-btn" style="font-size:11px;padding:4px 10px;background:#21262d;border:1px solid #30363d;border-radius:6px;color:#e6edf3;cursor:pointer">✏ Змінити</button>';
-    inner += '<button data-key="' + keys[i] + '" class="myex-del-btn" style="font-size:11px;padding:4px 10px;background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.4);border-radius:6px;color:#ef4444;cursor:pointer">🗑</button>';
-    inner += '</div></div>';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;overflow-y:auto;padding:16px';
+
+  // Рахуємо приклади по словах
+  const wordExamples = {}; // wordIdx -> [examples]
+  Object.keys(saved).forEach(k => {
+    const e = saved[k];
+    if (!lk || e.lk === lk) {
+      const wIdx = e.idx !== undefined ? e.idx : null;
+      if (wIdx !== null) {
+        if (!wordExamples[wIdx]) wordExamples[wIdx] = [];
+        wordExamples[wIdx].push({key: k, ...e});
+      }
+    }
   });
-  box.innerHTML = inner;
-  modal.appendChild(box);
+
+  const total = words.length || Object.keys(wordExamples).length;
+  const done2 = words.filter((_,i) => (wordExamples[i]||[]).length >= 2).length;
+  const done1 = words.filter((_,i) => (wordExamples[i]||[]).length === 1).length;
+  const done0 = total - done2 - done1;
+
+  let html = \`<div style="max-width:600px;margin:0 auto;background:#0d1117;border-radius:16px;padding:20px;min-height:100vh">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div>
+        <div style="color:#e6edf3;font-size:16px;font-weight:700">✍️ Мої приклади</div>
+        <div style="color:#7d8590;font-size:12px;margin-top:2px">\${done2} готово · \${done1} майже · \${done0} без прикладу</div>
+      </div>
+      <button id="myExClose" style="background:none;border:none;color:#7d8590;font-size:24px;cursor:pointer;line-height:1">✕</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:16px">
+      <div style="flex:1;background:#161b22;border-radius:8px;padding:10px;text-align:center">
+        <div style="font-size:18px;font-weight:700;color:#3ecf8e">\${done2}</div>
+        <div style="font-size:10px;color:#7d8590;margin-top:2px">✅ Готово</div>
+      </div>
+      <div style="flex:1;background:#161b22;border-radius:8px;padding:10px;text-align:center">
+        <div style="font-size:18px;font-weight:700;color:#d4a843">\${done1}</div>
+        <div style="font-size:10px;color:#7d8590;margin-top:2px">🟡 Ще 1</div>
+      </div>
+      <div style="flex:1;background:#161b22;border-radius:8px;padding:10px;text-align:center">
+        <div style="font-size:18px;font-weight:700;color:#ef4444">\${done0}</div>
+        <div style="font-size:10px;color:#7d8590;margin-top:2px">⬜ Пусто</div>
+      </div>
+    </div>\`;
+
+  // Список слів
+  const renderWords = words.length ? words : Object.values(saved).filter(e=>!lk||e.lk===lk).map(e=>({de:e.word||'?',ua:''}));
+  renderWords.forEach((w, i) => {
+    const exs = wordExamples[i] || [];
+    const count = exs.length;
+    const statusColor = count >= 2 ? '#3ecf8e' : count === 1 ? '#d4a843' : '#484f58';
+    const statusIcon = count >= 2 ? '✅' : count === 1 ? '🟡' : '⬜';
+    const bgColor = count >= 2 ? 'rgba(62,207,142,.06)' : count === 1 ? 'rgba(212,168,67,.06)' : '#161b22';
+    const borderColor = count >= 2 ? 'rgba(62,207,142,.3)' : count === 1 ? 'rgba(212,168,67,.3)' : '#30363d';
+
+    html += \`<div style="border:1px solid \${borderColor};border-radius:10px;padding:12px;margin-bottom:8px;background:\${bgColor}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:\${count>0?'8px':'0'}">
+        <div>
+          <span style="font-size:13px;font-weight:600;color:#e6edf3">\${w.de}</span>
+          <span style="font-size:11px;color:#7d8590;margin-left:6px">\${w.ua||''}</span>
+        </div>
+        <span style="font-size:12px;color:\${statusColor}">\${statusIcon} \${count}/2</span>
+      </div>\`;
+
+    exs.forEach((ex, ei) => {
+      html += \`<div style="background:#0d1117;border-radius:6px;padding:8px 10px;margin-bottom:5px;position:relative">
+        <div style="font-size:12px;color:#e6edf3;line-height:1.5" id="myex-\${i}-\${ei}">\${ex.de}</div>
+        <div style="display:flex;gap:6px;margin-top:6px">
+          <button data-key="\${ex.key}" data-wi="\${i}" data-ei="\${ei}" class="myex-edit-btn" style="font-size:10px;padding:3px 8px;background:#21262d;border:1px solid #30363d;border-radius:5px;color:#e6edf3;cursor:pointer">✏</button>
+          <button data-key="\${ex.key}" data-lk="\${lk}" class="myex-del-btn" style="font-size:10px;padding:3px 8px;background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);border-radius:5px;color:#ef4444;cursor:pointer">🗑</button>
+        </div>
+      </div>\`;
+    });
+
+    if (count < 2) {
+      html += \`<div style="font-size:11px;color:#484f58;padding:4px 2px">\${count===0?'Напиши 2 приклади':'Ще один приклад і готово!'}</div>\`;
+    }
+    html += '</div>';
+  });
+
+  html += '</div>';
+  modal.innerHTML = html;
   document.body.appendChild(modal);
+
   document.getElementById('myExClose').onclick = () => modal.remove();
   modal.querySelectorAll('.myex-edit-btn').forEach(btn => {
     btn.onclick = () => {
       const key = btn.dataset.key;
-      const idx = btn.dataset.i;
+      const wi = btn.dataset.wi;
+      const ei = btn.dataset.ei;
       const sv = loadMyExamples();
       const cur = sv[key] ? sv[key].de : '';
       const newText = prompt('Редагувати:', cur);
@@ -5289,7 +5349,7 @@ function showMyExamples(lk) {
         sv[key].de = newText.trim();
         exampleCache[key] = sv[key];
         persistMyExamples(sv);
-        const el = document.getElementById('myex-' + idx);
+        const el = document.getElementById('myex-' + wi + '-' + ei);
         if (el) el.textContent = newText.trim();
       }
     };
@@ -5302,7 +5362,7 @@ function showMyExamples(lk) {
       delete exampleCache[key];
       persistMyExamples(sv);
       modal.remove();
-      showMyExamples(lk);
+      showMyExamples(btn.dataset.lk || lk);
     };
   });
 }
