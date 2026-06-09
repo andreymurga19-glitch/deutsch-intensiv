@@ -5212,21 +5212,122 @@ async function sendChat(lk, suggText) {
   }
 }
 
+const MY_EX_KEY = 'di_my_examples';
+function loadMyExamples(){ try{ return JSON.parse(localStorage.getItem(MY_EX_KEY)||'{}'); }catch(e){ return {}; } }
+function persistMyExamples(obj){ localStorage.setItem(MY_EX_KEY, JSON.stringify(obj)); }
+
+// Завантажуємо збережені приклади в cache при старті
+(function(){ const saved = loadMyExamples(); Object.assign(exampleCache, saved); })();
+
 function saveMyExample(lk, idx, originalSentence, correctedSentence) {
   const key = exKey(lk, idx);
   const data = getWordData(lk);
   const w = data?.words[idx];
   if (!w) return;
-  // Use corrected if available, else original
   const finalSentence = correctedSentence && correctedSentence !== originalSentence
     ? correctedSentence : originalSentence;
-  exampleCache[key] = { de: finalSentence, ua: '✎ Мій приклад', custom: true };
+  exampleCache[key] = { de: finalSentence, ua: '✎ Мій приклад', custom: true, word: w.de, lk, idx };
+  // Зберігаємо в di_my_examples
+  const saved = loadMyExamples();
+  saved[key] = exampleCache[key];
+  persistMyExamples(saved);
+  // ТАКОЖ зберігаємо в lrState щоб відображалось в прогресі
+  if (lrState[lk]) {
+    if (!lrState[lk].examples) lrState[lk].examples = {};
+    lrState[lk].examples[idx] = { de: finalSentence, ua: '✎ Мій приклад' };
+    lrSave();
+  }
   // Show confirmation
   const feedbackEl = document.getElementById('trn-feedback-' + lk);
   if (feedbackEl) {
     const btn = feedbackEl.querySelector('button[onclick*="saveMyExample"]');
     if (btn) { btn.textContent = '✓ Збережено!'; btn.disabled = true; }
   }
+}
+
+function showMyExamples(lk) {
+  const saved = loadMyExamples();
+  const keys = Object.keys(saved).filter(k => !lk || saved[k].lk === lk);
+  const entries = keys.map(k => saved[k]);
+  if (!entries.length) {
+    alert('Поки немає збережених прикладів.');
+    return;
+  }
+  // Видаляємо старий модал якщо є
+  document.getElementById('myExModal') && document.getElementById('myExModal').remove();
+  const modal = document.createElement('div');
+  modal.id = 'myExModal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;overflow-y:auto;padding:16px';
+  const box = document.createElement('div');
+  box.style.cssText = 'max-width:600px;margin:0 auto;background:#161b22;border-radius:12px;padding:16px';
+  let inner = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">';
+  inner += '<h3 style="color:#e6edf3;margin:0;font-size:15px">✎ Мої приклади (' + entries.length + ')</h3>';
+  inner += '<button id="myExClose" style="background:none;border:none;color:#7d8590;font-size:22px;cursor:pointer;line-height:1">✕</button>';
+  inner += '</div>';
+  entries.forEach((e, i) => {
+    const k = keys[i].replace(/'/g, "\'");
+    inner += '<div style="border:1px solid #30363d;border-radius:8px;padding:10px;margin-bottom:8px;background:#21262d">';
+    inner += '<div style="color:#7d8590;font-size:11px;margin-bottom:4px">' + (e.word || '') + '</div>';
+    inner += '<div style="color:#e6edf3;font-size:13px;line-height:1.5" id="myex-' + i + '">' + e.de + '</div>';
+    inner += '<div style="display:flex;gap:6px;margin-top:8px">';
+    inner += '<button data-key="' + keys[i] + '" data-i="' + i + '" class="myex-edit-btn" style="font-size:11px;padding:4px 10px;background:#21262d;border:1px solid #30363d;border-radius:6px;color:#e6edf3;cursor:pointer">✏ Змінити</button>';
+    inner += '<button data-key="' + keys[i] + '" class="myex-del-btn" style="font-size:11px;padding:4px 10px;background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.4);border-radius:6px;color:#ef4444;cursor:pointer">🗑</button>';
+    inner += '</div></div>';
+  });
+  box.innerHTML = inner;
+  modal.appendChild(box);
+  document.body.appendChild(modal);
+  document.getElementById('myExClose').onclick = () => modal.remove();
+  modal.querySelectorAll('.myex-edit-btn').forEach(btn => {
+    btn.onclick = () => {
+      const key = btn.dataset.key;
+      const idx = btn.dataset.i;
+      const sv = loadMyExamples();
+      const cur = sv[key] ? sv[key].de : '';
+      const newText = prompt('Редагувати:', cur);
+      if (newText && newText.trim()) {
+        sv[key].de = newText.trim();
+        exampleCache[key] = sv[key];
+        persistMyExamples(sv);
+        const el = document.getElementById('myex-' + idx);
+        if (el) el.textContent = newText.trim();
+      }
+    };
+  });
+  modal.querySelectorAll('.myex-del-btn').forEach(btn => {
+    btn.onclick = () => {
+      const key = btn.dataset.key;
+      const sv = loadMyExamples();
+      delete sv[key];
+      delete exampleCache[key];
+      persistMyExamples(sv);
+      modal.remove();
+      showMyExamples(lk);
+    };
+  });
+}
+
+function editMyExample(key, i) {
+  const saved = loadMyExamples();
+  const e = saved[key];
+  if(!e) return;
+  const newText = prompt('Редагувати приклад:', e.de);
+  if(newText && newText.trim() && newText !== e.de) {
+    saved[key].de = newText.trim();
+    exampleCache[key] = saved[key];
+    persistMyExamples(saved);
+    const el = document.getElementById('myex-text-'+i);
+    if(el) el.textContent = newText.trim();
+  }
+}
+
+function deleteMyExample(key) {
+  const saved = loadMyExamples();
+  delete saved[key];
+  delete exampleCache[key];
+  persistMyExamples(saved);
+  document.getElementById('myExModal')?.remove();
+  showMyExamples();
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -6150,7 +6251,7 @@ function speakDe(text, e) {
   if (e) e.stopPropagation();
   if (!('speechSynthesis' in window)) return;
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text.replace(/[+()=]/g, '').trim());
+  const u = new SpeechSynthesisUtterance(text.replace(/[+()=*#_~`]/g, '').replace(/\s+/g,' ').trim());
   u.lang = 'de-DE';
   u.rate = 0.85;
   // Try to find a German voice
@@ -7230,17 +7331,23 @@ function lrRenderMain(lk, data) {
   // Examples task
   const exCount = Object.keys(st.examples || {}).length;
   const exTotal = words.length;
+  // Ціль: 2 приклади на слово за тиждень
+  const exGoal = exTotal * 2;
+  const myExCount = Object.values(loadMyExamples()).filter(e=>e.lk===lrCurrentLk).length;
+  const exPct = Math.min(100, Math.round(myExCount/exGoal*100));
   html += `<div class="lr-task">
     <div class="lr-task-icon">✍️</div>
     <div class="lr-task-body">
       <div class="lr-task-title">Придумай приклади</div>
-      <div class="lr-task-sub">${exCount}/${exTotal} слів · AI перевіряє</div>
+      <div class="lr-task-sub">${myExCount}/${exGoal} прикладів · ціль: 2 на слово</div>
       <div class="lr-progress-row" style="margin-top:5px">
-        <div class="lr-pbar"><div class="lr-pbar-fill" style="width:${Math.round(exCount/exTotal*100)}%"></div></div>
+        <div class="lr-pbar"><div class="lr-pbar-fill" style="width:${exPct}%"></div></div>
       </div>
     </div>
-    <button class="lr-task-btn ex-btn" onclick="lrStartExamples()">✍️ Писати</button>
-    <button class="lr-task-btn" onclick="_showMyEx(lk)" style="margin-top:6px;background:#21262d;border:1px solid #30363d;font-size:12px">📋 Мої (${_myExCount(lk)}/${exTotal*2})</button>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <button class="lr-task-btn ex-btn" onclick="lrStartExamples()" style="padding:8px 14px">✍️ Писати</button>
+      <button class="lr-task-btn" onclick="showMyExamples(lrCurrentLk)" style="padding:6px 14px;background:#21262d;border:1px solid #30363d;font-size:12px">📋 Мої (${myExCount})</button>
+    </div>
   </div>`;
 
   // AI Chat task
@@ -7759,6 +7866,7 @@ async function lrAiSuggestExample(globalIdx, pIdx, total) {
   const w = data.words[globalIdx];
   const fb = document.getElementById('lrExFeedback');
   if (!fb) return;
+  fb.style.display = 'block';
   fb.style.background = '#21262d';
   fb.style.border = '1px solid #30363d';
   fb.innerHTML = '<div style="width:16px;height:16px;border:2px solid #30363d;border-top-color:#d4a843;border-radius:50%;animation:spin .7s linear infinite;display:inline-block"></div> AI генерує приклад...';
@@ -7785,7 +7893,7 @@ async function lrAiSuggestExample(globalIdx, pIdx, total) {
         <button class="lr-task-btn" style="width:100%;background:#21262d;color:#7d8590;margin-top:4px" onclick="lrShowExampleWriter(${pIdx+1},getWordData('${lrCurrentLk}').words,getWordData('${lrCurrentLk}').words.filter((_,i)=>!lrState['${lrCurrentLk}'].examples[i]))">⏭ Далі без збереження</button>
       </div>`;
   } catch(e) {
-    fb.innerHTML = '<div style="color:#c0185a">Помилка генерації.</div>';
+    fb.innerHTML = '<div style="color:#c0185a">❌ Помилка: ' + (e.message||e) + '</div>';
   }
 }
 
@@ -7800,7 +7908,12 @@ function lrSaveExample(globalIdx, de, ua, pIdx, total) {
   const w = data.words[globalIdx];
   exampleCache['dict|' + lrCurrentLk + '|' + w.de] = {de, ua};
   lrSave();
-  var _myEx = _loadMyEx(); _myEx[lrCurrentLk+'|'+globalIdx] = {de:de,ua:ua,word:w.de,lk:lrCurrentLk,idx:globalIdx}; _saveMyEx(_myEx);
+  // ТАКОЖ зберігаємо в di_my_examples для перегляду
+  const myKey = exKey(lrCurrentLk, globalIdx);
+  const myExSaved = loadMyExamples();
+  myExSaved[myKey] = { de, ua, custom: true, word: w.de, lk: lrCurrentLk, idx: globalIdx };
+  exampleCache[myKey] = myExSaved[myKey];
+  persistMyExamples(myExSaved);
   toast('✅ Приклад збережено!', 'var(--grn)');
   const pending = data.words.filter((_,i) => !st.examples[i]);
   lrShowExampleWriter(0, data.words, pending);
@@ -8068,103 +8181,6 @@ function lrLevenshtein(a, b) {
 // init — show B1 lektion 1 first
 switchLevel('B1');
 // initDictClicks called in closeLanding() after DOM is visible
-
-// ── MY EXAMPLES ──
-var _MY_EX = 'di_my_examples';
-function _loadMyEx(){ try{ return JSON.parse(localStorage.getItem(_MY_EX)||'{}'); }catch(e){ return {}; } }
-function _saveMyEx(o){ localStorage.setItem(_MY_EX, JSON.stringify(o)); }
-function _myExCount(lk){ return Object.values(_loadMyEx()).filter(function(e){ return e.lk===lk; }).length; }
-
-function _showMyEx(lk) {
-  var saved = _loadMyEx();
-  var data = getWordData(lk);
-  var words = data ? data.words : [];
-  var old = document.getElementById('_myExModal');
-  if (old) old.remove();
-
-  // Групуємо по слову
-  var byWord = {};
-  Object.keys(saved).forEach(function(k) {
-    var e = saved[k];
-    if (e.lk === lk) {
-      var i = Number(e.idx);
-      if (!byWord[i]) byWord[i] = [];
-      byWord[i].push({key:k, de:e.de, ua:e.ua||''});
-    }
-  });
-
-  var d2=0, d1=0, d0=0;
-  words.forEach(function(_,i){ var c=(byWord[i]||[]).length; if(c>=2)d2++; else if(c===1)d1++; else d0++; });
-
-  var modal = document.createElement('div');
-  modal.id = '_myExModal';
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;overflow-y:auto;padding:16px';
-
-  var html = '<div style="max-width:560px;margin:0 auto;background:#0d1117;border-radius:14px;padding:18px">';
-  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">';
-  html += '<div><b style="color:#e6edf3;font-size:15px">✍️ Мої приклади</b>';
-  html += '<div style="color:#7d8590;font-size:11px;margin-top:2px">'+d2+' готово · '+d1+' майже · '+d0+' пусто</div></div>';
-  html += '<button id="_myExClose" style="background:none;border:none;color:#7d8590;font-size:22px;cursor:pointer">✕</button></div>';
-
-  // Статистика
-  html += '<div style="display:flex;gap:8px;margin-bottom:14px">';
-  html += '<div style="flex:1;background:#161b22;border-radius:8px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:700;color:#3ecf8e">'+d2+'</div><div style="font-size:10px;color:#7d8590">✅ Готово</div></div>';
-  html += '<div style="flex:1;background:#161b22;border-radius:8px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:700;color:#d4a843">'+d1+'</div><div style="font-size:10px;color:#7d8590">🟡 Ще 1</div></div>';
-  html += '<div style="flex:1;background:#161b22;border-radius:8px;padding:10px;text-align:center"><div style="font-size:20px;font-weight:700;color:#ef4444">'+d0+'</div><div style="font-size:10px;color:#7d8590">⬜ Пусто</div></div>';
-  html += '</div>';
-
-  // Слова
-  words.forEach(function(w, i) {
-    var exs = byWord[i] || [];
-    var c = exs.length;
-    var bc = c>=2 ? 'rgba(62,207,142,.3)' : c===1 ? 'rgba(212,168,67,.3)' : '#21262d';
-    var bg = c>=2 ? 'rgba(62,207,142,.05)' : c===1 ? 'rgba(212,168,67,.05)' : '#161b22';
-    var ic = c>=2 ? '✅' : c===1 ? '🟡' : '⬜';
-    var cc = c>=2 ? '#3ecf8e' : c===1 ? '#d4a843' : '#484f58';
-    html += '<div style="border:1px solid '+bc+';border-radius:10px;padding:11px;margin-bottom:7px;background:'+bg+'">';
-    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:'+(c>0?'7':'0')+'px">';
-    html += '<span style="font-size:13px;font-weight:600;color:#e6edf3">'+w.de+'</span>';
-    html += '<span style="font-size:12px;color:'+cc+'">'+ic+' '+c+'/2</span></div>';
-    exs.forEach(function(ex, ei) {
-      html += '<div style="background:#0d1117;border-radius:6px;padding:7px 10px;margin-bottom:4px">';
-      html += '<div style="font-size:12px;color:#e6edf3;line-height:1.5" id="_ex_'+i+'_'+ei+'">'+ex.de+'</div>';
-      html += '<div style="display:flex;gap:5px;margin-top:5px">';
-      html += '<button data-k="'+ex.key+'" data-i="'+i+'" data-e="'+ei+'" data-lk="'+lk+'" class="_exEdit" style="font-size:10px;padding:3px 8px;background:#21262d;border:1px solid #30363d;border-radius:5px;color:#e6edf3;cursor:pointer">✏</button>';
-      html += '<button data-k="'+ex.key+'" data-lk="'+lk+'" class="_exDel" style="font-size:10px;padding:3px 8px;background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);border-radius:5px;color:#ef4444;cursor:pointer">🗑</button>';
-      html += '</div></div>';
-    });
-    if (c < 2) html += '<div style="font-size:11px;color:#484f58;margin-top:3px">'+(c===0?'Напиши 2 приклади':'Ще один — і готово!')+'</div>';
-    html += '</div>';
-  });
-  html += '</div>';
-  modal.innerHTML = html;
-  document.body.appendChild(modal);
-
-  document.getElementById('_myExClose').onclick = function(){ modal.remove(); };
-  modal.querySelectorAll('._exEdit').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var sv = _loadMyEx();
-      var cur = sv[btn.dataset.k] ? sv[btn.dataset.k].de : '';
-      var nt = prompt('Редагувати:', cur);
-      if (nt && nt.trim()) {
-        sv[btn.dataset.k].de = nt.trim();
-        _saveMyEx(sv);
-        var el = document.getElementById('_ex_'+btn.dataset.i+'_'+btn.dataset.e);
-        if (el) el.textContent = nt.trim();
-      }
-    });
-  });
-  modal.querySelectorAll('._exDel').forEach(function(btn) {
-    btn.addEventListener('click', function() {
-      var sv = _loadMyEx();
-      delete sv[btn.dataset.k];
-      _saveMyEx(sv);
-      modal.remove();
-      _showMyEx(btn.dataset.lk);
-    });
-  });
-}
-
 </script>
 
 <!-- ══════════════════════════════════════════════════════════
