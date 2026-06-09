@@ -5241,29 +5241,64 @@ function saveMyExample(lk, idx, originalSentence, correctedSentence) {
 
 function showMyExamples(lk) {
   const saved = loadMyExamples();
-  const entries = Object.values(saved).filter(e => !lk || e.lk === lk);
-  if(!entries.length){
-    alert('Поки немає збережених прикладів. Придумай приклад до слова і натисни "Зберегти".');
+  const keys = Object.keys(saved).filter(k => !lk || saved[k].lk === lk);
+  const entries = keys.map(k => saved[k]);
+  if (!entries.length) {
+    alert('Поки немає збережених прикладів.');
     return;
   }
-  // Будуємо модальне вікно
-  let html = '<div style="position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;overflow-y:auto;padding:20px" id="myExModal">';
-  html += '<div style="max-width:600px;margin:0 auto;background:#161b22;border-radius:12px;padding:20px">';
-  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
-  html += '<h3 style="color:#e6edf3;margin:0">✎ Мої приклади ('+entries.length+')</h3>';
-  html += '<button onclick="document.getElementById('myExModal').remove()" style="background:none;border:none;color:#7d8590;font-size:20px;cursor:pointer">✕</button>';
-  html += '</div>';
-  entries.forEach((e,i) => {
-    html += '<div style="border:1px solid #30363d;border-radius:8px;padding:12px;margin-bottom:8px;background:#21262d">';
-    html += '<div style="color:#7d8590;font-size:11px;margin-bottom:4px">'+(e.word||'')+'</div>';
-    html += '<div style="color:#e6edf3;font-size:14px" id="myex-text-'+i+'">'+e.de+'</div>';
-    html += '<div style="display:flex;gap:8px;margin-top:8px">';
-    html += '<button onclick="editMyExample(''+Object.keys(saved).filter(k=>!lk||saved[k].lk===lk)[i]+'','+i+')" style="font-size:12px;padding:4px 10px;background:#21262d;border:1px solid #30363d;border-radius:6px;color:#e6edf3;cursor:pointer">✏ Редагувати</button>';
-    html += '<button onclick="deleteMyExample(''+Object.keys(saved).filter(k=>!lk||saved[k].lk===lk)[i]+'')" style="font-size:12px;padding:4px 10px;background:rgba(220,38,38,.2);border:1px solid rgba(220,38,38,.4);border-radius:6px;color:#ef4444;cursor:pointer">🗑 Видалити</button>';
-    html += '</div></div>';
+  // Видаляємо старий модал якщо є
+  document.getElementById('myExModal') && document.getElementById('myExModal').remove();
+  const modal = document.createElement('div');
+  modal.id = 'myExModal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;overflow-y:auto;padding:16px';
+  const box = document.createElement('div');
+  box.style.cssText = 'max-width:600px;margin:0 auto;background:#161b22;border-radius:12px;padding:16px';
+  let inner = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">';
+  inner += '<h3 style="color:#e6edf3;margin:0;font-size:15px">✎ Мої приклади (' + entries.length + ')</h3>';
+  inner += '<button id="myExClose" style="background:none;border:none;color:#7d8590;font-size:22px;cursor:pointer;line-height:1">✕</button>';
+  inner += '</div>';
+  entries.forEach((e, i) => {
+    const k = keys[i].replace(/'/g, "\'");
+    inner += '<div style="border:1px solid #30363d;border-radius:8px;padding:10px;margin-bottom:8px;background:#21262d">';
+    inner += '<div style="color:#7d8590;font-size:11px;margin-bottom:4px">' + (e.word || '') + '</div>';
+    inner += '<div style="color:#e6edf3;font-size:13px;line-height:1.5" id="myex-' + i + '">' + e.de + '</div>';
+    inner += '<div style="display:flex;gap:6px;margin-top:8px">';
+    inner += '<button data-key="' + keys[i] + '" data-i="' + i + '" class="myex-edit-btn" style="font-size:11px;padding:4px 10px;background:#21262d;border:1px solid #30363d;border-radius:6px;color:#e6edf3;cursor:pointer">✏ Змінити</button>';
+    inner += '<button data-key="' + keys[i] + '" class="myex-del-btn" style="font-size:11px;padding:4px 10px;background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.4);border-radius:6px;color:#ef4444;cursor:pointer">🗑</button>';
+    inner += '</div></div>';
   });
-  html += '</div></div>';
-  document.body.insertAdjacentHTML('beforeend', html);
+  box.innerHTML = inner;
+  modal.appendChild(box);
+  document.body.appendChild(modal);
+  document.getElementById('myExClose').onclick = () => modal.remove();
+  modal.querySelectorAll('.myex-edit-btn').forEach(btn => {
+    btn.onclick = () => {
+      const key = btn.dataset.key;
+      const idx = btn.dataset.i;
+      const sv = loadMyExamples();
+      const cur = sv[key] ? sv[key].de : '';
+      const newText = prompt('Редагувати:', cur);
+      if (newText && newText.trim()) {
+        sv[key].de = newText.trim();
+        exampleCache[key] = sv[key];
+        persistMyExamples(sv);
+        const el = document.getElementById('myex-' + idx);
+        if (el) el.textContent = newText.trim();
+      }
+    };
+  });
+  modal.querySelectorAll('.myex-del-btn').forEach(btn => {
+    btn.onclick = () => {
+      const key = btn.dataset.key;
+      const sv = loadMyExamples();
+      delete sv[key];
+      delete exampleCache[key];
+      persistMyExamples(sv);
+      modal.remove();
+      showMyExamples(lk);
+    };
+  });
 }
 
 function editMyExample(key, i) {
