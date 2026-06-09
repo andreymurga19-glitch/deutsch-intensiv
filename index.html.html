@@ -7804,6 +7804,11 @@ function lrSaveExample(globalIdx, de, ua, pIdx, total) {
   const w = data.words[globalIdx];
   exampleCache['dict|' + lrCurrentLk + '|' + w.de] = {de, ua};
   lrSave();
+  // Також зберігаємо в MY_EX_KEY для вікна "Мої приклади"
+  const myKey = lrCurrentLk + '|' + globalIdx;
+  const myEx = loadMyExamples();
+  myEx[myKey] = {de: de, ua: ua, custom: true, word: w.de, lk: lrCurrentLk, idx: globalIdx};
+  persistMyExamples(myEx);
   toast('✅ Приклад збережено!', 'var(--grn)');
   const pending = data.words.filter((_,i) => !st.examples[i]);
   lrShowExampleWriter(0, data.words, pending);
