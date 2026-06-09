@@ -5227,10 +5227,16 @@ function saveMyExample(lk, idx, originalSentence, correctedSentence) {
   const finalSentence = correctedSentence && correctedSentence !== originalSentence
     ? correctedSentence : originalSentence;
   exampleCache[key] = { de: finalSentence, ua: '✎ Мій приклад', custom: true, word: w.de, lk, idx };
-  // Зберігаємо в localStorage
+  // Зберігаємо в di_my_examples
   const saved = loadMyExamples();
   saved[key] = exampleCache[key];
   persistMyExamples(saved);
+  // ТАКОЖ зберігаємо в lrState щоб відображалось в прогресі
+  if (lrState[lk]) {
+    if (!lrState[lk].examples) lrState[lk].examples = {};
+    lrState[lk].examples[idx] = { de: finalSentence, ua: '✎ Мій приклад' };
+    lrSave();
+  }
   // Show confirmation
   const feedbackEl = document.getElementById('trn-feedback-' + lk);
   if (feedbackEl) {
@@ -7886,7 +7892,7 @@ async function lrAiSuggestExample(globalIdx, pIdx, total) {
         <button class="lr-task-btn" style="width:100%;background:#21262d;color:#7d8590;margin-top:4px" onclick="lrShowExampleWriter(${pIdx+1},getWordData('${lrCurrentLk}').words,getWordData('${lrCurrentLk}').words.filter((_,i)=>!lrState['${lrCurrentLk}'].examples[i]))">⏭ Далі без збереження</button>
       </div>`;
   } catch(e) {
-    fb.innerHTML = '<div style="color:#c0185a">Помилка генерації.</div>';
+    fb.innerHTML = '<div style="color:#c0185a">❌ Помилка: ' + (e.message||e) + '</div>';
   }
 }
 
@@ -7901,6 +7907,12 @@ function lrSaveExample(globalIdx, de, ua, pIdx, total) {
   const w = data.words[globalIdx];
   exampleCache['dict|' + lrCurrentLk + '|' + w.de] = {de, ua};
   lrSave();
+  // ТАКОЖ зберігаємо в di_my_examples для перегляду
+  const myKey = exKey(lrCurrentLk, globalIdx);
+  const myExSaved = loadMyExamples();
+  myExSaved[myKey] = { de, ua, custom: true, word: w.de, lk: lrCurrentLk, idx: globalIdx };
+  exampleCache[myKey] = myExSaved[myKey];
+  persistMyExamples(myExSaved);
   toast('✅ Приклад збережено!', 'var(--grn)');
   const pending = data.words.filter((_,i) => !st.examples[i]);
   lrShowExampleWriter(0, data.words, pending);
