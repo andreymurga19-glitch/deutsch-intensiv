@@ -5212,21 +5212,81 @@ async function sendChat(lk, suggText) {
   }
 }
 
+const MY_EX_KEY = 'di_my_examples';
+function loadMyExamples(){ try{ return JSON.parse(localStorage.getItem(MY_EX_KEY)||'{}'); }catch(e){ return {}; } }
+function persistMyExamples(obj){ localStorage.setItem(MY_EX_KEY, JSON.stringify(obj)); }
+
+// Завантажуємо збережені приклади в cache при старті
+(function(){ const saved = loadMyExamples(); Object.assign(exampleCache, saved); })();
+
 function saveMyExample(lk, idx, originalSentence, correctedSentence) {
   const key = exKey(lk, idx);
   const data = getWordData(lk);
   const w = data?.words[idx];
   if (!w) return;
-  // Use corrected if available, else original
   const finalSentence = correctedSentence && correctedSentence !== originalSentence
     ? correctedSentence : originalSentence;
-  exampleCache[key] = { de: finalSentence, ua: '✎ Мій приклад', custom: true };
+  exampleCache[key] = { de: finalSentence, ua: '✎ Мій приклад', custom: true, word: w.de, lk, idx };
+  // Зберігаємо в localStorage
+  const saved = loadMyExamples();
+  saved[key] = exampleCache[key];
+  persistMyExamples(saved);
   // Show confirmation
   const feedbackEl = document.getElementById('trn-feedback-' + lk);
   if (feedbackEl) {
     const btn = feedbackEl.querySelector('button[onclick*="saveMyExample"]');
     if (btn) { btn.textContent = '✓ Збережено!'; btn.disabled = true; }
   }
+}
+
+function showMyExamples(lk) {
+  const saved = loadMyExamples();
+  const entries = Object.values(saved).filter(e => !lk || e.lk === lk);
+  if(!entries.length){
+    alert('Поки немає збережених прикладів. Придумай приклад до слова і натисни "Зберегти".');
+    return;
+  }
+  // Будуємо модальне вікно
+  let html = '<div style="position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;overflow-y:auto;padding:20px" id="myExModal">';
+  html += '<div style="max-width:600px;margin:0 auto;background:#161b22;border-radius:12px;padding:20px">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">';
+  html += '<h3 style="color:#e6edf3;margin:0">✎ Мої приклади ('+entries.length+')</h3>';
+  html += '<button onclick="document.getElementById('myExModal').remove()" style="background:none;border:none;color:#7d8590;font-size:20px;cursor:pointer">✕</button>';
+  html += '</div>';
+  entries.forEach((e,i) => {
+    html += '<div style="border:1px solid #30363d;border-radius:8px;padding:12px;margin-bottom:8px;background:#21262d">';
+    html += '<div style="color:#7d8590;font-size:11px;margin-bottom:4px">'+(e.word||'')+'</div>';
+    html += '<div style="color:#e6edf3;font-size:14px" id="myex-text-'+i+'">'+e.de+'</div>';
+    html += '<div style="display:flex;gap:8px;margin-top:8px">';
+    html += '<button onclick="editMyExample(''+Object.keys(saved).filter(k=>!lk||saved[k].lk===lk)[i]+'','+i+')" style="font-size:12px;padding:4px 10px;background:#21262d;border:1px solid #30363d;border-radius:6px;color:#e6edf3;cursor:pointer">✏ Редагувати</button>';
+    html += '<button onclick="deleteMyExample(''+Object.keys(saved).filter(k=>!lk||saved[k].lk===lk)[i]+'')" style="font-size:12px;padding:4px 10px;background:rgba(220,38,38,.2);border:1px solid rgba(220,38,38,.4);border-radius:6px;color:#ef4444;cursor:pointer">🗑 Видалити</button>';
+    html += '</div></div>';
+  });
+  html += '</div></div>';
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function editMyExample(key, i) {
+  const saved = loadMyExamples();
+  const e = saved[key];
+  if(!e) return;
+  const newText = prompt('Редагувати приклад:', e.de);
+  if(newText && newText.trim() && newText !== e.de) {
+    saved[key].de = newText.trim();
+    exampleCache[key] = saved[key];
+    persistMyExamples(saved);
+    const el = document.getElementById('myex-text-'+i);
+    if(el) el.textContent = newText.trim();
+  }
+}
+
+function deleteMyExample(key) {
+  const saved = loadMyExamples();
+  delete saved[key];
+  delete exampleCache[key];
+  persistMyExamples(saved);
+  document.getElementById('myExModal')?.remove();
+  showMyExamples();
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -6150,7 +6210,7 @@ function speakDe(text, e) {
   if (e) e.stopPropagation();
   if (!('speechSynthesis' in window)) return;
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text.replace(/[+()=]/g, '').trim());
+  const u = new SpeechSynthesisUtterance(text.replace(/[+()=*#_~`]/g, '').replace(/\s+/g,' ').trim());
   u.lang = 'de-DE';
   u.rate = 0.85;
   // Try to find a German voice
@@ -7230,16 +7290,23 @@ function lrRenderMain(lk, data) {
   // Examples task
   const exCount = Object.keys(st.examples || {}).length;
   const exTotal = words.length;
+  // Ціль: 2 приклади на слово за тиждень
+  const exGoal = exTotal * 2;
+  const myExCount = Object.values(loadMyExamples()).filter(e=>e.lk===lrCurrentLk).length;
+  const exPct = Math.min(100, Math.round(myExCount/exGoal*100));
   html += `<div class="lr-task">
     <div class="lr-task-icon">✍️</div>
     <div class="lr-task-body">
       <div class="lr-task-title">Придумай приклади</div>
-      <div class="lr-task-sub">${exCount}/${exTotal} слів · AI перевіряє</div>
+      <div class="lr-task-sub">${myExCount}/${exGoal} прикладів · ціль: 2 на слово</div>
       <div class="lr-progress-row" style="margin-top:5px">
-        <div class="lr-pbar"><div class="lr-pbar-fill" style="width:${Math.round(exCount/exTotal*100)}%"></div></div>
+        <div class="lr-pbar"><div class="lr-pbar-fill" style="width:${exPct}%"></div></div>
       </div>
     </div>
-    <button class="lr-task-btn ex-btn" onclick="lrStartExamples()">✍️ Писати</button>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <button class="lr-task-btn ex-btn" onclick="lrStartExamples()" style="padding:8px 14px">✍️ Писати</button>
+      <button class="lr-task-btn" onclick="showMyExamples(lrCurrentLk)" style="padding:6px 14px;background:#21262d;border:1px solid #30363d;font-size:12px">📋 Мої (${myExCount})</button>
+    </div>
   </div>`;
 
   // AI Chat task
