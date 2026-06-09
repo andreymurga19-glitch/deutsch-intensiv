@@ -5203,7 +5203,8 @@ async function sendChat(lk, suggText) {
     s.chatHistory.push({ role: 'assistant', content: aiText });
 
     loadingMsg.className = 'chat-msg ai';
-    loadingMsg.innerHTML = aiText.replace(/\n/g, '<br>');
+    const aiMd = aiText.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>').replace(/\n/g,'<br>');
+    loadingMsg.innerHTML = aiMd;
     msgsEl.scrollTop = msgsEl.scrollHeight;
   } catch(e) {
     loadingMsg.className = 'chat-msg ai';
@@ -7937,7 +7938,10 @@ function lrChatAddMsg(role, text) {
   const isAi = role === 'ai';
   if (isAi) {
     div.style.cssText = 'background:#21262d;border:1px solid #30363d;border-radius:4px 12px 12px 12px;padding:10px 13px;font-size:13px;line-height:1.6;color:#e6edf3;position:relative';
-    div.innerHTML = '<div style="padding-right:30px">' + text + '</div>' +
+    const mdText = text
+      .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+      .replace(/\*(.+?)\*/g, '<i>$1</i>');
+    div.innerHTML = '<div style="padding-right:30px">' + mdText + '</div>' +
       '<button onclick="speakDe(this.closest(\'div[style]\').querySelector(\'div\').textContent)" style="position:absolute;top:8px;right:8px;background:none;border:none;color:#7d8590;cursor:pointer;font-size:13px;opacity:.7" title="Прослухати">🔊</button>';
   } else {
     div.style.cssText = 'background:rgba(26,58,107,.4);border:1px solid #1a3a6b;border-radius:12px 4px 12px 12px;padding:10px 13px;font-size:13px;line-height:1.6;color:#e6edf3;text-align:right';
