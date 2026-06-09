@@ -7866,6 +7866,7 @@ async function lrAiSuggestExample(globalIdx, pIdx, total) {
   const w = data.words[globalIdx];
   const fb = document.getElementById('lrExFeedback');
   if (!fb) return;
+  fb.style.display = 'block';
   fb.style.background = '#21262d';
   fb.style.border = '1px solid #30363d';
   fb.innerHTML = '<div style="width:16px;height:16px;border:2px solid #30363d;border-top-color:#d4a843;border-radius:50%;animation:spin .7s linear infinite;display:inline-block"></div> AI генерує приклад...';
