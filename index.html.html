@@ -5345,14 +5345,48 @@ function showHomework(lk) {
       var sv = loadMyExamples();
       var k = btn.dataset.key;
       if (!sv[k]) return;
-      var nt = prompt('Редагувати:', sv[k].de);
-      if (nt && nt.trim()) {
-        sv[k].de = nt.trim();
+      var el = document.getElementById('hwt-'+btn.dataset.wi+'-'+btn.dataset.ei);
+      if (!el) return;
+      // Замінюємо текст на textarea
+      var cur = sv[k].de;
+      var ta = document.createElement('textarea');
+      ta.value = cur;
+      ta.style.cssText = 'width:100%;font-size:13px;color:#1a2a40;line-height:1.5;border:2px solid #1a3a6b;border-radius:6px;padding:6px 8px;font-family:inherit;resize:none;min-height:60px;box-sizing:border-box;margin-bottom:4px;outline:none';
+      var saveBtn = document.createElement('button');
+      saveBtn.textContent = '✅ Зберегти';
+      saveBtn.style.cssText = 'font-size:11px;padding:4px 12px;background:#1a3a6b;border:none;border-radius:5px;color:#fff;cursor:pointer;margin-right:6px';
+      var cancelBtn = document.createElement('button');
+      cancelBtn.textContent = '✕ Скасувати';
+      cancelBtn.style.cssText = 'font-size:11px;padding:4px 10px;background:#f4f6fa;border:1px solid #d0d8e8;border-radius:5px;color:#7a90b0;cursor:pointer';
+      var wrap = document.createElement('div');
+      wrap.appendChild(ta);
+      var btnRow = document.createElement('div');
+      btnRow.style.cssText = 'display:flex;gap:6px;margin-top:4px';
+      btnRow.appendChild(saveBtn);
+      btnRow.appendChild(cancelBtn);
+      wrap.appendChild(btnRow);
+      el.replaceWith(wrap);
+      ta.focus();
+      ta.select();
+      saveBtn.addEventListener('click', function() {
+        var nt = ta.value.trim();
+        if (!nt) return;
+        sv[k].de = nt;
         persistMyExamples(sv);
-        var el = document.getElementById('hwt-'+btn.dataset.wi+'-'+btn.dataset.ei);
-        if (el) el.textContent = nt.trim();
+        var newEl = document.createElement('div');
+        newEl.id = 'hwt-'+btn.dataset.wi+'-'+btn.dataset.ei;
+        newEl.style.cssText = 'font-size:13px;color:#1a2a40;line-height:1.5;margin-bottom:6px';
+        newEl.textContent = nt;
+        wrap.replaceWith(newEl);
         toast('✅ Збережено', 'var(--green)');
-      }
+      });
+      cancelBtn.addEventListener('click', function() {
+        var newEl = document.createElement('div');
+        newEl.id = 'hwt-'+btn.dataset.wi+'-'+btn.dataset.ei;
+        newEl.style.cssText = 'font-size:13px;color:#1a2a40;line-height:1.5;margin-bottom:6px';
+        newEl.textContent = cur;
+        wrap.replaceWith(newEl);
+      });
     });
   });
 
@@ -8150,9 +8184,25 @@ function lrSaveChat() {
 }
 
 function lrViewSavedChat(chatId) {
-  var msgs = JSON.parse(localStorage.getItem('lr_chat_' + chatId) || '[]');
+  var msgs = [];
+  if (chatId) msgs = JSON.parse(localStorage.getItem('lr_chat_' + chatId) || '[]');
+  // Для старих розмов - спробуємо знайти в lrState по chatId
+  if (!msgs.length && lrCurrentLk && lrState[lrCurrentLk]) {
+    var chats = lrState[lrCurrentLk].savedChats || [];
+    var chat = chats.find(function(c){ return c.id === chatId; });
+    if (chat && chat.messages_data) msgs = chat.messages_data;
+  }
   if (!msgs.length) {
-    toast('Розмову не знайдено. Збережи нову розмову кнопкою "Зберегти розмову"', 'var(--muted)');
+    // Показуємо preview якщо є
+    if (lrCurrentLk && lrState[lrCurrentLk]) {
+      var chats2 = lrState[lrCurrentLk].savedChats || [];
+      var chat2 = chats2.find(function(c){ return (c.id||0) === chatId; });
+      if (chat2) {
+        toast('Ця розмова збережена до нового формату. Тема: ' + (chat2.topic||'?') + ', ' + chat2.date, 'var(--muted)');
+        return;
+      }
+    }
+    toast('Розмову не знайдено', 'var(--muted)');
     return;
   }
 
