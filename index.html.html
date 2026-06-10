@@ -5246,64 +5246,135 @@ function saveMyExample(lk, idx, originalSentence, correctedSentence) {
 }
 
 function showMyExamples(lk) {
-  const saved = loadMyExamples();
-  const keys = Object.keys(saved).filter(k => !lk || saved[k].lk === lk);
-  const entries = keys.map(k => saved[k]);
-  if (!entries.length) {
-    alert('Поки немає збережених прикладів.');
-    return;
+  var saved = loadMyExamples();
+  var data = getWordData(lk);
+  var words = data ? data.words : [];
+
+  // Групуємо приклади по слову
+  var byWord = {};
+  Object.keys(saved).forEach(function(k) {
+    var e = saved[k];
+    if (e.lk === lk) {
+      var i = Number(e.idx);
+      if (!byWord[i]) byWord[i] = [];
+      byWord[i].push({key: k, de: e.de});
+    }
+  });
+
+  // Розбиваємо слова на 3 групи
+  var need2 = [], need1 = [], done = [];
+  words.forEach(function(w, i) {
+    var c = (byWord[i] || []).length;
+    if (c >= 2) done.push({w: w, i: i, exs: byWord[i]});
+    else if (c === 1) need1.push({w: w, i: i, exs: byWord[i]});
+    else need2.push({w: w, i: i, exs: []});
+  });
+
+  // Видаляємо старий модал
+  var old = document.getElementById('_myExModal');
+  if (old) old.remove();
+
+  var modal = document.createElement('div');
+  modal.id = '_myExModal';
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:9999;overflow-y:auto;padding:12px';
+
+  var html = '<div style="max-width:560px;margin:0 auto;padding-bottom:40px">';
+
+  // Заголовок
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;position:sticky;top:0;background:rgba(0,0,0,.93);padding:8px 0">';
+  html += '<div><div style="color:#e6edf3;font-size:16px;font-weight:700">📋 Домашнє завдання</div>';
+  html += '<div style="color:#7d8590;font-size:11px;margin-top:2px">'+done.length+'/'+words.length+' слів готово</div></div>';
+  html += '<button id="_myExClose" style="background:none;border:none;color:#7d8590;font-size:26px;cursor:pointer;line-height:1">✕</button></div>';
+
+  // Прогрес бар
+  var pct = words.length ? Math.round(done.length / words.length * 100) : 0;
+  html += '<div style="background:#21262d;border-radius:99px;height:8px;margin-bottom:20px">';
+  html += '<div style="background:linear-gradient(90deg,#3ecf8e,#22c55e);height:8px;border-radius:99px;width:'+pct+'%;transition:width .3s"></div></div>';
+
+  // Секція 1: Треба написати (0 прикладів)
+  if (need2.length) {
+    html += '<div style="color:#ef4444;font-size:11px;font-weight:700;letter-spacing:.08em;margin-bottom:8px">⬜ ТРЕБА НАПИСАТИ ('+need2.length+')</div>';
+    need2.forEach(function(item) {
+      html += '<div style="border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:12px;margin-bottom:6px;background:rgba(239,68,68,.04)">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center">';
+      html += '<div><span style="color:#e6edf3;font-size:13px;font-weight:600">'+item.w.de+'</span>';
+      html += '<span style="color:#7d8590;font-size:11px;margin-left:8px">'+item.w.ua+'</span></div>';
+      html += '<span style="color:#ef4444;font-size:11px">0/2</span></div>';
+      html += '<div style="color:#484f58;font-size:11px;margin-top:5px">Напиши 2 приклади</div></div>';
+    });
+    html += '<div style="margin-bottom:16px"></div>';
   }
-  // Видаляємо старий модал якщо є
-  document.getElementById('myExModal') && document.getElementById('myExModal').remove();
-  const modal = document.createElement('div');
-  modal.id = 'myExModal';
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;overflow-y:auto;padding:16px';
-  const box = document.createElement('div');
-  box.style.cssText = 'max-width:600px;margin:0 auto;background:#161b22;border-radius:12px;padding:16px';
-  let inner = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">';
-  inner += '<h3 style="color:#e6edf3;margin:0;font-size:15px">✎ Мої приклади (' + entries.length + ')</h3>';
-  inner += '<button id="myExClose" style="background:none;border:none;color:#7d8590;font-size:22px;cursor:pointer;line-height:1">✕</button>';
-  inner += '</div>';
-  entries.forEach((e, i) => {
-    const k = keys[i].replace(/'/g, "\'");
-    inner += '<div style="border:1px solid #30363d;border-radius:8px;padding:10px;margin-bottom:8px;background:#21262d">';
-    inner += '<div style="color:#7d8590;font-size:11px;margin-bottom:4px">' + (e.word || '') + '</div>';
-    inner += '<div style="color:#e6edf3;font-size:13px;line-height:1.5" id="myex-' + i + '">' + e.de + '</div>';
-    inner += '<div style="display:flex;gap:6px;margin-top:8px">';
-    inner += '<button data-key="' + keys[i] + '" data-i="' + i + '" class="myex-edit-btn" style="font-size:11px;padding:4px 10px;background:#21262d;border:1px solid #30363d;border-radius:6px;color:#e6edf3;cursor:pointer">✏ Змінити</button>';
-    inner += '<button data-key="' + keys[i] + '" class="myex-del-btn" style="font-size:11px;padding:4px 10px;background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.4);border-radius:6px;color:#ef4444;cursor:pointer">🗑</button>';
-    inner += '</div></div>';
-  });
-  box.innerHTML = inner;
-  modal.appendChild(box);
+
+  // Секція 2: Майже (1 приклад)
+  if (need1.length) {
+    html += '<div style="color:#d4a843;font-size:11px;font-weight:700;letter-spacing:.08em;margin-bottom:8px">🟡 МАЙЖЕ ГОТОВО ('+need1.length+')</div>';
+    need1.forEach(function(item) {
+      html += '<div style="border:1px solid rgba(212,168,67,.3);border-radius:10px;padding:12px;margin-bottom:6px;background:rgba(212,168,67,.05)">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+      html += '<div><span style="color:#e6edf3;font-size:13px;font-weight:600">'+item.w.de+'</span>';
+      html += '<span style="color:#7d8590;font-size:11px;margin-left:8px">'+item.w.ua+'</span></div>';
+      html += '<span style="color:#d4a843;font-size:11px">1/2</span></div>';
+      var ex = item.exs[0];
+      html += '<div style="background:#0d1117;border-radius:6px;padding:8px 10px">';
+      html += '<div style="font-size:12px;color:#e6edf3" id="_ex_'+item.i+'_0">'+ex.de+'</div>';
+      html += '<div style="display:flex;gap:5px;margin-top:5px">';
+      html += '<button data-k="'+ex.key+'" data-wi="'+item.i+'" data-ei="0" data-lk="'+lk+'" class="_exEdit" style="font-size:10px;padding:2px 8px;background:#21262d;border:1px solid #30363d;border-radius:5px;color:#e6edf3;cursor:pointer">✏</button>';
+      html += '<button data-k="'+ex.key+'" data-lk="'+lk+'" class="_exDel" style="font-size:10px;padding:2px 8px;background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);border-radius:5px;color:#ef4444;cursor:pointer">🗑</button>';
+      html += '</div></div>';
+      html += '<div style="color:#d4a843;font-size:11px;margin-top:6px">← Ще один приклад і готово!</div></div>';
+    });
+    html += '<div style="margin-bottom:16px"></div>';
+  }
+
+  // Секція 3: Готово (2 приклади)
+  if (done.length) {
+    html += '<div style="color:#3ecf8e;font-size:11px;font-weight:700;letter-spacing:.08em;margin-bottom:8px">✅ ГОТОВО ('+done.length+')</div>';
+    done.forEach(function(item) {
+      html += '<div style="border:1px solid rgba(62,207,142,.25);border-radius:10px;padding:12px;margin-bottom:6px;background:rgba(62,207,142,.04)">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+      html += '<div><span style="color:#e6edf3;font-size:13px;font-weight:600">'+item.w.de+'</span>';
+      html += '<span style="color:#7d8590;font-size:11px;margin-left:8px">'+item.w.ua+'</span></div>';
+      html += '<span style="color:#3ecf8e;font-size:11px">2/2 ✅</span></div>';
+      item.exs.forEach(function(ex, ei) {
+        html += '<div style="background:#0d1117;border-radius:6px;padding:8px 10px;margin-bottom:4px">';
+        html += '<div style="font-size:12px;color:#e6edf3" id="_ex_'+item.i+'_'+ei+'">'+ex.de+'</div>';
+        html += '<div style="display:flex;gap:5px;margin-top:5px">';
+        html += '<button data-k="'+ex.key+'" data-wi="'+item.i+'" data-ei="'+ei+'" data-lk="'+lk+'" class="_exEdit" style="font-size:10px;padding:2px 8px;background:#21262d;border:1px solid #30363d;border-radius:5px;color:#e6edf3;cursor:pointer">✏</button>';
+        html += '<button data-k="'+ex.key+'" data-lk="'+lk+'" class="_exDel" style="font-size:10px;padding:2px 8px;background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);border-radius:5px;color:#ef4444;cursor:pointer">🗑</button>';
+        html += '</div></div>';
+      });
+      html += '</div>';
+    });
+  }
+
+  html += '</div>';
+  modal.innerHTML = html;
   document.body.appendChild(modal);
-  document.getElementById('myExClose').onclick = () => modal.remove();
-  modal.querySelectorAll('.myex-edit-btn').forEach(btn => {
-    btn.onclick = () => {
-      const key = btn.dataset.key;
-      const idx = btn.dataset.i;
-      const sv = loadMyExamples();
-      const cur = sv[key] ? sv[key].de : '';
-      const newText = prompt('Редагувати:', cur);
-      if (newText && newText.trim()) {
-        sv[key].de = newText.trim();
-        exampleCache[key] = sv[key];
+
+  document.getElementById('_myExClose').onclick = function() { modal.remove(); };
+
+  modal.querySelectorAll('._exEdit').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var sv = loadMyExamples();
+      var cur = sv[btn.dataset.k] ? sv[btn.dataset.k].de : '';
+      var nt = prompt('Редагувати:', cur);
+      if (nt && nt.trim()) {
+        sv[btn.dataset.k].de = nt.trim();
         persistMyExamples(sv);
-        const el = document.getElementById('myex-' + idx);
-        if (el) el.textContent = newText.trim();
+        var el = document.getElementById('_ex_' + btn.dataset.wi + '_' + btn.dataset.ei);
+        if (el) el.textContent = nt.trim();
       }
-    };
+    });
   });
-  modal.querySelectorAll('.myex-del-btn').forEach(btn => {
-    btn.onclick = () => {
-      const key = btn.dataset.key;
-      const sv = loadMyExamples();
-      delete sv[key];
-      delete exampleCache[key];
+
+  modal.querySelectorAll('._exDel').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var sv = loadMyExamples();
+      delete sv[btn.dataset.k];
       persistMyExamples(sv);
       modal.remove();
-      showMyExamples(lk);
-    };
+      showMyExamples(btn.dataset.lk);
+    });
   });
 }
 
