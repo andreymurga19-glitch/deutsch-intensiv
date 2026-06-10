@@ -5321,14 +5321,20 @@ function showHomework(lk) {
     html += '<div style="height:1px;background:#ffffff;margin:18px 0"></div>';
     html += '<div style="color:#1a6b45;font-size:11px;font-weight:700;letter-spacing:.06em;margin-bottom:10px">ГОТОВО ('+done.length+')</div>';
     done.forEach(function(item) {
-      html += '<div style="border:1px solid rgba(62,207,142,.2);border-radius:10px;padding:13px 14px;margin-bottom:8px;background:rgba(62,207,142,.04)">';
-      html += '<div style="display:flex;justify-content:space-between;align-items:center">';
+      html += '<div style="border:1px solid rgba(26,107,69,.2);border-radius:10px;padding:13px 14px;margin-bottom:8px;background:rgba(26,107,69,.04)">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
       html += '<div><div style="color:#1a2a40;font-size:14px;font-weight:600">'+item.w.de+'</div>';
-      html += '<div style="color:#7a90b0;font-size:11px;margin-top:2px">'+item.w.ua+'</div>';
-      item.exs.forEach(function(ex) {
-        html += '<div style="color:#7a90b0;font-size:11px;margin-top:3px;font-style:italic">'+ex.de+'</div>';
+      html += '<div style="color:#7a90b0;font-size:11px;margin-top:2px">'+item.w.ua+'</div></div>';
+      html += '<span style="color:#1a6b45;font-size:13px">✅</span></div>';
+      item.exs.forEach(function(ex, ei) {
+        html += '<div style="background:#fff;border:1px solid #d0d8e8;border-radius:8px;padding:8px 10px;margin-bottom:6px">';
+        html += '<div style="font-size:13px;color:#1a2a40;line-height:1.5;margin-bottom:6px" id="hwex-'+item.i+'-'+ei+'">'+ex.de+'</div>';
+        html += '<div style="display:flex;gap:6px">';
+        html += '<button data-key="'+ex.key+'" data-i="'+item.i+'" data-ei="'+ei+'" data-lk="'+lk+'" class="_hwEdit" style="font-size:11px;padding:3px 10px;background:#f4f6fa;border:1px solid #d0d8e8;border-radius:5px;color:#1a3a6b;cursor:pointer">✏ Змінити</button>';
+        html += '<button data-key="'+ex.key+'" data-lk="'+lk+'" class="_hwDel" style="font-size:11px;padding:3px 10px;background:#fff0f0;border:1px solid #fca5a5;border-radius:5px;color:#dc2626;cursor:pointer">🗑 Видалити</button>';
+        html += '</div></div>';
       });
-      html += '</div><div style="color:#1a6b45;font-size:13px">✅</div></div></div>';
+      html += '</div>';
     });
   }
 
@@ -5337,6 +5343,48 @@ function showHomework(lk) {
   document.body.appendChild(modal);
 
   document.getElementById('_hwClose').onclick = function() { modal.remove(); };
+
+  // Редагувати приклад
+  modal.querySelectorAll('._hwEdit').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var sv = loadMyExamples();
+      var cur = sv[btn.dataset.key] ? sv[btn.dataset.key].de : '';
+      var nt = prompt('Редагувати приклад:', cur);
+      if (nt && nt.trim() && nt !== cur) {
+        sv[btn.dataset.key].de = nt.trim();
+        persistMyExamples(sv);
+        var el = document.getElementById('hwex-'+btn.dataset.i+'-'+btn.dataset.ei);
+        if (el) el.textContent = nt.trim();
+        toast('✅ Збережено', 'var(--green)');
+      }
+    });
+  });
+
+  // Видалити приклад
+  modal.querySelectorAll('._hwDel').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (!confirm('Видалити цей приклад?')) return;
+      var sv = loadMyExamples();
+      delete sv[btn.dataset.key];
+      persistMyExamples(sv);
+      // Також видаляємо з lrState
+      var lkk = btn.dataset.lk;
+      if (lrState[lkk] && lrState[lkk].examples) {
+        // Перераховуємо приклади для слова
+        Object.keys(lrState[lkk].examples).forEach(function(idx) {
+          var arr = lrState[lkk].examples[idx];
+          if (Array.isArray(arr)) {
+            lrState[lkk].examples[idx] = arr.filter(function(ex) {
+              return ex.de !== (sv[btn.dataset.key] || {}).de;
+            });
+          }
+        });
+        lrSave();
+      }
+      modal.remove();
+      showHomework(lkk);
+    });
+  });
 
   // Натискання на слово → відкриває writer
   modal.querySelectorAll('._hwWord').forEach(function(card) {
@@ -8102,15 +8150,11 @@ function lrSaveChat() {
 }
 
 function lrViewSavedChat(chatId) {
-  var msgs = [];
-  if (chatId && chatId !== 0) {
-    msgs = JSON.parse(localStorage.getItem('lr_chat_' + chatId) || '[]');
+  var msgs = JSON.parse(localStorage.getItem('lr_chat_' + chatId) || '[]');
+  if (!msgs.length) {
+    toast('Розмову не знайдено. Збережи нову розмову кнопкою "Зберегти розмову"', 'var(--muted)');
+    return;
   }
-  // Якщо немає збереженого - показуємо поточну lrChatHistory
-  if (!msgs.length && lrChatHistory && lrChatHistory.length) {
-    msgs = lrChatHistory;
-  }
-  if (!msgs.length) { toast('Розмову не знайдено', 'var(--muted)'); return; }
 
   const old = document.getElementById('_chatViewModal');
   if (old) old.remove();
