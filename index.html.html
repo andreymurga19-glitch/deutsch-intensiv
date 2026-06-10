@@ -7435,9 +7435,7 @@ function lrRenderMain(lk, data) {
       html += '<div style="font-size:11px;color:#7a90b0;margin-top:2px">' + chat.date + ' · ' + chat.messages + ' повідомлень</div>';
       if (chat.preview) html += '<div style="font-size:11px;color:#7a90b0;margin-top:2px;font-style:italic">' + chat.preview.slice(0,60) + '...</div>';
       html += '</div>';
-      if (chat.id) {
-        html += '<button onclick="lrViewSavedChat(' + chat.id + ')" style="font-size:11px;padding:4px 10px;background:#f4f6fa;border:1px solid #d0d8e8;border-radius:6px;color:#1a3a6b;cursor:pointer;white-space:nowrap;flex-shrink:0;margin-left:8px">▶ Читати</button>';
-      }
+      html += '<button onclick="lrViewSavedChat(' + (chat.id||0) + ')" style="font-size:11px;padding:4px 10px;background:#f4f6fa;border:1px solid #d0d8e8;border-radius:6px;color:#1a3a6b;cursor:pointer;white-space:nowrap;flex-shrink:0;margin-left:8px">▶ Читати</button>';
       html += '</div>';
     });
     html += '</div>';
@@ -8005,8 +8003,15 @@ function lrSaveExample(globalIdx, de, ua, pIdx, total) {
   const w = data.words[globalIdx];
   exampleCache['dict|' + lrCurrentLk + '|' + w.de] = st.examples[globalIdx][0];
   lrSave();
-  // Зберігаємо в di_my_examples
+  // Зберігаємо в di_my_examples - спочатку видаляємо старі записи для цього слова
   const myExSaved = loadMyExamples();
+  Object.keys(myExSaved).forEach(function(k) {
+    if (myExSaved[k].lk === lrCurrentLk && Number(myExSaved[k].idx) === globalIdx) {
+      delete myExSaved[k];
+      delete exampleCache[k];
+    }
+  });
+  // Зберігаємо актуальні
   st.examples[globalIdx].forEach(function(ex, ei) {
     const myKey = lrCurrentLk + '|' + globalIdx + '_' + ei;
     myExSaved[myKey] = { de: ex.de, ua: ex.ua, custom: true, word: w.de, lk: lrCurrentLk, idx: globalIdx };
@@ -8097,7 +8102,14 @@ function lrSaveChat() {
 }
 
 function lrViewSavedChat(chatId) {
-  const msgs = JSON.parse(localStorage.getItem('lr_chat_' + chatId) || '[]');
+  var msgs = [];
+  if (chatId && chatId !== 0) {
+    msgs = JSON.parse(localStorage.getItem('lr_chat_' + chatId) || '[]');
+  }
+  // Якщо немає збереженого - показуємо поточну lrChatHistory
+  if (!msgs.length && lrChatHistory && lrChatHistory.length) {
+    msgs = lrChatHistory;
+  }
   if (!msgs.length) { toast('Розмову не знайдено', 'var(--muted)'); return; }
 
   const old = document.getElementById('_chatViewModal');
