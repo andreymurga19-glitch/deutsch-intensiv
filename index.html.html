@@ -5255,6 +5255,7 @@ function showHomework(lk) {
   var data = getWordData(lk);
   var words = data ? data.words : [];
 
+  // Групуємо за idx
   var byWord = {};
   Object.keys(saved).forEach(function(k) {
     var e = saved[k];
@@ -5265,73 +5266,67 @@ function showHomework(lk) {
     }
   });
 
-  var need = [], done = [];
+  var done = [], need = [];
   words.forEach(function(w, i) {
-    var c = (byWord[i] || []).length;
-    if (c >= 2) done.push({w:w, i:i, c:c, exs:byWord[i]||[]});
-    else need.push({w:w, i:i, c:c, exs:byWord[i]||[]});
+    var exs = byWord[i] || [];
+    if (exs.length >= 2) done.push({w:w, i:i, exs:exs});
+    else need.push({w:w, i:i, exs:exs});
   });
 
-  var old = document.getElementById('_hwModal');
-  if (old) old.remove();
+  // Видаляємо старий modal
+  var oldM = document.getElementById('_hwModal');
+  if (oldM) oldM.remove();
 
+  // Створюємо modal
   var modal = document.createElement('div');
   modal.id = '_hwModal';
-  modal.style.cssText = 'position:fixed;inset:0;background:#f4f6fa;z-index:9999;overflow-y:auto';
+  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#f4f6fa;z-index:9999;overflow-y:auto;padding:16px 14px 60px';
 
-  var pct = words.length ? Math.round(done.length / words.length * 100) : 0;
+  var pct = words.length ? Math.round(done.length/words.length*100) : 0;
 
-  var html = '<div style="max-width:560px;margin:0 auto;padding:16px 14px 40px">';
-
-  // Заголовок
-  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
-  html += '<div style="color:#1a2a40;font-size:17px;font-weight:700">✍️ Придумай приклади</div>';
-  html += '<button id="_hwClose" style="background:none;border:none;color:#7a90b0;font-size:26px;cursor:pointer;line-height:1">✕</button></div>';
-  html += '<div style="color:#7a90b0;font-size:12px;margin-bottom:14px">'+done.length+' з '+words.length+' слів готово · ціль 2 приклади на слово</div>';
+  var html = '<div style="max-width:560px;margin:0 auto">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0 12px;position:sticky;top:0;background:#f4f6fa;z-index:1">';
+  html += '<div><div style="font-size:17px;font-weight:700;color:#1a2a40">✍️ Придумай приклади</div>';
+  html += '<div style="font-size:12px;color:#7a90b0;margin-top:2px">'+done.length+' з '+words.length+' слів готово</div></div>';
+  html += '<button id="hwCloseBtn" style="font-size:28px;background:none;border:none;color:#7a90b0;cursor:pointer;padding:0 4px">×</button>';
+  html += '</div>';
 
   // Прогрес
-  html += '<div style="background:#ffffff;border-radius:99px;height:6px;margin-bottom:20px">';
-  html += '<div style="background:linear-gradient(90deg,#6366f1,#8b5cf6);height:6px;border-radius:99px;width:'+pct+'%"></div></div>';
+  html += '<div style="background:#d0d8e8;border-radius:99px;height:6px;margin-bottom:20px">';
+  html += '<div style="background:#1a3a6b;height:6px;border-radius:99px;width:'+pct+'%"></div></div>';
 
-  // Треба написати
+  // ЗАЛИШИЛОСЬ
   if (need.length) {
-    html += '<div style="color:#1a2a40;font-size:11px;font-weight:700;letter-spacing:.06em;margin-bottom:10px">ЗАЛИШИЛОСЬ ('+need.length+')</div>';
+    html += '<div style="font-size:11px;font-weight:700;color:#7a90b0;letter-spacing:.06em;margin-bottom:10px">ЗАЛИШИЛОСЬ ('+need.length+')</div>';
     need.forEach(function(item) {
-      var statusColor = item.c === 1 ? '#d4a843' : '#6e7681';
-      var statusBg = item.c === 1 ? 'rgba(212,168,67,.08)' : 'rgba(255,255,255,.03)';
-      var statusBorder = item.c === 1 ? 'rgba(212,168,67,.3)' : 'rgba(255,255,255,.08)';
-      var badge = item.c === 1 ? '1/2 🟡' : '0/2';
-      html += '<div data-wi="'+item.i+'" data-lk="'+lk+'" class="_hwWord" style="border:1px solid '+statusBorder+';border-radius:10px;padding:13px 14px;margin-bottom:8px;background:'+statusBg+';cursor:pointer;transition:border-color .15s">';
-      html += '<div style="display:flex;justify-content:space-between;align-items:center">';
-      html += '<div><div style="color:#1a2a40;font-size:14px;font-weight:600">'+item.w.de+'</div>';
-      html += '<div style="color:#7a90b0;font-size:11px;margin-top:2px">'+item.w.ua+'</div>';
-      if (item.c === 1) {
-        html += '<div style="color:#7a90b0;font-size:11px;margin-top:4px;font-style:italic">'+item.exs[0].de+'</div>';
-      }
-      html += '</div>';
-      html += '<div style="text-align:right">';
-      html += '<div style="color:'+statusColor+';font-size:12px;font-weight:600">'+badge+'</div>';
-      html += '<div style="color:#7a90b0;font-size:10px;margin-top:3px">натисни →</div>';
+      var c = item.exs.length;
+      var border = c===1 ? '#d4a843' : '#d0d8e8';
+      var bg = c===1 ? '#fffbf0' : '#fff';
+      html += '<div data-wi="'+item.i+'" data-lk="'+lk+'" class="hwWord" style="border:1px solid '+border+';border-radius:10px;padding:12px 14px;margin-bottom:8px;background:'+bg+';cursor:pointer">';
+      html += '<div style="display:flex;justify-content:space-between">';
+      html += '<div><div style="font-size:14px;font-weight:600;color:#1a2a40">'+item.w.de+'</div>';
+      html += '<div style="font-size:11px;color:#7a90b0;margin-top:2px">'+item.w.ua+'</div>';
+      if (c===1) html += '<div style="font-size:11px;color:#7a90b0;font-style:italic;margin-top:4px">'+item.exs[0].de+'</div>';
+      html += '</div><div style="text-align:right;flex-shrink:0;margin-left:8px">';
+      html += '<div style="font-size:12px;color:'+(c===1?'#d4a843':'#7a90b0')+'">'+c+'/2</div>';
+      html += '<div style="font-size:10px;color:#7a90b0;margin-top:2px">натисни →</div>';
       html += '</div></div></div>';
     });
   }
 
-  // Готово
+  // ГОТОВО
   if (done.length) {
-    html += '<div style="height:1px;background:#ffffff;margin:18px 0"></div>';
-    html += '<div style="color:#1a6b45;font-size:11px;font-weight:700;letter-spacing:.06em;margin-bottom:10px">ГОТОВО ('+done.length+')</div>';
+    html += '<div style="height:1px;background:#d0d8e8;margin:16px 0"></div>';
+    html += '<div style="font-size:11px;font-weight:700;color:#1a6b45;letter-spacing:.06em;margin-bottom:10px">ГОТОВО ('+done.length+')</div>';
     done.forEach(function(item) {
-      html += '<div style="border:1px solid rgba(26,107,69,.2);border-radius:10px;padding:13px 14px;margin-bottom:8px;background:rgba(26,107,69,.04)">';
-      html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
-      html += '<div><div style="color:#1a2a40;font-size:14px;font-weight:600">'+item.w.de+'</div>';
-      html += '<div style="color:#7a90b0;font-size:11px;margin-top:2px">'+item.w.ua+'</div></div>';
-      html += '<span style="color:#1a6b45;font-size:13px">✅</span></div>';
+      html += '<div style="border:1px solid rgba(26,107,69,.25);border-radius:10px;padding:12px 14px;margin-bottom:8px;background:rgba(26,107,69,.04)">';
+      html += '<div style="font-size:14px;font-weight:600;color:#1a2a40;margin-bottom:8px">'+item.w.de+'</div>';
       item.exs.forEach(function(ex, ei) {
         html += '<div style="background:#fff;border:1px solid #d0d8e8;border-radius:8px;padding:8px 10px;margin-bottom:6px">';
-        html += '<div style="font-size:13px;color:#1a2a40;line-height:1.5;margin-bottom:6px" id="hwex-'+item.i+'-'+ei+'">'+ex.de+'</div>';
+        html += '<div style="font-size:13px;color:#1a2a40;line-height:1.5;margin-bottom:6px" id="hwt-'+item.i+'-'+ei+'">'+ex.de+'</div>';
         html += '<div style="display:flex;gap:6px">';
-        html += '<button data-key="'+ex.key+'" data-i="'+item.i+'" data-ei="'+ei+'" data-lk="'+lk+'" class="_hwEdit" style="font-size:11px;padding:3px 10px;background:#f4f6fa;border:1px solid #d0d8e8;border-radius:5px;color:#1a3a6b;cursor:pointer">✏ Змінити</button>';
-        html += '<button data-key="'+ex.key+'" data-lk="'+lk+'" class="_hwDel" style="font-size:11px;padding:3px 10px;background:#fff0f0;border:1px solid #fca5a5;border-radius:5px;color:#dc2626;cursor:pointer">🗑 Видалити</button>';
+        html += '<button class="hwEditBtn" data-key="'+ex.key+'" data-wi="'+item.i+'" data-ei="'+ei+'" style="font-size:11px;padding:3px 10px;background:#eef1f8;border:1px solid #d0d8e8;border-radius:5px;color:#1a3a6b;cursor:pointer">✏ Змінити</button>';
+        html += '<button class="hwDelBtn" data-key="'+ex.key+'" data-lk="'+lk+'" style="font-size:11px;padding:3px 10px;background:#fff0f0;border:1px solid #fca5a5;border-radius:5px;color:#dc2626;cursor:pointer">🗑 Видалити</button>';
         html += '</div></div>';
       });
       html += '</div>';
@@ -5342,75 +5337,80 @@ function showHomework(lk) {
   modal.innerHTML = html;
   document.body.appendChild(modal);
 
-  document.getElementById('_hwClose').onclick = function() { modal.remove(); };
+  document.getElementById('hwCloseBtn').addEventListener('click', function() { modal.remove(); });
 
-  // Редагувати приклад
-  modal.querySelectorAll('._hwEdit').forEach(function(btn) {
-    btn.addEventListener('click', function() {
+  modal.querySelectorAll('.hwEditBtn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
       var sv = loadMyExamples();
-      var cur = sv[btn.dataset.key] ? sv[btn.dataset.key].de : '';
-      var nt = prompt('Редагувати приклад:', cur);
-      if (nt && nt.trim() && nt !== cur) {
-        sv[btn.dataset.key].de = nt.trim();
+      var k = btn.dataset.key;
+      if (!sv[k]) return;
+      var nt = prompt('Редагувати:', sv[k].de);
+      if (nt && nt.trim()) {
+        sv[k].de = nt.trim();
         persistMyExamples(sv);
-        var el = document.getElementById('hwex-'+btn.dataset.i+'-'+btn.dataset.ei);
+        var el = document.getElementById('hwt-'+btn.dataset.wi+'-'+btn.dataset.ei);
         if (el) el.textContent = nt.trim();
         toast('✅ Збережено', 'var(--green)');
       }
     });
   });
 
-  // Видалити приклад
-  modal.querySelectorAll('._hwDel').forEach(function(btn) {
-    btn.addEventListener('click', function() {
+  modal.querySelectorAll('.hwDelBtn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
       if (!confirm('Видалити цей приклад?')) return;
       var sv = loadMyExamples();
       delete sv[btn.dataset.key];
       persistMyExamples(sv);
-      // Також видаляємо з lrState
-      var lkk = btn.dataset.lk;
-      if (lrState[lkk] && lrState[lkk].examples) {
-        // Перераховуємо приклади для слова
-        Object.keys(lrState[lkk].examples).forEach(function(idx) {
-          var arr = lrState[lkk].examples[idx];
-          if (Array.isArray(arr)) {
-            lrState[lkk].examples[idx] = arr.filter(function(ex) {
-              return ex.de !== (sv[btn.dataset.key] || {}).de;
-            });
-          }
-        });
-        lrSave();
-      }
       modal.remove();
-      showHomework(lkk);
+      showHomework(btn.dataset.lk);
     });
   });
 
-  // Натискання на слово → відкриває writer
-  modal.querySelectorAll('._hwWord').forEach(function(card) {
-    card.addEventListener('mouseenter', function() { card.style.borderColor = '#6366f1'; });
-    card.addEventListener('mouseleave', function() { card.style.borderColor = ''; });
+  modal.querySelectorAll('.hwWord').forEach(function(card) {
     card.addEventListener('click', function() {
       var wi = Number(card.dataset.wi);
       var cardLk = card.dataset.lk;
       modal.remove();
-      // Відкриваємо writer для конкретного слова
+      lrCurrentLk = cardLk;
       var wdata = getWordData(cardLk);
       var allWords = wdata.words;
+      var sv = loadMyExamples();
       var pending = allWords.filter(function(_, i) {
-        var sv = loadMyExamples();
-        var c = Object.values(sv).filter(function(e){ return e.lk===cardLk && Number(e.idx)===i; }).length;
-        return c < 2;
+        return Object.values(sv).filter(function(e){ return e.lk===cardLk && Number(e.idx)===i; }).length < 2;
       });
-      var pIdx = pending.findIndex(function(w, i) { return allWords.indexOf(w) === wi; });
+      var pIdx = pending.findIndex(function(w) { return allWords.indexOf(w) === wi; });
       if (pIdx < 0) pIdx = 0;
-      lrCurrentLk = cardLk;
       lrShowExampleWriter(pIdx, allWords, pending);
     });
   });
 }
 
-// Залишаємо showMyExamples як аліас для сумісності
+function hwEdit(key, wi, ei) {
+  var sv = loadMyExamples();
+  if (!sv[key]) return;
+  var nt = prompt('Редагувати:', sv[key].de);
+  if (nt && nt.trim()) {
+    sv[key].de = nt.trim();
+    persistMyExamples(sv);
+    var el = document.getElementById('hwt-'+wi+'-'+ei);
+    if (el) el.textContent = nt.trim();
+    toast('✅ Збережено', 'var(--green)');
+  }
+}
+
+function hwDel(key, lk) {
+  if (!confirm('Видалити цей приклад?')) return;
+  var sv = loadMyExamples();
+  delete sv[key];
+  persistMyExamples(sv);
+  var modal = document.getElementById('_hwModal');
+  if (modal) modal.remove();
+  showHomework(lk);
+}
+
+
 function showMyExamples(lk) { showHomework(lk); }
 
 function editMyExample(key, i) {
