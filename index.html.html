@@ -5285,7 +5285,7 @@ function showHomework(lk) {
 
   // Заголовок
   html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
-  html += '<div style="color:#e6edf3;font-size:17px;font-weight:700">✍️ Придумай приклади</div>';
+  html += '<div style="color:#1a2a40;font-size:17px;font-weight:700">✍️ Придумай приклади</div>';
   html += '<button id="_hwClose" style="background:none;border:none;color:#7a90b0;font-size:26px;cursor:pointer;line-height:1">✕</button></div>';
   html += '<div style="color:#7a90b0;font-size:12px;margin-bottom:14px">'+done.length+' з '+words.length+' слів готово · ціль 2 приклади на слово</div>';
 
@@ -5295,7 +5295,7 @@ function showHomework(lk) {
 
   // Треба написати
   if (need.length) {
-    html += '<div style="color:#e6edf3;font-size:11px;font-weight:700;letter-spacing:.06em;margin-bottom:10px">ЗАЛИШИЛОСЬ ('+need.length+')</div>';
+    html += '<div style="color:#1a2a40;font-size:11px;font-weight:700;letter-spacing:.06em;margin-bottom:10px">ЗАЛИШИЛОСЬ ('+need.length+')</div>';
     need.forEach(function(item) {
       var statusColor = item.c === 1 ? '#d4a843' : '#6e7681';
       var statusBg = item.c === 1 ? 'rgba(212,168,67,.08)' : 'rgba(255,255,255,.03)';
@@ -5303,7 +5303,7 @@ function showHomework(lk) {
       var badge = item.c === 1 ? '1/2 🟡' : '0/2';
       html += '<div data-wi="'+item.i+'" data-lk="'+lk+'" class="_hwWord" style="border:1px solid '+statusBorder+';border-radius:10px;padding:13px 14px;margin-bottom:8px;background:'+statusBg+';cursor:pointer;transition:border-color .15s">';
       html += '<div style="display:flex;justify-content:space-between;align-items:center">';
-      html += '<div><div style="color:#e6edf3;font-size:14px;font-weight:600">'+item.w.de+'</div>';
+      html += '<div><div style="color:#1a2a40;font-size:14px;font-weight:600">'+item.w.de+'</div>';
       html += '<div style="color:#7a90b0;font-size:11px;margin-top:2px">'+item.w.ua+'</div>';
       if (item.c === 1) {
         html += '<div style="color:#7a90b0;font-size:11px;margin-top:4px;font-style:italic">'+item.exs[0].de+'</div>';
@@ -5323,7 +5323,7 @@ function showHomework(lk) {
     done.forEach(function(item) {
       html += '<div style="border:1px solid rgba(62,207,142,.2);border-radius:10px;padding:13px 14px;margin-bottom:8px;background:rgba(62,207,142,.04)">';
       html += '<div style="display:flex;justify-content:space-between;align-items:center">';
-      html += '<div><div style="color:#e6edf3;font-size:14px;font-weight:600">'+item.w.de+'</div>';
+      html += '<div><div style="color:#1a2a40;font-size:14px;font-weight:600">'+item.w.de+'</div>';
       html += '<div style="color:#7a90b0;font-size:11px;margin-top:2px">'+item.w.ua+'</div>';
       item.exs.forEach(function(ex) {
         html += '<div style="color:#7a90b0;font-size:11px;margin-top:3px;font-style:italic">'+ex.de+'</div>';
@@ -7864,10 +7864,10 @@ function lrShowExampleWriter(pIdx, allWords, pending) {
       <div style="font-size:13px;color:#7a90b0;margin-top:4px">${w.ua}</div>
     </div>
     <div style="font-size:12px;color:#7a90b0;margin-bottom:7px">Напиши своє речення по-німецьки:</div>
-    <textarea id="lrExInput" style="width:100%;background:#ffffff;border:1px solid #d0d8e8;border-radius:8px;color:#e6edf3;font-family:'IBM Plex Sans',sans-serif;font-size:14px;padding:10px;outline:none;resize:none;height:80px;margin-bottom:10px" placeholder="Речення..." onfocus="this.style.borderColor='#d4a843'" onblur="this.style.borderColor='#d0d8e8'"></textarea>
+    <textarea id="lrExInput" style="width:100%;background:#ffffff;border:1px solid #d0d8e8;border-radius:8px;color:#1a2a40;font-family:'IBM Plex Sans',sans-serif;font-size:14px;padding:10px;outline:none;resize:none;height:80px;margin-bottom:10px" placeholder="Речення..." onfocus="this.style.borderColor='#d4a843'" onblur="this.style.borderColor='#d0d8e8'"></textarea>
     <div id="lrExFeedback" style="display:none;border-radius:8px;padding:12px;margin-bottom:12px;font-size:13px;line-height:1.6"></div>
     <div style="display:flex;gap:9px;margin-bottom:8px">
-      <button class="lr-task-btn" style="flex:1;background:#ffffff;color:#e6edf3" onclick="lrSkipExample(${pIdx},${pending.length})">⏭ Пропустити</button>
+      <button class="lr-task-btn" style="flex:1;background:#ffffff;color:#1a2a40" onclick="lrSkipExample(${pIdx},${pending.length})">⏭ Пропустити</button>
       <button class="lr-task-btn" style="flex:1" onclick="lrCheckExample(${globalIdx},${pIdx},${pending.length})">✓ Перевірити</button>
     </div>
     <button class="lr-task-btn" style="width:100%;background:#7b61ff;color:#fff" onclick="lrAiSuggestExample(${globalIdx},${pIdx},${pending.length})">💡 Підказка від AI</button>
@@ -7918,11 +7918,11 @@ async function lrCheckExample(globalIdx, pIdx, total) {
     fb.style.border = '1px solid ' + (ok ? '#1a6b45' : '#fb923c');
     fb.innerHTML = `<div style="font-weight:600;color:${ok?'#1a6b45':'#fb923c'};margin-bottom:5px">${ok?'✅ Правильно!':'⚠️ Є помилки'}</div>
       <div style="color:#7a90b0;margin-bottom:6px">${res.comment}</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#e6edf3;background:#ffffff;padding:8px 10px;border-radius:6px;margin:4px 0">${res.corrected}</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#1a2a40;background:#ffffff;padding:8px 10px;border-radius:6px;margin:4px 0">${res.corrected}</div>
       <div style="font-size:12px;color:#1a6b45;margin-top:3px;font-style:italic">${res.corrected_ua||''}</div>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
         <button class="lr-task-btn" style="flex:1;min-width:100px" onclick="lrSaveExample(${globalIdx},'${(res.corrected||own).replace(/'/g,"\'")}','${(res.corrected_ua||'').replace(/'/g,"\'")}',${pIdx},${total})">✅ Зафіксувати</button>
-        <button class="lr-task-btn" style="flex:1;min-width:100px;background:#ffffff;color:#e6edf3" onclick="lrWriteAnother(${globalIdx},${pIdx},${total})">✍️ Написати інший</button>
+        <button class="lr-task-btn" style="flex:1;min-width:100px;background:#ffffff;color:#1a2a40" onclick="lrWriteAnother(${globalIdx},${pIdx},${total})">✍️ Написати інший</button>
         <button class="lr-task-btn" style="flex:1;min-width:100px;background:#7b61ff;color:#fff" onclick="lrAiSuggestExample(${globalIdx},${pIdx},${total})">💡 Підказка AI</button>
         <button class="lr-task-btn" style="width:100%;background:transparent;color:#7a90b0;border:1px solid #d0d8e8;margin-top:4px" onclick="lrSkipExample(${pIdx},${total})">⏭ Далі без збереження</button>
       </div>`;
@@ -7956,7 +7956,7 @@ async function lrAiSuggestExample(globalIdx, pIdx, total) {
     fb.style.border = '1px solid #7b61ff';
     fb.innerHTML = `
       <div style="font-weight:600;color:#7b61ff;margin-bottom:6px">🤖 Варіант від AI:</div>
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#e6edf3;background:#ffffff;padding:8px 10px;border-radius:6px;margin:4px 0">${esc(ex.de)}</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:#1a2a40;background:#ffffff;padding:8px 10px;border-radius:6px;margin:4px 0">${esc(ex.de)}</div>
       <div style="font-size:12px;color:#1a6b45;margin-top:3px;font-style:italic">${esc(ex.ua)}</div>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
         <button class="lr-task-btn" style="flex:1;min-width:120px" onclick="lrSaveExample(${globalIdx},'${ex.de.replace(/'/g,"\'")}','${ex.ua.replace(/'/g,"\'")}',${pIdx},${total})">✅ Зафіксувати</button>
@@ -8123,14 +8123,14 @@ function lrChatAddMsg(role, text) {
   const div = document.createElement('div');
   const isAi = role === 'ai';
   if (isAi) {
-    div.style.cssText = 'background:#ffffff;border:1px solid #d0d8e8;border-radius:4px 12px 12px 12px;padding:10px 13px;font-size:13px;line-height:1.6;color:#e6edf3;position:relative';
+    div.style.cssText = 'background:#ffffff;border:1px solid #d0d8e8;border-radius:4px 12px 12px 12px;padding:10px 13px;font-size:13px;line-height:1.6;color:#1a2a40;position:relative';
     const mdText = text
       .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
       .replace(/\*(.+?)\*/g, '<i>$1</i>');
     div.innerHTML = '<div style="padding-right:30px">' + mdText + '</div>' +
       '<button onclick="speakDe(this.closest(\'div[style]\').querySelector(\'div\').textContent)" style="position:absolute;top:8px;right:8px;background:none;border:none;color:#7a90b0;cursor:pointer;font-size:13px;opacity:.7" title="Прослухати">🔊</button>';
   } else {
-    div.style.cssText = 'background:rgba(26,58,107,.4);border:1px solid #1a3a6b;border-radius:12px 4px 12px 12px;padding:10px 13px;font-size:13px;line-height:1.6;color:#e6edf3;text-align:right';
+    div.style.cssText = 'background:rgba(26,58,107,.4);border:1px solid #1a3a6b;border-radius:12px 4px 12px 12px;padding:10px 13px;font-size:13px;line-height:1.6;color:#1a2a40;text-align:right';
     div.textContent = text;
   }
   msgs.appendChild(div);
