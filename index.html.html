@@ -7993,21 +7993,35 @@ function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 function lrSaveExample(globalIdx, de, ua, pIdx, total) {
   const st = lrState[lrCurrentLk];
   if (!st.examples) st.examples = {};
-  st.examples[globalIdx] = {de, ua};
-  // Also save to exampleCache for use in cards
+  // Зберігаємо масив - до 2 прикладів на слово
+  if (!st.examples[globalIdx]) st.examples[globalIdx] = [];
+  if (!Array.isArray(st.examples[globalIdx])) {
+    st.examples[globalIdx] = [st.examples[globalIdx]]; // конвертуємо старий формат
+  }
+  if (st.examples[globalIdx].length < 2) {
+    st.examples[globalIdx].push({de, ua});
+  }
   const data = getWordData(lrCurrentLk);
   const w = data.words[globalIdx];
-  exampleCache['dict|' + lrCurrentLk + '|' + w.de] = {de, ua};
+  exampleCache['dict|' + lrCurrentLk + '|' + w.de] = st.examples[globalIdx][0];
   lrSave();
-  // ТАКОЖ зберігаємо в di_my_examples для перегляду
-  const myKey = exKey(lrCurrentLk, globalIdx);
+  // Зберігаємо в di_my_examples
   const myExSaved = loadMyExamples();
-  myExSaved[myKey] = { de, ua, custom: true, word: w.de, lk: lrCurrentLk, idx: globalIdx };
-  exampleCache[myKey] = myExSaved[myKey];
+  st.examples[globalIdx].forEach(function(ex, ei) {
+    const myKey = lrCurrentLk + '|' + globalIdx + '_' + ei;
+    myExSaved[myKey] = { de: ex.de, ua: ex.ua, custom: true, word: w.de, lk: lrCurrentLk, idx: globalIdx };
+    exampleCache[myKey] = myExSaved[myKey];
+  });
   persistMyExamples(myExSaved);
-  toast('✅ Приклад збережено!', 'var(--grn)');
-  const pending = data.words.filter((_,i) => !st.examples[i]);
-  lrShowExampleWriter(0, data.words, pending);
+  const count = st.examples[globalIdx].length;
+  toast(count >= 2 ? '✅ 2/2 Обидва приклади збережено!' : '✅ 1/2 Перший приклад збережено!', 'var(--green)');
+  // Якщо ще не 2 - даємо написати другий
+  if (count < 2) {
+    lrShowExampleWriter(pIdx, data.words, data.words.filter((_,i) => (st.examples[i]||[]).length < 2));
+  } else {
+    const pending = data.words.filter((_,i) => (st.examples[i]||[]).length < 2);
+    lrShowExampleWriter(0, data.words, pending);
+  }
 }
 
 // ── AI CHAT ──
