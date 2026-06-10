@@ -7510,15 +7510,19 @@ function lrRenderMain(lk, data) {
   if (savedChats.length > 0) {
     html += '<div style="margin-top:8px">';
     html += '<div style="font-size:10px;color:#7a90b0;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">Збережені розмови</div>';
-    savedChats.slice().reverse().slice(0,3).forEach(function(chat) {
-      html += '<div style="background:#ffffff;border:1px solid #d0d8e8;border-radius:10px;padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">';
-      html += '<div>';
+    savedChats.slice().reverse().forEach(function(chat, ri) {
+      var realIdx = savedChats.length - 1 - ri;
+      html += '<div style="background:#ffffff;border:1px solid #d0d8e8;border-radius:10px;padding:10px 12px;margin-bottom:6px">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:flex-start">';
+      html += '<div style="flex:1;min-width:0">';
       html += '<div style="font-size:12px;font-weight:600;color:#1a2a40">' + (chat.topic || 'Розмова') + '</div>';
       html += '<div style="font-size:11px;color:#7a90b0;margin-top:2px">' + chat.date + ' · ' + chat.messages + ' повідомлень</div>';
-      if (chat.preview) html += '<div style="font-size:11px;color:#7a90b0;margin-top:2px;font-style:italic">' + chat.preview.slice(0,60) + '...</div>';
+      if (chat.preview) html += '<div style="font-size:11px;color:#7a90b0;margin-top:2px;font-style:italic;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">' + chat.preview.slice(0,60) + '...</div>';
       html += '</div>';
-      html += '<button onclick="lrViewSavedChat(' + (chat.id||0) + ')" style="font-size:11px;padding:4px 10px;background:#f4f6fa;border:1px solid #d0d8e8;border-radius:6px;color:#1a3a6b;cursor:pointer;white-space:nowrap;flex-shrink:0;margin-left:8px">▶ Читати</button>';
-      html += '</div>';
+      html += '<div style="display:flex;gap:6px;flex-shrink:0;margin-left:8px">';
+      html += '<button onclick="lrViewSavedChat(' + (chat.id||0) + ')" style="font-size:11px;padding:4px 10px;background:#f4f6fa;border:1px solid #d0d8e8;border-radius:6px;color:#1a3a6b;cursor:pointer;white-space:nowrap">▶ Читати</button>';
+      html += '<button onclick="lrDeleteChat(' + realIdx + ',\'' + lk + '\')" style="font-size:11px;padding:4px 8px;background:#fff0f0;border:1px solid #fca5a5;border-radius:6px;color:#dc2626;cursor:pointer">🗑</button>';
+      html += '</div></div></div>';
     });
     html += '</div>';
   }
@@ -8181,6 +8185,18 @@ function lrSaveChat() {
   lrSave();
   toast('💾 Розмову збережено!', 'var(--green)');
   lrRenderMain(lrChatLk, data);
+}
+
+function lrDeleteChat(idx, lk) {
+  if (!confirm('Видалити цю розмову?')) return;
+  var st = lrState[lk];
+  if (!st || !st.savedChats) return;
+  var chat = st.savedChats[idx];
+  if (chat && chat.id) localStorage.removeItem('lr_chat_' + chat.id);
+  st.savedChats.splice(idx, 1);
+  lrSave();
+  lrRenderMain(lk, getWordData(lk));
+  toast('🗑 Розмову видалено', 'var(--muted)');
 }
 
 function lrViewSavedChat(chatId) {
