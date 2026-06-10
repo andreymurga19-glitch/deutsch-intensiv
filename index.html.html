@@ -7386,7 +7386,7 @@ function lrRenderMain(lk, data) {
   const exTotal = words.length;
   // Ціль: 2 приклади на слово за тиждень
   const exGoal = exTotal * 2;
-  const myExCount = Object.values(loadMyExamples()).filter(e=>e.lk===lrCurrentLk).length;
+  const myExCount = Object.values(loadMyExamples()).filter(e=>e.lk===lk).length;
   const exPct = Math.min(100, Math.round(myExCount/exGoal*100));
   html += `<div class="lr-task">
     <div class="lr-task-icon">✍️</div>
