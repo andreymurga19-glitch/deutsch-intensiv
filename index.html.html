@@ -7951,6 +7951,8 @@ async function lrStartExamples() {
 }
 
 function lrShowExampleWriter(pIdx, allWords, pending) {
+  // Зупиняємо мікрофон якщо він активний з попереднього слова
+  if (lrExListening && lrExRecognition) { try { lrExRecognition.abort(); } catch(e){} lrExListening = false; }
   const st = lrState[lrCurrentLk];
   if (!st.examples) st.examples = {};
   if (pIdx >= pending.length) {
@@ -7968,7 +7970,11 @@ function lrShowExampleWriter(pIdx, allWords, pending) {
       <div style="font-size:13px;color:#7a90b0;margin-top:4px">${w.ua}</div>
     </div>
     <div style="font-size:12px;color:#7a90b0;margin-bottom:7px">Напиши своє речення по-німецьки:</div>
-    <textarea id="lrExInput" style="width:100%;background:#ffffff;border:1px solid #d0d8e8;border-radius:8px;color:#1a2a40;font-family:'IBM Plex Sans',sans-serif;font-size:14px;padding:10px;outline:none;resize:none;height:80px;margin-bottom:10px" placeholder="Речення..." onfocus="this.style.borderColor='#d4a843'" onblur="this.style.borderColor='#d0d8e8'"></textarea>
+    <div style="position:relative">
+      <textarea id="lrExInput" style="width:100%;background:#ffffff;border:1px solid #d0d8e8;border-radius:8px;color:#1a2a40;font-family:'IBM Plex Sans',sans-serif;font-size:14px;padding:10px 50px 10px 10px;outline:none;resize:none;height:90px;margin-bottom:4px;box-sizing:border-box" placeholder="Речення..." onfocus="this.style.borderColor='#d4a843'" onblur="this.style.borderColor='#d0d8e8'"></textarea>
+      <button id="lrExMicBtn" onclick="lrExMicToggle()" style="position:absolute;top:8px;right:8px;width:34px;height:34px;border-radius:50%;border:none;background:linear-gradient(135deg,#7b61ff,#9b85ff);color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(123,97,255,.3)">🎤</button>
+    </div>
+    <div id="lrExMicStatus" style="font-size:11px;color:#7a90b0;margin-bottom:8px;min-height:14px"></div>
     <div id="lrExFeedback" style="display:none;border-radius:8px;padding:12px;margin-bottom:12px;font-size:13px;line-height:1.6"></div>
     <div style="display:flex;gap:9px;margin-bottom:8px">
       <button class="lr-task-btn" style="flex:1;background:#ffffff;color:#1a2a40" onclick="lrSkipExample(${pIdx},${pending.length})">⏭ Пропустити</button>
@@ -7976,6 +7982,72 @@ function lrShowExampleWriter(pIdx, allWords, pending) {
     </div>
     <button class="lr-task-btn" style="width:100%;background:#7b61ff;color:#fff" onclick="lrAiSuggestExample(${globalIdx},${pIdx},${pending.length})">💡 Підказка від AI</button>
   `;
+}
+
+
+var lrExRecognition = null;
+var lrExListening = false;
+
+function lrExMicToggle() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const btn = document.getElementById('lrExMicBtn');
+  const status = document.getElementById('lrExMicStatus');
+  const input = document.getElementById('lrExInput');
+  if (!SpeechRecognition) {
+    if (status) status.textContent = '❌ Розпізнавання не підтримується (тільки Chrome)';
+    return;
+  }
+
+  if (lrExListening) {
+    if (lrExRecognition) { try { lrExRecognition.abort(); } catch(e){} }
+    lrExListening = false;
+    if (btn) { btn.style.background = 'linear-gradient(135deg,#7b61ff,#9b85ff)'; btn.textContent = '🎤'; }
+    if (status) status.textContent = '';
+    return;
+  }
+
+  if (lrExRecognition) { try { lrExRecognition.abort(); } catch(e){} }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'de-DE';
+  recognition.interimResults = false;
+  recognition.continuous = false;
+  recognition.maxAlternatives = 1;
+  lrExRecognition = recognition;
+  lrExListening = true;
+
+  if (btn) { btn.style.background = 'linear-gradient(135deg,#e8266e,#ff6bb0)'; btn.textContent = '⏺'; }
+  if (status) status.textContent = '🎙️ Говори по-німецьки...';
+
+  recognition.onresult = function(e) {
+    const text = e.results[0][0].transcript;
+    if (input) {
+      // Додаємо до існуючого тексту через пробіл, з великої букви
+      const cur = input.value.trim();
+      const capitalized = text.charAt(0).toUpperCase() + text.slice(1);
+      input.value = cur ? cur + ' ' + text : capitalized;
+      input.focus();
+    }
+    if (status) status.textContent = '✅ Розпізнано! Перевір текст і натисни "Перевірити"';
+  };
+
+  recognition.onerror = function(e) {
+    if (status) {
+      if (e.error === 'no-speech') status.textContent = '🤔 Нічого не почув, спробуй ще раз';
+      else if (e.error === 'not-allowed') status.textContent = '❌ Потрібен доступ до мікрофона';
+      else status.textContent = '❌ Помилка: ' + e.error;
+    }
+  };
+
+  recognition.onend = function() {
+    lrExListening = false;
+    if (btn) { btn.style.background = 'linear-gradient(135deg,#7b61ff,#9b85ff)'; btn.textContent = '🎤'; }
+  };
+
+  try { recognition.start(); } catch(e) {
+    if (status) status.textContent = '❌ Не вдалося запустити мікрофон';
+    lrExListening = false;
+  }
 }
 
 
