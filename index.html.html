@@ -8155,33 +8155,47 @@ function lrSaveCorrected(globalIdx, pIdx, total) {
 function lrSaveExample(globalIdx, de, ua, pIdx, total) {
   const st = lrState[lrCurrentLk];
   if (!st.examples) st.examples = {};
-  // Зберігаємо масив - до 2 прикладів на слово
-  if (!st.examples[globalIdx]) st.examples[globalIdx] = [];
-  if (!Array.isArray(st.examples[globalIdx])) {
-    st.examples[globalIdx] = [st.examples[globalIdx]]; // конвертуємо старий формат
-  }
-  if (st.examples[globalIdx].length < 2) {
-    st.examples[globalIdx].push({de, ua});
-  }
   const data = getWordData(lrCurrentLk);
   const w = data.words[globalIdx];
-  exampleCache['dict|' + lrCurrentLk + '|' + w.de] = st.examples[globalIdx][0];
-  lrSave();
-  // Зберігаємо в di_my_examples - спочатку видаляємо старі записи для цього слова
+
+  // СИНХРОНІЗУЄМО з di_my_examples - це джерело правди для прикладів
   const myExSaved = loadMyExamples();
+  let existing = [];
+  Object.keys(myExSaved).forEach(function(k) {
+    const e = myExSaved[k];
+    if (e.lk === lrCurrentLk && Number(e.idx) === globalIdx) {
+      existing.push({de: e.de, ua: e.ua, key: k});
+    }
+  });
+  // Сортуємо за ключем (idx_0, idx_1) щоб порядок був стабільний
+  existing.sort(function(a,b){ return a.key.localeCompare(b.key); });
+
+  // Додаємо новий приклад
+  if (existing.length < 2) {
+    existing.push({de, ua});
+  } else {
+    existing[1] = {de, ua}; // замінюємо другий, якщо вже 2
+  }
+
+  // Видаляємо старі ключі для цього слова
   Object.keys(myExSaved).forEach(function(k) {
     if (myExSaved[k].lk === lrCurrentLk && Number(myExSaved[k].idx) === globalIdx) {
       delete myExSaved[k];
       delete exampleCache[k];
     }
   });
-  // Зберігаємо актуальні
-  st.examples[globalIdx].forEach(function(ex, ei) {
+  // Записуємо актуальні
+  existing.forEach(function(ex, ei) {
     const myKey = lrCurrentLk + '|' + globalIdx + '_' + ei;
     myExSaved[myKey] = { de: ex.de, ua: ex.ua, custom: true, word: w.de, lk: lrCurrentLk, idx: globalIdx };
     exampleCache[myKey] = myExSaved[myKey];
   });
   persistMyExamples(myExSaved);
+
+  // Синхронізуємо lrState.examples для exampleCache карток
+  st.examples[globalIdx] = existing.map(function(ex){ return {de: ex.de, ua: ex.ua}; });
+  exampleCache['dict|' + lrCurrentLk + '|' + w.de] = st.examples[globalIdx][0];
+  lrSave();
   const count = st.examples[globalIdx].length;
   toast(count >= 2 ? '✅ 2/2 Слово готово!' : '✅ 1/2 Перший приклад збережено!', 'var(--green)');
   const pending = data.words.filter((_,i) => (st.examples[i]||[]).length < 2);
