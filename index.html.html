@@ -7324,6 +7324,21 @@ function spLevenshtein(a, b) {
 // LERNEN MODULE — Structured weekly learning
 // ══════════════════════════════════════════════════════════════
 const LR_KEY = 'lernen_v1';
+function toast(msg, color) {
+  let t = document.getElementById('_toastEl');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = '_toastEl';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a2a40;color:#fff;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:600;z-index:99999;box-shadow:0 4px 16px rgba(0,0,0,.2);transition:opacity .3s;opacity:0;max-width:90vw;text-align:center';
+    document.body.appendChild(t);
+  }
+  if (color) t.style.background = color.replace('var(--green)','#1a6b45').replace('var(--pink)','#dc2626').replace('var(--muted)','#7a90b0');
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._hideTimer);
+  t._hideTimer = setTimeout(function(){ t.style.opacity = '0'; }, 2500);
+}
+
 let lrState = {}; // {lk: {day, rounds_cards, rounds_voice, hard:[], examples:{}, finalDone}}
 let lrCurrentLk = null;
 let lrSession = null; // current active session
@@ -8205,16 +8220,21 @@ function lrSaveExample(globalIdx, de, ua, pIdx, total) {
   const count = st.examples[globalIdx].length;
   toast(count >= 2 ? '✅ 2/2 Слово готово!' : '✅ 1/2 Перший приклад збережено!', 'var(--green)');
   const pending = data.words.filter((_,i) => (st.examples[i]||[]).length < 2);
+  let newPIdx;
   if (count < 2) {
     // Той самий слот - другий приклад для того ж слова
-    const newPIdx = pending.indexOf(w);
-    lrShowExampleWriter(newPIdx >= 0 ? newPIdx : 0, data.words, pending);
-  } else {
-    // Слово готове - наступне слово (зберігаємо позицію)
-    let newPIdx = Math.min(pIdx, pending.length - 1);
+    newPIdx = pending.indexOf(w);
     if (newPIdx < 0) newPIdx = 0;
-    lrShowExampleWriter(newPIdx, data.words, pending);
+  } else {
+    // Слово готове - наступне слово
+    newPIdx = Math.min(pIdx, pending.length - 1);
+    if (newPIdx < 0) newPIdx = 0;
   }
+  setTimeout(function() {
+    lrShowExampleWriter(newPIdx, data.words, pending);
+    const lc = document.getElementById('lrContent');
+    if (lc) lc.scrollIntoView({behavior:'instant', block:'start'});
+  }, 50);
 }
 
 // ── AI CHAT ──
