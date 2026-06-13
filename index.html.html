@@ -8149,10 +8149,16 @@ function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').
 
 function lrSaveCorrected(globalIdx, pIdx, total) {
   const c = window._lrLastCorrected || {};
-  lrSaveExample(globalIdx, c.de || '', c.ua || '', pIdx, total);
+  try {
+    lrSaveExample(globalIdx, c.de || '', c.ua || '', pIdx, total);
+  } catch(e) {
+    console.error('lrSaveCorrected error:', e);
+    toast('Помилка збереження. Спробуй ще раз', 'var(--pink)');
+  }
 }
 
 function lrSaveExample(globalIdx, de, ua, pIdx, total) {
+  if (!lrState[lrCurrentLk]) lrState[lrCurrentLk] = {hard:[], cardRounds:{}, voiceRounds:{}, finalDone:false, examples:{}, savedChats:[]};
   const st = lrState[lrCurrentLk];
   if (!st.examples) st.examples = {};
   const data = getWordData(lrCurrentLk);
