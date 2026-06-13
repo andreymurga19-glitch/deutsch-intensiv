@@ -8177,12 +8177,14 @@ function lrSaveExample(globalIdx, de, ua, pIdx, total) {
   });
   persistMyExamples(myExSaved);
   const count = st.examples[globalIdx].length;
-  toast(count >= 2 ? '✅ 2/2 Обидва приклади збережено!' : '✅ 1/2 Перший приклад збережено!', 'var(--green)');
-  // Якщо ще не 2 - даємо написати другий
+  toast(count >= 2 ? '✅ 2/2 Слово готово!' : '✅ 1/2 Перший приклад збережено!', 'var(--green)');
+  const pending = data.words.filter((_,i) => (st.examples[i]||[]).length < 2);
   if (count < 2) {
-    lrShowExampleWriter(pIdx, data.words, data.words.filter((_,i) => (st.examples[i]||[]).length < 2));
+    // Залишаємось на цьому слові для другого прикладу - знаходимо його новий pIdx
+    const newPIdx = pending.findIndex((w,i) => data.words.indexOf(w) === globalIdx);
+    lrShowExampleWriter(newPIdx >= 0 ? newPIdx : 0, data.words, pending);
   } else {
-    const pending = data.words.filter((_,i) => (st.examples[i]||[]).length < 2);
+    // Слово готове (2/2) - переходимо до наступного слова
     lrShowExampleWriter(0, data.words, pending);
   }
 }
